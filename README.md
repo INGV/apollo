@@ -1,64 +1,82 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# apollo
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+```
+$ git clone --recursive https://gitlab+deploy-token-71:TWxRfoetzHXxpsLbckbb@gitlab.rm.ingv.it/caravel/apollo.git
+$ cd apollo
+$ git submodule update --init --recursive
+```
 
-## About Laravel
+## Configure Laradock
+Set ports (nginx, etc...) into  `./apollo/configure_laradock.sh` and run:
+```
+$ ./apollo/configure_laradock.sh
+```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Configure Laravel - 1st step
+Copy laravel environment file and set it:
+```
+$ cp ./.env.example ./.env
+```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Start apollo
+First, build docker images:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```
+$ cd laradock-apollo
+$ docker-compose build --no-cache --pull nginx redis php-fpm workspace docker-in-docker
+$ docker-compose up -d nginx redis php-fpm workspace docker-in-docker
+$ cd ..
+```
 
-## Learning Laravel
+## Configure Laravel - 2nd step
+### !!! On Linux machine and no 'root' user !!!
+```
+$ cd laradock-apollo
+$ docker-compose exec -T --user=laradock workspace composer install
+$ docker-compose exec -T --user=laradock workspace php artisan key:generate
+$ docker-compose exec -T --user=laradock workspace chown -R $(id -u):$(id -g) ./storage
+$ docker-compose exec -T --user=laradock workspace chown -R $(id -u):$(id -g) ./bootstrap/cache/
+$ cd ..
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### !!! Others !!!
+```
+$ cd laradock-apollo
+$ docker-compose exec -T workspace composer install
+$ docker-compose exec -T workspace php artisan key:generate
+$ docker-compose exec -T workspace chown -R $(id -u):$(id -g) ./storage
+$ docker-compose exec -T workspace chown -R $(id -u):$(id -g) ./bootstrap/cache/
+$ cd ..
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Build hyp2000 image
+build **hyp2000** docker image into *php-fpm* container:
+```
+$ cd laradock-apollo
+$ docker-compose exec -T php-fpm sh -c "if docker image ls | grep -q hyp2000 ; then echo \" nothing to do\"; else cd hyp2000 && docker build --tag hyp2000:ewdevgit -f DockerfileEwDevGit .; fi"
+$ cd ..
+```
 
-## Laravel Sponsors
+### Keep on mind!
+The **hyp2000** docker image is built in the *php-fpm* container; if you destroy or rebuild *php-fpm* container, remember to re-build hyp2000 image.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## How to use it
+When all containers are started, connect to: 
+- http://<your_host>:<your_port>/
 
-### Premium Partners
+default is:
+- http://localhost:80/
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+If all works, you should see a web page with OpenAPI3 specification to interact with WS.
 
-## Contributing
+## Thanks to
+This project uses the [Laradock](https://github.com/laradock/laradock) idea to start docker containers
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Contribute
+Please, feel free to contribute.
 
-## Code of Conduct
+## Author
+(c) 2022 Valentino Lauciani valentino.lauciani[at]ingv.it \
+(c) 2022 Sergio Bruni sergio.bruni[at]ingv.it
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Istituto Nazionale di Geofisica e Vulcanologia, Italia
