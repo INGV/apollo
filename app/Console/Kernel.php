@@ -16,6 +16,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        /* Remove old logs(s) */
+        $schedule->command('ingv-logging:clear --keep_last=files 31')->daily();
     }
 
     /**
