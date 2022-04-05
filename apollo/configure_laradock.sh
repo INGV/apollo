@@ -87,6 +87,14 @@ checkReturnCode ${?}
 echo "Done"
 echo ""
 
+# FIX BUG on COMPOSER_AUTH: https://github.com/laradock/laradock/pull/3190
+echo "!!! - FIX BUG on COMPOSER_AUTH: https://github.com/laradock/laradock/pull/3190 :"
+git checkout master
+git fetch origin refs/pull/3190/head:pr_3190
+git checkout pr_3190
+echo "Done"
+echo ""
+
 # Update Laradock 'docker-compose.yml'. Issue: https://github.com/laradock/laradock/issues/2947
 echo "Update Laradock 'docker-compose.yml':"
 FILE_DOCKERCOMPOSE="docker-compose.yml"

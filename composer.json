@@ -9,9 +9,13 @@
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.2",
         "laravel/sanctum": "^2.14.1",
-        "laravel/tinker": "^2.7"
+        "laravel/tinker": "^2.7",
+	"ingv/hyp2000-converter": "dev-master",
+	"ingv/ingv-logging": "dev-master",
+	"ingv/station-hinv": "dev-master"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^2.12",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
@@ -34,7 +38,9 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "php artisan clear-compiled",
+            "@php artisan ide-helper:generate"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
@@ -57,5 +63,19 @@
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "station-hinv": {
+            "type": "vcs",
+            "url": "https://gitlab+deploy-token-67:3NLyLkttzFF2riiDPt1e@gitlab.rm.ingv.it/caravel/php-pkg/station-hinv.git"
+        },
+        "hyp2000-converter": {
+            "type": "vcs",
+            "url": "https://gitlab+deploy-token-68:zLTL4P53W2RWvoumJZ9B@gitlab.rm.ingv.it/caravel/php-pkg/hyp2000-converter.git"
+        },
+        "ingv-logging": {
+            "type": "vcs",
+            "url": "https://gitlab+deploy-token-32:CiabjAfqsSGf9jpiPyrM@gitlab.rm.ingv.it/caravel/php-pkg/ingv-logging.git"
+        }
+    }
 }
