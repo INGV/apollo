@@ -1,0 +1,61 @@
+# This repository adheres to the publiccode.yml standard by including this 
+# metadata file that makes public software easily discoverable.
+# More info at https://github.com/italia/publiccode.yml
+
+publiccodeYmlVersion: '0.2'
+name: 'INGV - hyp2000ws' 
+releaseDate: 2022-02-12
+url: 'https://github.com/INGV/hyp2000-ws'
+logo: public/images/ingv_logo_text_two_lines.png 
+landingURL: 'https://github.com/INGV/hyp2000-ws'
+softwareVersion: 2.4.0
+developmentStatus: stable
+softwareType: standalone/other
+platforms:
+  - windows
+  - mac
+  - linux
+usedBy:
+  - INGV
+categories:
+  - data-analytics
+  - data-collection
+maintenance:
+  type: internal
+  contacts:
+    - name: Valentino Lauciani
+      email: valentino.lauciani@ingv.it
+legal:
+  authorsFile: AUTHORS.md 
+  repoOwner: 'Istituto Nazionale di Geofisica e Vulcanologia - INGV'
+  license: 'AGPL-3.0-or-later'
+intendedAudience:
+  scope:
+    - research
+localisation:
+  localisationReady: false
+  availableLanguages:
+    - en
+it:
+  countryExtensionVersion: '0.2'
+  riuso:
+    codiceIPA: ingv
+description:
+  en:
+    genericName: hyp2000ws
+    shortDescription: >-
+      Web Service built on top of hypoinverse, a software used to Locate earthquakes.
+    documentation: 'https://github.com/INGV/hyp2000-ws/blob/master/README.md'
+    longDescription: >
+      Hypoinverse is software used to Locate earthquakes and determine magnitudes in a local or regional seismic network.
+
+      More info aboute Hypoinverse, here: https://www.usgs.gov/software/hypoinverse-earthquake-location
+
+      At INGV we build stand-alone Docker to deploy "hyp2000" (https://github.com/ingv/hyp2000) and on top of that was buit a Web Service; It gets in input a JSON file with phases and amplitudes. 
+      For each station name, It searches the metadata (like Lat and Long) on the FDSN-StationXML Web Services around the world.
+      
+      The output could be in a standard format like ARC and PRT or in JSON.
+    localisedName: 'hyp2000ws'
+    features:
+      - Web Service built on top of hypoinverse
+      - Software used to locate earthquakes and determine magnitudes in a local or regional seismic network
