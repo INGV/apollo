@@ -209,10 +209,10 @@ echo ""
 
 # 
 echo "Now, run:"
-echo " $ cd laradock-hyp2000ws"
+echo " $ cd laradock-${PROJECT_NAME}"
 echo " $ docker-compose build --no-cache --pull nginx php-fpm redis workspace docker-in-docker"
 echo " $ docker-compose up -d nginx php-fpm redis workspace docker-in-docker"
 echo ""
 echo "and follow the guide here:"
-echo " - https://gitlab.rm.ingv.it/caravel/hyp2000ws"
+echo " - https://gitlab.rm.ingv.it/caravel/${PROJECT_NAME}"
 echo ""
