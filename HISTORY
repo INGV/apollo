@@ -1,0 +1,29 @@
+#########################
+hyp2000ws Release History
+#########################
+
+* Release 2.4.0 (2022-02-12)
+  - Update php packages ('composer update').
+  - Update hyp2000 submodule
+  - Use PHP8 instead of PHP7
+  - Update Laradock submodule
+
+* Release 2.3.0 (2022-01-18)
+  - Update validation implementing Form Request Validation.
+  - Update Laradock submodule
+  - Update hyp2000 submodule. Commit: https://github.com/INGV/hyp2000/commit/de035e915ea9b3d19b679c75357f6db866d7276a
+  - Update OA3 validation into .gitlab-ci
+  - Update 'configure_laradock.sh' script
+  - Fix validation on 'phase.weight'. Issue: https://gitlab.rm.ingv.it/caravel/hyp2000ws/-/issues/7
+
+* Release 2.2.0 (2021-05-26)
+  - Update swagger with 'emersio' field
+  - Update code to use new input JSON version (https://gitlab.rm.ingv.it/caravel/hyp2000ws/-/issues/1#note_48399). There is a method to convert the input from old style to the new one.
+  - Fix "baco 60s". Issue: https://gitlab.rm.ingv.it/caravel/pickfx/-/issues/143
+
+* Release 2.1.1 (2021-05-11)    
+  - Update 'hyp2000' submodule. Commit: https://github.com/INGV/hyp2000/commit/836789158313b9cd1c2e320030b9b6e14565cec2
+  - Fix Swagger bug for 'weight' field
+
+* Release 2.0.0 (2021-03-23)
+  - Update laradock
