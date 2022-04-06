@@ -1,0 +1,152 @@
+#image: docker:stable
+#image: docker:19.03.1
+image: docker:20.10.12
+
+# When using dind, it's wise to use the overlayfs driver for
+# improved performance.
+variables:
+    GIT_SUBMODULE_STRATEGY: normal
+    GIT_SUBMODULES: recursive
+    # This is used to connect the docker-client intalled into 'php:latest' image, to docker daemon
+    DOCKER_HOST: tcp://docker:2375/
+    # https://gitlab.rm.ingv.it/help/ci/pipelines/settings.md
+    GIT_STRATEGY: clone
+    # BUG!!! - Remove this (DOCKER_TLS_CERTDIR: "") when solved!!! - https://gitlab.com/gitlab-org/gitlab-runner/issues/4501
+    DOCKER_TLS_CERTDIR: ""
+    # DockerHub
+    DOCKERHUB_REGISTRY_USER: vlauciani
+    DOCKERHUB_REGISTRY_PSW: 56a161d2-0851-4445-a37f-41e071bdd646
+
+services:
+    # Remeber to set 'privileged = true' into the runner 'config.toml' file (es on hgp5: /srv/gitlab-runner/config/config.toml)
+    #- docker:dind
+    - docker:20.10.12-dind
+    - command:["--registry-mirror", "https://mirror.gcr.io"]
+
+stages:
+  - all_stages
+
+before_script:
+    #
+    - date
+    #
+    - uname -a
+    # Install common dependecies
+    - apk update
+    - apk upgrade   
+    - apk add --no-cache curl wget jq
+    # Print project name
+    - echo ${CI_PROJECT_NAME}
+    # Get DockerHub RateLimit without login
+    - TOKEN=$(curl "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
+    - curl --head -H "Authorization:Bearer ${TOKEN}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | grep -i "RateLimit"
+    # DockerHub login
+    - echo ${DOCKERHUB_REGISTRY_PSW} | docker login -u ${DOCKERHUB_REGISTRY_USER} --password-stdin
+    # Get DockerHub RateLimit with login
+    - docker system info | grep -E 'Username'
+    - TOKEN=$(curl --user "${DOCKERHUB_REGISTRY_USER}:${DOCKERHUB_REGISTRY_PSW}" "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
+    - curl --head -H "Authorization:Bearer ${TOKEN}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | grep -i "RateLimit"
+    # Set HTTP PORT variable
+    - >
+      if [[ "${CI_COMMIT_REF_NAME}" == "master" ]]; then
+        HTTP_PORT=80
+      else
+        HTTP_PORT=8585
+      fi
+    - echo "HTTP_PORT=${HTTP_PORT}"
+    - docker -v
+
+build_laravel:
+    stage: all_stages
+    tags:
+        # Runners:
+        # 1) 'laradock' runner is working on 'albus.int.ingv.it' valentino's MAC.
+        # 2) 'test' runner is working on 'docker.int.ingv.it' server.
+        # 3) 'hgp5_runner' runner is working on 'hgp5.int.ingv.it' server.
+        # 4) 'sqlx2-srvr_runner' runner is working on 'sqlx2-srvr.int.ingv.it' server.
+        - sqlx2-srvr_runner
+        
+    cache:
+        key: ${CI_COMMIT_REF_SLUG}-composer
+        paths:
+            - vendor/ 
+
+    script:
+        # Install common dependecies
+        - apk add --no-cache bash vim python3 py-pip python3-dev libffi-dev openssl-dev gcc libc-dev make git
+        - pip install --upgrade pip
+        - pip install --no-cache-dir docker-compose 
+        
+        # Configure Laravel ENV
+        - cp ./.env.example ./.env
+        - cat ./.env
+        - whoami
+        
+        # Remove file to re-build 'laradock'
+        - if [ -f laradock-hyp2000ws/.env ]; then rm -v laradock-hyp2000ws/.env ; fi
+        
+        # Configure laradock
+        - ./hyp2000ws/configure_laradock.sh
+        - cat ./laradock-hyp2000ws/.env
+
+        # Start Laradock
+        - cd laradock-hyp2000ws
+        - docker-compose build --no-cache --pull nginx php-fpm redis workspace laravel-horizon ;
+        - docker-compose up -d nginx php-fpm redis workspace laravel-horizon
+        - docker-compose exec -T workspace composer install
+        - docker-compose exec -T workspace composer update
+        - docker-compose exec -T workspace php artisan key:generate 
+
+        # Install hyp2000 submodule
+        - docker-compose exec -T php-fpm sh -c "if docker image ls | grep -q hyp2000 ; then echo \" nothing to do\"; else cd hyp2000 && docker build --tag hyp2000:ewdevgit -f DockerfileEwDevGit .; fi"
+
+        # START - Tests
+        # Artisan
+        - docker-compose exec -T workspace bash -c "php artisan route:list"
+
+        # PHPUnit
+        - docker-compose exec -T workspace php artisan test --testsuite=Feature --stop-on-failure
+        # END - Tests
+    artifacts:
+        when: always
+        paths:
+            - storage/logs
+        expire_in: 1 day
+
+validate_oa3:
+    stage: all_stages
+    #tags:
+        # Runners:
+        # 1) 'laradock' runner is working on 'albus.int.ingv.it' valentino's MAC.
+        # 2) 'test' runner is working on 'docker.int.ingv.it' server.
+        # 3) 'hgp5_runner' runner is working on 'hgp5.int.ingv.it' server.
+        # 4) 'sqlx2-srvr_runner' runner is working on 'sqlx2-srvr.int.ingv.it' server.        
+        #- hgp5_runner
+
+    script:
+        - ls -l $(pwd)/public/api/0.0.2 # to be removed when https://github.com/italia/api-oas-checker/issues/60 is solved
+        
+        # This command should work, but the command 'spectral lint --version' doesn't work: https://github.com/stoplightio/spectral/issues/1483
+        #  then I wrote a workaround 
+        #- docker run --rm -v $(pwd)/public/api/0.0.3:/tmp stoplight/spectral lint -r https://italia.github.io/api-oas-checker/spectral.yml "/tmp/openapi.yaml"
+        
+        # This is the workaround 
+        - docker run --rm --entrypoint=sh -v $(pwd)/public/api/0.0.2:/tmp stoplight/spectral:5.9.1 -c "spectral lint -r https://italia.github.io/api-oas-checker/spectral.yml /tmp/openapi.yaml"
+
+validate_publiccode:
+    stage: all_stages
+    script:
+        - docker run --rm -v $(pwd)/publiccode.yml:/publiccode_folder/publiccode.yml italia/publiccode-parser-go /publiccode_folder/publiccode.yml
+
+validate_version_number_and_date:
+    stage: all_stages
+    script:
+        - apk add --no-cache bash git
+        - which bash
+        - ls -l /bin/
+        - ./hyp2000ws/validate_version_number_and_date.sh
+    
+#test_ws:
+#    stage: test_2
+#    tags:
+#    script:
