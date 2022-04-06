@@ -43,7 +43,7 @@ class Handler extends ExceptionHandler
         });
     }
 
-   /**
+    /**
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -135,12 +135,13 @@ class Handler extends ExceptionHandler
         \Log::debug(" exception:", $rfc7807Output);
 
         /* Trigger the event */
+        /*
         try {
             event(new ExceptionWasThrownEvent($eventArray));
         } catch (\Swift_TransportException $e) {
             \Log::error(" Error sending email: " . $e->getMessage());
         }
-
+        */
         /* Empty cache in case of Exception. Issue: https://gitlab.rm.ingv.it/caravel/dante8/-/issues/74 */
         if (config('dante.enableQueryCache')) {
             \Log::debug(" empty cache!");

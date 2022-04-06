@@ -83,14 +83,14 @@ build_laravel:
         - whoami
         
         # Remove file to re-build 'laradock'
-        - if [ -f laradock-hyp2000ws/.env ]; then rm -v laradock-hyp2000ws/.env ; fi
+        - if [ -f laradock-${CI_PROJECT_NAME}/.env ]; then rm -v laradock-${CI_PROJECT_NAME}/.env ; fi
         
         # Configure laradock
-        - ./hyp2000ws/configure_laradock.sh
-        - cat ./laradock-hyp2000ws/.env
+        - ./${CI_PROJECT_NAME}/configure_laradock.sh
+        - cat ./laradock-${CI_PROJECT_NAME}/.env
 
         # Start Laradock
-        - cd laradock-hyp2000ws
+        - cd laradock-${CI_PROJECT_NAME}
         - docker-compose build --no-cache --pull nginx php-fpm redis workspace laravel-horizon ;
         - docker-compose up -d nginx php-fpm redis workspace laravel-horizon
         - docker-compose exec -T workspace composer install
@@ -144,7 +144,7 @@ validate_version_number_and_date:
         - apk add --no-cache bash git
         - which bash
         - ls -l /bin/
-        - ./hyp2000ws/validate_version_number_and_date.sh
+        - ./${CI_PROJECT_NAME}/validate_version_number_and_date.sh
     
 #test_ws:
 #    stage: test_2

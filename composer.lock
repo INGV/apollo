@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "02b2034e672f56016cd831e54c7cd9d6",
+    "content-hash": "5f09a6c69ac3a4bc6a24d5f2e05f3f88",
     "packages": [
         {
             "name": "brick/math",
@@ -5032,6 +5032,66 @@
                 "source": "https://github.com/vlauciani/fortran-formatter/tree/v1.9.0"
             },
             "time": "2022-03-23T17:30:07+00:00"
+        },
+        {
+            "name": "vlauciani/laravel-validation-rules",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vlauciani/laravel-validation-rules.git",
+                "reference": "4ad52e70cb073d72d3499224acf43dd5f40450e8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vlauciani/laravel-validation-rules/zipball/4ad52e70cb073d72d3499224acf43dd5f40450e8",
+                "reference": "4ad52e70cb073d72d3499224acf43dd5f40450e8",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^8.0|^9.0",
+                "php": "^7.4|^8.0|^8.1"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^6.0|^7.0",
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.3"
+            },
+            "type": "project",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "VLauciani\\LaravelValidationRules\\ValidationRulesServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "VLauciani\\LaravelValidationRules\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Valentino Lauciani",
+                    "email": "vlauciani@gmail.com"
+                }
+            ],
+            "description": "Validation rules for Laravel.",
+            "homepage": "https://github.com/vlauciani/laravel-validation-rules",
+            "keywords": [
+                "laravel",
+                "rules",
+                "validation",
+                "vlauciani"
+            ],
+            "support": {
+                "issues": "https://github.com/vlauciani/laravel-validation-rules/issues",
+                "source": "https://github.com/vlauciani/laravel-validation-rules/tree/v1.2.0"
+            },
+            "time": "2022-04-06T15:50:20+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
