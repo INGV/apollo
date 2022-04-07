@@ -27,24 +27,13 @@ info:
     email: valentino.lauciani@ingv.it
     name: INGV - Valentino Lauciani
     url: http://terremoti.ingv.it/webservices_and_software
-  description: "\n# Introduction\nHypoinverse is software used to Locate earthquakes\
-    \ and determine magnitudes in a local or regional seismic network.\n\nMore info,\
-    \ here: [https://www.usgs.gov/software/hypoinverse-earthquake-location](https://www.usgs.gov/software/hypoinverse-earthquake-location)\n\
-    \nAt INGV we build stand-alone Docker to deploy \"hyp2000\" ([https://github.com/ingv/hyp2000](https://github.com/ingv/hyp2000))\
-    \ and on top of this docker was build a Web Service.\n\n# Input\nThe input file\
-    \ is a JSON with four sections: \n  - **HYP2000_CONF**: HYPOINVERS configuration\
-    \ file (refer to manual for more details)\n  - **MODEL**: Crustal velocity model\n\
-    \  - **OUTPUT**: It could be `json`, `prt`, `arc`, `sum`\n  - **TYPE_HYP2000ARC**:\
-    \ An array of phases in **ew2openapi** format.\n\n# Output\nThe output could be\
-    \ `json`, `prt`, `arc` or `sum`:\n  - `prt`: print format\n  - `arc`: archive\
-    \ format\n  - `sum`: summary format\n  - `json`: NON STANDARD json format developed\
-    \ in **ew2openapi**\n\n# Rate limit:\n  The **Rate Limit** and **Rate Reset**\
+  description: "\n# Rate limit:\n  The **Rate Limit** and **Rate Reset**\
     \ are specified in the HTTP-header with `X-RateLimit-Limit` and `X-RateLimit-Reset`;\
     \ the rate limit is *per* `IP`."
   license:
     name: Creative Commons Attribution 4.0 International
     url: http://creativecommons.org/licenses/by/4.0/
-  title: HYP2000 Web Services
+  title: Location Web Services
   version: 2.5.0
   x-api-id: fa78e2be-826e-4451-8979-0a0dfd598dff
   x-logo: http://webservices.ingv.it/ingv_logo_text_two_lines.png
@@ -53,14 +42,17 @@ info:
 tags:
   - name: status
     description: "status api"
-  - name: hyp2000
-    description: "hyp2000 api"
+  - name: location
+    description: "location api"
 servers:
+# Added by API Auto Mocking Plugin
+- description: SwaggerHub API Auto Mocking
+  url: https://virtserver.swaggerhub.com/vlauciani/location/2.5.0
 - url: http://caravel.int.ingv.it:8480/api/hyp2000
   description: production
   # 'x-sandbox' is needed to use 'http' instead of 'https'
   x-sandbox: true 
-- url: http://{hostname}/api/hyp2000
+- url: http://{hostname}/api/location
   description: development
   # 'x-sandbox' is needed to use 'http' instead of 'https'
   x-sandbox: true 
@@ -177,9 +169,9 @@ paths:
                     allOf:
                     - $ref: 'https://ingv.github.io/openapi/definitions_ew.yaml#/components/schemas/hyp2000arcSchema'
       tags:
-      - hyp2000
+      - location
 
-  /v2/station:
+  /v2/station-hinv:
     get:
       description: Get "station file" line for hyp2000
       summary: Get "station file" line for hyp2000
@@ -196,13 +188,24 @@ paths:
         '200':
           description: successful operation
       tags:
-      - hyp2000
+      - location
 
-  /v2/location:
+  /v2/hyp2000:
     post:
-      description: Send new json data to HYP2000 WS
-      summary: Hypoinverse 2000 API - v2
-      operationId: v2_postLocation
+      description: "\n# Introduction\nHypoinverse is software used to Locate earthquakes\
+        \ and determine magnitudes in a local or regional seismic network.\n\nMore info,\
+        \ here: [https://www.usgs.gov/software/hypoinverse-earthquake-location](https://www.usgs.gov/software/hypoinverse-earthquake-location)\n\
+        \nAt INGV we build stand-alone Docker to deploy \"hyp2000\" ([https://github.com/ingv/hyp2000](https://github.com/ingv/hyp2000))\
+        \ and on top of this docker was build a Web Service.\n\n# Input\nThe input file\
+        \ is a JSON with four sections: \n  - **HYP2000_CONF**: HYPOINVERS configuration\
+        \ file (refer to manual for more details)\n  - **MODEL**: Crustal velocity model\n\
+        \  - **OUTPUT**: It could be `json`, `prt`, `arc`, `sum`\n  - **TYPE_HYP2000ARC**:\
+        \ An array of phases in **ew2openapi** format.\n\n# Output\nThe output could be\
+        \ `json`, `prt`, `arc` or `sum`:\n  - `prt`: print format\n  - `arc`: archive\
+        \ format\n  - `sum`: summary format\n  - `json`: NON STANDARD json format developed\
+        \ in **ew2openapi**"
+      summary: Hypoinverse 2000 API
+      operationId: v2_postHyp2000
       requestBody:
         description: JSON to post
         required: true
@@ -215,19 +218,45 @@ paths:
                     hyp2000_conf:
                       $ref: '#/components/schemas/ObjectHyp2000Conf'
                     model:
-                      $ref: '#/components/schemas/ObjectModel'
+                      $ref: '#/components/schemas/ObjectHyp2000Model'
                     output:
-                      $ref: '#/components/schemas/ObjectOutput'
+                      $ref: '#/components/schemas/ObjectHyp2000Output'
                     phases:
-                      $ref: '#/components/schemas/ObjectPhases'
+                      $ref: '#/components/schemas/ObjectHyp2000Phases'
 
       responses:
         <<: *common-responses
         '200':
           description: successful operation   
       tags:
-      - hyp2000
+      - location
 
+  /v2/pyml:
+    post:
+      description: "To Do"
+      summary: Hypoinverse 2000 API
+      operationId: v2_postPyMl
+      requestBody:
+        description: JSON to post
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                data:
+                  properties:
+                    pyml_conf:
+                      $ref: '#/components/schemas/ObjectPyMlConf'
+                    amplitudes:
+                      $ref: '#/components/schemas/ObjectPyMlAmplitudes'
+
+      responses:
+        <<: *common-responses
+        '200':
+          description: successful operation   
+      tags:
+      - location
+      
 components:
   headers:
     Cache-Control:
@@ -263,6 +292,115 @@ components:
     default:
       $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/responses/default'
   schemas:
+    ObjectPyMlConf:
+      properties:
+        iofilenames:
+          properties:
+            magnitudes:
+              type: string
+              example: pyml_magnitudes.csv
+            log:
+              type: string
+              example: pyml_general.log
+        preconditions:
+          properties:
+            theoretical_p:
+              type: boolean
+              example: false
+              default: false
+            theoretical_s:
+              type: boolean
+              example: false
+              default: false
+            delta_corner:
+              type: integer
+              format: int64
+              example: 5.0
+            max_lowcorner:
+              type: integer
+              format: int64
+              example: 15.0
+        station_magnitude:
+          properties:
+            delta_peaks:
+              type: number
+              format: float
+              example: 1.0
+            use_stcorr_hb:
+              type: boolean
+              example: true
+              default: true
+            use_stcorr_db:
+              type: boolean
+              example: true
+              default: true
+            when_no_stcorr_hb:
+              type: boolean
+              example: true
+              default: true
+            when_no_stcorr_db:
+              type: boolean
+              example: true
+              default: true
+        event_magnitude:
+          properties:
+            mindist:
+              type: integer
+              format: int64
+              example: 10
+            maxdist:
+              type: integer
+              format: int64
+              example: 600
+            hm_cutoff:
+              example: [12,13]
+            outliers_max_it:
+              type: integer
+              format: int64
+              example: 10
+            outliers_red_stop:
+              type: number
+              format: float
+              example: 0.1
+            outliers_nstd:
+              type: integer
+              format: int64
+              example: 1
+            outliers_cutoff:
+              type: number
+              format: float
+              example: 0.1
+    ObjectPyMlAmplitudes:
+      items:
+        allOf:
+        - properties:
+            net:
+              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__net'
+            sta:
+              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__sta'
+            cha:
+              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__cha'
+            loc:
+              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__loc'
+            lat:
+              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/latitude'
+            lon:
+              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/longitude'
+            elev:
+              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__elev'
+            ep_distance:
+              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/ep_distance_km'
+            orig_distance:
+              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/orig_distance_km'
+            amp1:
+              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__amp1'
+            time1:
+              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__time1'
+            amp2:
+              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__amp2'
+            time2:
+              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__time2'
+      type: array
     ObjectHyp2000Conf:
         example:
         - 200 T 2000 0
@@ -299,18 +437,18 @@ components:
         - CON 25 0.04 0.001
         - PHS './input.arc'
         - LOC
-    ObjectModel:
+    ObjectHyp2000Model:
         example:
         - Italy
         - 5.00  0.00
         - 6.00 10.00
         - 8.10 30.00
-    ObjectOutput:
+    ObjectHyp2000Output:
       type: string
       description: Output format
       default: 'prt'
       enum: [prt, json, arc, sum]
-    ObjectPhases:
+    ObjectHyp2000Phases:
       items:
         allOf:
         - properties:
@@ -325,7 +463,7 @@ components:
             arrival_time:
               $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/pick__arrival_time'
             isc_code:
-              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/arrival__isc_code'            
+              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/arrival__isc_code'
             firstmotion:
               $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/pick__firstmotion'
             emersio:
