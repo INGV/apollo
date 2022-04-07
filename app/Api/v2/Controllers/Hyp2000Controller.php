@@ -3,6 +3,7 @@
 namespace App\Api\v2\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Ingv\Hyp2000Converter\Json2ArcV2;
 use Symfony\Component\Process\Process;
@@ -66,7 +67,7 @@ class Hyp2000Controller extends Controller
      */
     public function location(Hyp2000Request $request)
     {
-        //        \Log::info("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        //        Log::info("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
         //        /* Run process */
         //        //$command[] = 'ls';
         //        $command = [
@@ -90,19 +91,19 @@ class Hyp2000Controller extends Controller
         //        ew-sandbox:trunk_r8304 
         //        ls";
         //        */
-        //        \Log::debug(" Running command: ", $command);
+        //        Log::debug(" Running command: ", $command);
         //        $command_timeout = 120;
         //        $command_process = new Process($command);
         //        //$command_process = Process::fromShellCommandline($command2);
         //        $command_process->setTimeout($command_timeout);
         //        $command_process->run();
-        //        \Log::debug(" getOutput:" . $command_process->getOutput());
-        //        \Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
+        //        Log::debug(" getOutput:" . $command_process->getOutput());
+        //        Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
         //        if (!$command_process->isSuccessful()) {
         //            throw new ProcessFailedException($command_process);
         //        }
         //        dd(1);
-        //        \Log::debug(" Done.");
+        //        Log::debug(" Done.");
         //        /* !!!!!!!! END - Get 'whoami' ToDo better */
 
 
@@ -239,17 +240,17 @@ class Hyp2000Controller extends Controller
             );
 
         /* Run process */
-        \Log::debug(" Running command: ", $command);
+        Log::debug(" Running command: ", $command);
         $command_timeout = 120;
         $command_process = new Process($command);
         $command_process->setTimeout($command_timeout);
         $command_process->run();
-        \Log::debug(" getOutput:" . $command_process->getOutput());
-        \Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
+        Log::debug(" getOutput:" . $command_process->getOutput());
+        Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
         if (!$command_process->isSuccessful()) {
             throw new ProcessFailedException($command_process);
         }
-        \Log::debug(" Done.");
+        Log::debug(" Done.");
         /* !!!!!!!! END - Get 'whoami' ToDo better */
 
         /* !!!!!!!! START - Get 'id -u' ToDo better */
@@ -262,18 +263,18 @@ class Hyp2000Controller extends Controller
             );
 
         /* Run process */
-        \Log::debug(" Running command: ", $command);
+        Log::debug(" Running command: ", $command);
         $command_timeout = 120;
         $command_process = new Process($command);
         $command_process->setTimeout($command_timeout);
         $command_process->run();
         $uid = preg_replace("/\r|\n/", "", $command_process->getOutput());
-        \Log::debug(" getOutput:" . $uid);
-        \Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
+        Log::debug(" getOutput:" . $uid);
+        Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
         if (!$command_process->isSuccessful()) {
             throw new ProcessFailedException($command_process);
         }
-        \Log::debug(" Done.");
+        Log::debug(" Done.");
         /* !!!!!!!! END - Get 'id -u' ToDo better */
 
         /* !!!!!!!! START - Get 'id -g' ToDo better */
@@ -286,18 +287,18 @@ class Hyp2000Controller extends Controller
             );
 
         /* Run process */
-        \Log::debug(" Running command: ", $command);
+        Log::debug(" Running command: ", $command);
         $command_timeout = 120;
         $command_process = new Process($command);
         $command_process->setTimeout($command_timeout);
         $command_process->run();
         $gid = preg_replace("/\r|\n/", "", $command_process->getOutput());
-        \Log::debug(" getOutput:" . $gid);
-        \Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
+        Log::debug(" getOutput:" . $gid);
+        Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
         if (!$command_process->isSuccessful()) {
             throw new ProcessFailedException($command_process);
         }
-        \Log::debug(" Done.");
+        Log::debug(" Done.");
         /* !!!!!!!! END - Get 'id -g' ToDo better */
 
         /* !!!!!!!! START - Get 'docker run' ToDo better */
@@ -316,17 +317,17 @@ class Hyp2000Controller extends Controller
             );
 
         /* Run process */
-        \Log::debug(" Running docker: ", $command);
+        Log::debug(" Running docker: ", $command);
         $command_timeout = 120;
         $command_process = new Process($command);
         $command_process->setTimeout($command_timeout);
         $command_process->run();
-        \Log::debug(" getOutput:" . $command_process->getOutput());
-        \Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
+        Log::debug(" getOutput:" . $command_process->getOutput());
+        Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
         if (!$command_process->isSuccessful()) {
             throw new ProcessFailedException($command_process);
         }
-        \Log::debug(" Done.");
+        Log::debug(" Done.");
         /* !!!!!!!! END - Get 'docker run' ToDo better */
 
         $file_output_log                = "output.log";
@@ -335,19 +336,19 @@ class Hyp2000Controller extends Controller
         $file_output_fullpath_err       = $dir_working . "/" . $dir_output . "/" . $file_output_err;
 
         /* Write warnings and errors into log file */
-        \Log::debug(" Write warnings and errors into \"$file_output_fullpath_err\"");
+        Log::debug(" Write warnings and errors into \"$file_output_fullpath_err\"");
         Storage::disk('data')->put($file_output_fullpath_err, $command_process->getErrorOutput());
 
         /* Write standard output messages into log file */
-        \Log::debug(" Write standard output messages into \"$file_output_fullpath_log\"");
+        Log::debug(" Write standard output messages into \"$file_output_fullpath_log\"");
         Storage::disk('data')->put($file_output_fullpath_log, $command_process->getOutput());
 
         /* Get output to return */
-        \Log::debug(" Get output to return");
+        Log::debug(" Get output to return");
         $contents = Storage::disk('data')->get($dir_working . "/" . $dir_output . "/" . ${"file_output_" . $output_format});
 
         $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
-        \Log::info("END - " . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
+        Log::info("END - " . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
         if ($output_format == 'json') {
             //$contents = date_format(date_create($arcMessage['originTime']), 'Y-m-d');
             //$contents .= "\n\n";
@@ -361,7 +362,7 @@ class Hyp2000Controller extends Controller
 
     public function getStationInv($phases)
     {
-        \Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
 
         /* Build 'all_stations.hinv' file */
         $textHyp2000Stations = '';
@@ -380,7 +381,7 @@ class Hyp2000Controller extends Controller
                 $endtime = now()->format('Y-m-d') . 'T23:59:59';
             }
 
-            \Log::info($count . "/" . $n_hyp2000Sation . " - Searching: " . $phase['net'] . "." . $phase['sta'] . "." . $phase['loc'] . "." . $phase['cha']);
+            Log::info($count . "/" . $n_hyp2000Sation . " - Searching: " . $phase['net'] . "." . $phase['sta'] . "." . $phase['loc'] . "." . $phase['cha']);
             $insertRequest = new Hyp2000StationsRequest();
             $insertRequest->setValidator(Validator::make([
                 'net'           => $phase['net'],

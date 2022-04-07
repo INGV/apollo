@@ -3,6 +3,7 @@
 namespace App\Api\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Log;
 
 class JsonApiMiddleware
 {
@@ -15,11 +16,13 @@ class JsonApiMiddleware
      */
     public function handle($request, Closure $next)
     {
-        \Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
 
         $checkJson = false;
 
         /* Get and split 'Content-Type' */
+        $charset = null;
+        $contentType = null;
         if ($request->header('Content-Type')) {
             $contentType__exploded = explode(";", strtolower(str_replace(' ', '', $request->header('Content-Type'))));
             $contentType = $contentType__exploded[0] ?? null;
@@ -47,7 +50,7 @@ class JsonApiMiddleware
             }
         }
 
-        \Log::debug("END - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug("END - " . __CLASS__ . ' -> ' . __FUNCTION__);
         return $next($request);
     }
 }

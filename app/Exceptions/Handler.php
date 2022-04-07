@@ -2,12 +2,13 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Support\Facades\Log;
 
 use Illuminate\Support\Facades\Artisan;
 use App\Dante\Events\ExceptionWasThrownEvent;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
 {
@@ -51,7 +52,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        \Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
 
         /* 1/2 - Build array to trigger the Event 'ExceptionWasThrownEvent' to send email */
         $eventArray['url']                  = $request->fullUrl();
@@ -132,7 +133,7 @@ class Handler extends ExceptionHandler
         $prepareOutput = $defaultRender;
 
         /* print into log */
-        \Log::debug(" exception:", $rfc7807Output);
+        Log::debug(" exception:", $rfc7807Output);
 
         /* Trigger the event */
         /*
@@ -144,11 +145,11 @@ class Handler extends ExceptionHandler
         */
         /* Empty cache in case of Exception. Issue: https://gitlab.rm.ingv.it/caravel/dante8/-/issues/74 */
         if (config('dante.enableQueryCache')) {
-            \Log::debug(" empty cache!");
+            Log::debug(" empty cache!");
             Artisan::call('cache:clear');
         }
 
-        \Log::debug("END - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug("END - " . __CLASS__ . ' -> ' . __FUNCTION__);
         return $prepareOutput;
     }
 }

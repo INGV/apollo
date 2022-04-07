@@ -3,15 +3,16 @@
 namespace App\Api\v1\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
-
-use App\Http\Controllers\Controller;
-use Ingv\StationHinv\Controllers\Hyp2000StationsController;
-// use App\Api\Traits\ArcFileTrait;
+use Illuminate\Support\Facades\Log;
 use Ingv\Hyp2000Converter\Json2Arc;
+use App\Http\Controllers\Controller;
+use Symfony\Component\Process\Process;
+
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+// use App\Api\Traits\ArcFileTrait;
+use Ingv\StationHinv\Controllers\Hyp2000StationsController;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 
 class Hyp2000Controller extends Controller
@@ -67,7 +68,7 @@ class Hyp2000Controller extends Controller
 
     public function validateInputToContainsField($input_parameters, $field, $containsArray = false)
     {
-        \Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
 
         /* 1/2 - Validator */
         $validator_default_message  = [
@@ -93,7 +94,7 @@ class Hyp2000Controller extends Controller
             ])->validate();
         }
 
-        \Log::debug("END - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug("END - " . __CLASS__ . ' -> ' . __FUNCTION__);
     }
 
     /*
@@ -102,7 +103,7 @@ class Hyp2000Controller extends Controller
      */
     public function location(Request $request)
     {
-        \Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
 
         /* Validate '$request' contains 'data' */
         $input_parameters = $request->all();
@@ -276,17 +277,17 @@ class Hyp2000Controller extends Controller
             );
 
         /* Run process */
-        \Log::debug(" Running command: ", $command);
+        Log::debug(" Running command: ", $command);
         $command_timeout = 120;
         $command_process = new Process($command);
         $command_process->setTimeout($command_timeout);
         $command_process->run();
-        \Log::debug(" getOutput:" . $command_process->getOutput());
-        \Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
+        Log::debug(" getOutput:" . $command_process->getOutput());
+        Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
         if (!$command_process->isSuccessful()) {
             throw new ProcessFailedException($command_process);
         }
-        \Log::debug(" Done.");
+        Log::debug(" Done.");
         /* !!!!!!!! END - ToDo better */
 
         /* Set command for run process */
@@ -303,17 +304,17 @@ class Hyp2000Controller extends Controller
             );
 
         /* Run process */
-        \Log::debug(" Running docker: ", $command);
+        Log::debug(" Running docker: ", $command);
         $command_timeout = 120;
         $command_process = new Process($command);
         $command_process->setTimeout($command_timeout);
         $command_process->run();
-        \Log::debug(" getOutput:" . $command_process->getOutput());
-        \Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
+        Log::debug(" getOutput:" . $command_process->getOutput());
+        Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
         if (!$command_process->isSuccessful()) {
             throw new ProcessFailedException($command_process);
         }
-        \Log::debug(" Done.");
+        Log::debug(" Done.");
 
         $file_output_log                = "output.log";
         $file_output_err                = "output.err";
@@ -321,18 +322,18 @@ class Hyp2000Controller extends Controller
         $file_output_fullpath_err       = $dir_working . "/" . $dir_output . "/" . $file_output_err;
 
         /* Write warnings and errors into log file */
-        \Log::debug(" Write warnings and errors into \"$file_output_fullpath_err\"");
+        Log::debug(" Write warnings and errors into \"$file_output_fullpath_err\"");
         Storage::disk('data')->put($file_output_fullpath_err, $command_process->getErrorOutput());
 
         /* Write standard output messages into log file */
-        \Log::debug(" Write standard output messages into \"$file_output_fullpath_log\"");
+        Log::debug(" Write standard output messages into \"$file_output_fullpath_log\"");
         Storage::disk('data')->put($file_output_fullpath_log, $command_process->getOutput());
 
         /* Get output to return */
-        \Log::debug(" Get output to return");
+        Log::debug(" Get output to return");
         $contents = Storage::disk('data')->get($dir_working . "/" . $dir_output . "/" . ${"file_output_" . $output_format});
 
-        \Log::debug("END - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug("END - " . __CLASS__ . ' -> ' . __FUNCTION__);
         if ($output_format == 'json') {
             //$contents = date_format(date_create($arcMessage['originTime']), 'Y-m-d');
             //$contents .= "\n\n";
@@ -346,7 +347,7 @@ class Hyp2000Controller extends Controller
 
     public function getStationInv($phases)
     {
-        \Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
 
         /* Build 'all_stations.hinv' file */
         $textHyp2000Stations = '';
@@ -368,7 +369,7 @@ class Hyp2000Controller extends Controller
                 $endtime = now()->format('Y-m-d') . 'T23:59:59';
             }
 
-            \Log::info($count . "/" . $n_hyp2000Sation . " - Searching: " . $phase['net'] . "." . $phase['sta'] . "." . $phase['loc'] . "." . $phase['comp']);
+            Log::info($count . "/" . $n_hyp2000Sation . " - Searching: " . $phase['net'] . "." . $phase['sta'] . "." . $phase['loc'] . "." . $phase['comp']);
             $stationLine = $Hyp2000StationsController->query(new Request([
                 'net'           => $phase['net'],
                 'sta'           => $phase['sta'],
@@ -393,7 +394,7 @@ class Hyp2000Controller extends Controller
      */
     public function validateHyp2000ArcEwMessagePhase($phase)
     {
-        \Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
 
         // START - Validator
         $validator_default_message  = config('apollo.validator_default_messages');
@@ -445,6 +446,6 @@ class Hyp2000Controller extends Controller
         $validator->validate();
 
         // END - Validator
-        \Log::debug("END - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug("END - " . __CLASS__ . ' -> ' . __FUNCTION__);
     }
 }
