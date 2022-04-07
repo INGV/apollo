@@ -28,7 +28,7 @@ return [
         'ingv' => [
             'driver' => 'stack',
             'channels' => ['custom_daily'],
-            'name' => 'API-v' . config('hyp2000ws.version', '_unknown'),
+            'name' => 'API-v' . config('apollo.version', '_unknown'),
             'ignore_exceptions' => false,
         ],
 

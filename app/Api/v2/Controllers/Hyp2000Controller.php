@@ -310,7 +310,7 @@ class Hyp2000Controller extends Controller
                     '--user',
                     $uid . ':' . $gid,
                     '-v', $dir_data . $dir_working . ":/opt/data",
-                    config('hyp2000ws.docker_hyp2000'),
+                    config('apollo.docker_hyp2000'),
                     $file_input_conf
                 ]
             );

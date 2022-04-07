@@ -113,7 +113,7 @@ class Hyp2000Controller extends Controller
         $arcMessage = $input_parameters['data']['TYPE_HYP2000ARC'];
 
         /* Validate 'arcMessage' */
-        $validator_default_message  = config('hyp2000ws.validator_default_messages');
+        $validator_default_message  = config('apollo.validator_default_messages');
         Validator::make($arcMessage, [
             'quakeId'       => 'integer|required',
             'version'       => 'required',
@@ -297,7 +297,7 @@ class Hyp2000Controller extends Controller
                     'run',
                     '--rm',
                     '-v', $dir_data . $dir_working . ":/opt/data",
-                    config('hyp2000ws.docker_hyp2000'),
+                    config('apollo.docker_hyp2000'),
                     $file_input_conf
                 ]
             );
@@ -396,7 +396,7 @@ class Hyp2000Controller extends Controller
         \Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
 
         // START - Validator
-        $validator_default_message  = config('hyp2000ws.validator_default_messages');
+        $validator_default_message  = config('apollo.validator_default_messages');
         $validator = Validator::make($phase, [
             'sta'                   => 'required|string',
             'net'                   => 'string|between:1,2',

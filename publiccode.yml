@@ -3,7 +3,7 @@
 # More info at https://github.com/italia/publiccode.yml
 
 publiccodeYmlVersion: '0.2'
-name: 'INGV - hyp2000ws' 
+name: 'INGV - apollo' 
 releaseDate: 2022-02-12
 url: 'https://github.com/INGV/hyp2000-ws'
 logo: public/images/ingv_logo_text_two_lines.png 
@@ -42,7 +42,7 @@ it:
     codiceIPA: ingv
 description:
   en:
-    genericName: hyp2000ws
+    genericName: apollo
     shortDescription: >-
       Web Service built on top of hypoinverse, a software used to Locate earthquakes.
     documentation: 'https://github.com/INGV/hyp2000-ws/blob/master/README.md'
@@ -55,7 +55,7 @@ description:
       For each station name, It searches the metadata (like Lat and Long) on the FDSN-StationXML Web Services around the world.
       
       The output could be in a standard format like ARC and PRT or in JSON.
-    localisedName: 'hyp2000ws'
+    localisedName: 'apollo'
     features:
       - Web Service built on top of hypoinverse
       - Software used to locate earthquakes and determine magnitudes in a local or regional seismic network
