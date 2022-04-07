@@ -106,6 +106,9 @@ build_laravel:
 
         # PHPUnit
         - docker-compose exec -T workspace php artisan test --testsuite=Feature --stop-on-failure
+
+        # PHPStan
+        - docker-compose exec -T workspace vendor/bin/phpstan
         # END - Tests
     artifacts:
         when: always
