@@ -18,19 +18,6 @@ class PyMLRequest extends FormRequest
     }
 
     /**
-     * Configure the validator instance.
-     *
-     * @param  \Illuminate\Validation\Validator  $validator
-     * @return void
-     */
-    public function withValidator($validator)
-    {
-        $validator->sometimes('data.phases.*.arrival_time', new RFC3339ExtendedRule(), function ($input, $item) {
-            return isset($item->isc_code);
-        });
-    }
-
-    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
