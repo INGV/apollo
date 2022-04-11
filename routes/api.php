@@ -28,13 +28,13 @@ Route::group([
     ]
 ], function () {
     Route::group([
-        'prefix'        => 'hyp2000/v1',
+        'prefix'        => 'location/v1',
         'namespace'     => 'App\Api\v1\Controllers',
         'middleware'    => [
             'throttle:100,1'
         ]
     ], function () {
-        Route::post('/location', 'Hyp2000Controller@location')->name('hyp2000.location');
+        Route::post('/hyp2000', 'Hyp2000Controller@location')->name('location.hyp2000');
     });
 });
 
@@ -47,14 +47,14 @@ Route::group([
     ]
 ], function () {
     Route::group([
-        'prefix'        => 'hyp2000/v2',
+        'prefix'        => 'location/v2',
         'namespace'     => 'App\Api\v2\Controllers',
         'middleware'    => [
             'throttle:100,1'
         ]
     ], function () {
-        Route::post('/location', 'Hyp2000Controller@location')->name('hyp2000.location');
-        Route::get('/station',   '\Ingv\StationHinv\Controllers\Hyp2000StationsController@query')->name('hyp2000.station');
+        Route::post('/hyp2000',     'Hyp2000Controller@location')->name('location.hyp2000');
+        Route::get('/station-hinv', '\Ingv\StationHinv\Controllers\Hyp2000StationsController@query')->name('location.station-hinv');
     });
 });
 

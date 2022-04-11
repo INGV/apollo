@@ -507,7 +507,7 @@ class LocationTest extends TestCase
         $dataInput__decoded = json_decode($dataInput, true);
 
         /* Start location */
-        $response = $this->postJson(route('v2.hyp2000.location'), $dataInput__decoded);
+        $response = $this->postJson(route('v2.location.hyp2000'), $dataInput__decoded);
         $response->assertStatus(200);
 
         /* Check JSON structure */
