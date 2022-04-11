@@ -247,6 +247,8 @@ paths:
                   properties:
                     pyml_conf:
                       $ref: '#/components/schemas/ObjectPyMlConf'
+                    origin:
+                      $ref: '#/components/schemas/ObjectOrigin'
                     amplitudes:
                       $ref: '#/components/schemas/ObjectPyMlAmplitudes'
 
@@ -292,6 +294,14 @@ components:
     default:
       $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/responses/default'
   schemas:
+    ObjectOrigin:
+      properties:
+        lat:
+          $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/latitude'
+        lon:
+          $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/longitude'
+        depth:
+          $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/depth'
     ObjectPyMlConf:
       properties:
         iofilenames:
@@ -388,10 +398,6 @@ components:
               $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/longitude'
             elev:
               $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__elev'
-            ep_distance:
-              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/ep_distance_km'
-            orig_distance:
-              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/orig_distance_km'
             amp1:
               $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__amp1'
             time1:
