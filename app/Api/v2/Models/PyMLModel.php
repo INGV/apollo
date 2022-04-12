@@ -52,6 +52,8 @@ class PyMLModel extends Model
         $redisCacheKey = 'pyml_coord__' . $input_parameters['net'] . '.' . $input_parameters['sta'];
         if (isset($input_parameters['loc']) && !empty($input_parameters['loc'])) {
             $redisCacheKey .= '.' . $input_parameters['loc'];
+        } else {
+            $redisCacheKey .= '.--';
         }
         $redisCacheKey .= '.' . $input_parameters['cha'];
         /* END - Set Redis chache key */
