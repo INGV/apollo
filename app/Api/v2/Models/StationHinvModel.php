@@ -154,7 +154,7 @@ class StationHinvModel extends Model
 
         /* START - Set Redis chache key */
         $redisCacheKey = 'station-hinv__' . $input_parameters['net'] . '.' . $input_parameters['sta'];
-        if (isset($input_parameters['loc'])) {
+        if (isset($input_parameters['loc']) && !empty($input_parameters['loc'])) {
             $redisCacheKey .= '.' . $input_parameters['loc'];
         }
         $redisCacheKey .= '.' . $input_parameters['cha'];
