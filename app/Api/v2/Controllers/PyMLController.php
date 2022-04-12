@@ -305,43 +305,4 @@ class PyMLController extends Controller
             return response()->make($contents, 200, $headers);
         }
     }
-
-    public function getStationInv($phases)
-    {
-        Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
-
-        /* Build 'all_stations.hinv' file */
-        $textHyp2000Stations = '';
-        $Hyp2000StationsController = new Hyp2000StationsController;
-
-        /* Number of stations */
-        $n_hyp2000Sation = count($phases);
-        $count = 1;
-        foreach ($phases as $phase) {
-            // cerca su 'arrival_time' altrimenti 'now'
-            if (isset($phase['arrival_time']) && !empty($phase['arrival_time'])) {
-                $starttime = substr($phase['arrival_time'], 0, 10) . 'T00:00:00';
-                $endtime = substr($phase['arrival_time'], 0, 10) . 'T23:59:59';
-            } else {
-                $starttime = now()->format('Y-m-d') . 'T00:00:00';
-                $endtime = now()->format('Y-m-d') . 'T23:59:59';
-            }
-
-            Log::info($count . "/" . $n_hyp2000Sation . " - Searching: " . $phase['net'] . "." . $phase['sta'] . "." . $phase['loc'] . "." . $phase['cha']);
-            $insertRequest = new Hyp2000StationsRequest();
-            $insertRequest->setValidator(Validator::make([
-                'net'           => $phase['net'],
-                'sta'           => $phase['sta'],
-                'cha'           => $phase['cha'],
-                'loc'           => $phase['loc'],
-                'starttime'     => $starttime,
-                'endtime'       => $endtime,
-                'cache'         => 'true'
-            ], $insertRequest->rules()));
-            $stationLine = $Hyp2000StationsController->query($insertRequest);
-            $textHyp2000Stations .= $stationLine->content();
-            $count++;
-        }
-        return $textHyp2000Stations;
-    }
 }
