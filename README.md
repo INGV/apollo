@@ -22,39 +22,39 @@ $ cp ./.env.example ./.env
 First, build docker images:
 
 ```
-$ cd laradock-apollo
-$ docker-compose build --no-cache --pull nginx redis php-fpm workspace docker-in-docker
-$ docker-compose up -d nginx redis php-fpm workspace docker-in-docker
-$ cd ..
+cd laradock-apollo && \
+docker-compose build --no-cache --pull nginx redis php-fpm workspace docker-in-docker && \
+docker-compose up -d nginx redis php-fpm workspace docker-in-docker && \
+cd ..
 ```
 
 ## Configure Laravel - 2nd step
 ### !!! On Linux machine and no 'root' user !!!
 ```
-$ cd laradock-apollo
-$ docker-compose exec -T --user=laradock workspace composer install
-$ docker-compose exec -T --user=laradock workspace php artisan key:generate
-$ docker-compose exec -T --user=laradock workspace chown -R $(id -u):$(id -g) ./storage
-$ docker-compose exec -T --user=laradock workspace chown -R $(id -u):$(id -g) ./bootstrap/cache/
-$ cd ..
+cd laradock-apollo && \
+docker-compose exec -T --user=laradock workspace composer install && \
+docker-compose exec -T --user=laradock workspace php artisan key:generate && \
+docker-compose exec -T --user=laradock workspace chown -R $(id -u):$(id -g) ./storage && \
+docker-compose exec -T --user=laradock workspace chown -R $(id -u):$(id -g) ./bootstrap/cache/ && \
+cd ..
 ```
 
 ### !!! Others !!!
 ```
-$ cd laradock-apollo
-$ docker-compose exec -T workspace composer install
-$ docker-compose exec -T workspace php artisan key:generate
-$ docker-compose exec -T workspace chown -R $(id -u):$(id -g) ./storage
-$ docker-compose exec -T workspace chown -R $(id -u):$(id -g) ./bootstrap/cache/
-$ cd ..
+cd laradock-apollo && \
+docker-compose exec -T workspace composer install && \
+docker-compose exec -T workspace php artisan key:generate && \
+docker-compose exec -T workspace chown -R $(id -u):$(id -g) ./storage && \
+docker-compose exec -T workspace chown -R $(id -u):$(id -g) ./bootstrap/cache/ && \
+cd ..
 ```
 
 ## Build hyp2000 image
 build **hyp2000** docker image into *php-fpm* container:
 ```
-$ cd laradock-apollo
-$ docker-compose exec -T php-fpm sh -c "if docker image ls | grep -q hyp2000 ; then echo \" nothing to do\"; else cd hyp2000 && docker build --tag hyp2000:ewdevgit -f DockerfileEwDevGit .; fi"
-$ cd ..
+cd laradock-apollo && \
+docker-compose exec -T php-fpm sh -c "if docker image ls | grep -q hyp2000 ; then echo \" nothing to do\"; else cd hyp2000 && docker build --tag hyp2000:ewdevgit -f DockerfileEwDevGit .; fi" && \
+cd ..
 ```
 
 ### Keep on mind!
