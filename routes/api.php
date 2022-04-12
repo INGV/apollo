@@ -53,8 +53,9 @@ Route::group([
             'throttle:100,1'
         ]
     ], function () {
+        Route::post('/pyml',        'PyMLController@location')->name('location.pyml');
         Route::post('/hyp2000',     'Hyp2000Controller@location')->name('location.hyp2000');
-        Route::get('/station-hinv', '\Ingv\StationHinv\Controllers\Hyp2000StationsController@query')->name('location.station-hinv');
+        Route::get('/station-hinv', 'StationHinvController@query')->name('location.station-hinv');
     });
 });
 
