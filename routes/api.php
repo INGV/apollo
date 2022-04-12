@@ -19,25 +19,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 */
 
-/*** V1 ***/
-Route::group([
-    'as'            => 'v1.',
-    'middleware'    => [
-        'App\Api\Middleware\JsonApiMiddleware',
-        //'throttle:68,1'
-    ]
-], function () {
-    Route::group([
-        'prefix'        => 'location/v1',
-        'namespace'     => 'App\Api\v1\Controllers',
-        'middleware'    => [
-            'throttle:100,1'
-        ]
-    ], function () {
-        Route::post('/hyp2000', 'Hyp2000Controller@location')->name('location.hyp2000');
-    });
-});
-
 /*** V2 ***/
 Route::group([
     'as'            => 'v2.',

@@ -3,6 +3,7 @@ apollo Release History
 #########################
 
 * Release 2.5.0 (2022-04-07)
+  - Remove 'v1' version
   - Rename route path from 'hyp2000' to 'location'
   - Add PHPStan
   - Update to Laravel9
