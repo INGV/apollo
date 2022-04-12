@@ -60,6 +60,17 @@ cd ..
 ### Keep on mind!
 The **hyp2000** docker image is built in the *php-fpm* container; if you destroy or rebuild *php-fpm* container, remember to re-build hyp2000 image.
 
+## Build pyml image
+build **pyml** docker image into *php-fpm* container:
+```
+cd laradock-apollo && \
+docker-compose exec -T php-fpm sh -c "if docker image ls | grep -q pyml ; then echo \" nothing to do\"; else cd pyml && docker build --tag pyml .; fi" && \
+cd ..
+```
+
+### Keep on mind!
+The **pyml** docker image is built in the *php-fpm* container; if you destroy or rebuild *php-fpm* container, remember to re-build pyml image.
+
 ## How to use it
 When all containers are started, connect to: 
 - http://<your_host>:<your_port>/
