@@ -2,7 +2,6 @@
 
 namespace App\Api\v2\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Ingv\Hyp2000Converter\Json2ArcV2;
@@ -10,8 +9,8 @@ use Symfony\Component\Process\Process;
 use App\Api\v2\Requests\Hyp2000Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Ingv\StationHinv\Requests\Hyp2000StationsRequest;
-use Ingv\StationHinv\Controllers\Hyp2000StationsController;
+use App\Api\v2\Requests\StationHinvRequest;
+use App\Api\v2\Controllers\StationHinvController;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class Hyp2000Controller extends Controller
@@ -366,7 +365,8 @@ class Hyp2000Controller extends Controller
 
         /* Build 'all_stations.hinv' file */
         $textHyp2000Stations = '';
-        $Hyp2000StationsController = new Hyp2000StationsController;
+        //$Hyp2000StationsController = new Hyp2000StationsController;
+        $Hyp2000StationsController = new StationHinvController;
 
         /* Number of stations */
         $n_hyp2000Sation = count($phases);
@@ -382,7 +382,7 @@ class Hyp2000Controller extends Controller
             }
 
             Log::info($count . "/" . $n_hyp2000Sation . " - Searching: " . $phase['net'] . "." . $phase['sta'] . "." . $phase['loc'] . "." . $phase['cha']);
-            $insertRequest = new Hyp2000StationsRequest();
+            $insertRequest = new StationHinvRequest();
             $insertRequest->setValidator(Validator::make([
                 'net'           => $phase['net'],
                 'sta'           => $phase['sta'],
