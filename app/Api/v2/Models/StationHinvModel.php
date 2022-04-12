@@ -2,9 +2,9 @@
 
 namespace App\Api\v2\Models;
 
-use Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
 use App\Api\v2\Traits\FindAndRetrieveStationXMLTrait;
 use VLauciani\FortranFormatter\Traits\FortranFormatTrait;

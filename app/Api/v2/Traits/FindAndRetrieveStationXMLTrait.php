@@ -2,9 +2,9 @@
 
 namespace App\Api\v2\Traits;
 
-use Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 trait FindAndRetrieveStationXMLTrait
 {
@@ -128,7 +128,7 @@ trait FindAndRetrieveStationXMLTrait
             Log::debug("    getCode:" . $e->getCode());
             Log::debug("    getMessage:" . $e->getMessage());
             $outputHttpStatusCode = $e->getCode();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::debug("   step_1d");
             Log::debug("    getCode:" . $e->getCode());
             Log::debug("    getMessage:" . $e->getMessage());
