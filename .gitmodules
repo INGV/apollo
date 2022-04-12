@@ -4,3 +4,6 @@
 [submodule "hyp2000"]
 	path = hyp2000
 	url = https://github.com/INGV/hyp2000.git
+[submodule "pyml"]
+	path = pyml
+	url = https://gitlab+deploy-token-114:BnAC3y4DEBAVwZ69Gfzu@gitlab.rm.ingv.it/raffaele.distefano/pyml.git
