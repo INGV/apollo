@@ -235,7 +235,7 @@ paths:
     post:
       description: "To Do"
       summary: Hypoinverse 2000 API
-      operationId: v2_postPyMl
+      operationId: v2_postPyML
       requestBody:
         description: JSON to post
         required: true
@@ -246,11 +246,11 @@ paths:
                 data:
                   properties:
                     pyml_conf:
-                      $ref: '#/components/schemas/ObjectPyMlConf'
+                      $ref: '#/components/schemas/ObjectPyMLConf'
                     origin:
                       $ref: '#/components/schemas/ObjectOrigin'
                     amplitudes:
-                      $ref: '#/components/schemas/ObjectPyMlAmplitudes'
+                      $ref: '#/components/schemas/ObjectPyMLAmplitudes'
 
       responses:
         <<: *common-responses
@@ -302,7 +302,7 @@ components:
           $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/longitude'
         depth:
           $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/depth'
-    ObjectPyMlConf:
+    ObjectPyMLConf:
       properties:
         iofilenames:
           properties:
@@ -380,7 +380,7 @@ components:
               type: number
               format: float
               example: 0.1
-    ObjectPyMlAmplitudes:
+    ObjectPyMLAmplitudes:
       items:
         allOf:
         - properties:
