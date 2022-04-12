@@ -157,4 +157,21 @@ return [
         505   =>  'https://tools.ietf.org/html/rfc7231#section-6.6.6',
         507   =>  'https://tools.ietf.org/html/rfc4918#section-11.5',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | FDSNSWS array node; used to retrieve stations informations 
+    |--------------------------------------------------------------------------
+    |
+    */
+    'fdsnws_nodes'  => explode(",", str_replace(' ', '', env('FDSNWS_NODES', 'webservices.ingv.it'))),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Enable or disable request URL cache and timeout in seconds
+    |--------------------------------------------------------------------------
+    |
+    */
+    'cacheEnabled'  => env('CACHE_ENABLED', 0),
+    'cacheTimeout'  => env('CACHE_TIMEOUT', 2800),
 ];
