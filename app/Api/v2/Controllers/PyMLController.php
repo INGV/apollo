@@ -62,7 +62,7 @@ class PyMLController extends Controller
 
         /****** START - amplitudes ******/
         foreach ($input_parameters['data']['amplitudes'] as &$amplitude) {
-            $pyMLCoordArray = PyMLModel::getCoord($amplitude);
+            $pyMLCoordArray = PyMLModel::getCoord($amplitude, config('apollo.cacheTimeout'));
 
             if (empty($pyMLCoordArray)) {
                 Log::debug(" No, coordinates");
@@ -181,7 +181,7 @@ class PyMLController extends Controller
         /* START - Event magnitude */
         $output = [];
         foreach ($csvToArray[0] as $key => $value) {
-            $output['data']['magnitude'][$value] = $csvToArray[1][$key];
+            $output['data']['magnitude'][strtolower($value)] = $csvToArray[1][$key];
         }
         /* END - Event magnitude */
 
@@ -207,11 +207,11 @@ class PyMLController extends Controller
                 'sta' => $sta,
                 'cha' => $cha,
                 'loc' => $loc,
-                'a' => $a,
-                'c' => $c,
-                'd' => $d,
-                'f' => $f,
-                'g' => $g,
+                //'a' => $a,
+                'ml_hb' => $c,
+                'w_hb' => $d,
+                'ml_db' => $f,
+                'w_db' => $g,
             ];
             $output['data']['stationmagnitudes'][] = $stationmagnitude;
         }
