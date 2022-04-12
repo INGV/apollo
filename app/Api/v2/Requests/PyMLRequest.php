@@ -2,6 +2,7 @@
 
 namespace App\Api\v2\Requests;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Http\FormRequest;
 use VLauciani\LaravelValidationRules\Rules\RFC3339ExtendedRule;
 
@@ -34,12 +35,12 @@ class PyMLRequest extends FormRequest
             'data.pyml_conf.preconditions'                          => ['required', 'array'],
             'data.pyml_conf.preconditions.theoretical_p'            => ['required', 'boolean'],
             'data.pyml_conf.preconditions.theoretical_s'            => ['required', 'boolean'],
-            'data.pyml_conf.preconditions.delta_corner'             => ['required', 'numerical'],
-            'data.pyml_conf.preconditions.max_lowcorner'            => ['required', 'numerical'],
+            'data.pyml_conf.preconditions.delta_corner'             => ['required', 'numeric'],
+            'data.pyml_conf.preconditions.max_lowcorner'            => ['required', 'numeric'],
 
             /* pyml_conf.station_magnitude */
             'data.pyml_conf.station_magnitude'                      => ['required', 'array'],
-            'data.pyml_conf.station_magnitude.delta_peaks'          => ['required', 'numerical'],
+            'data.pyml_conf.station_magnitude.delta_peaks'          => ['required', 'numeric'],
             'data.pyml_conf.station_magnitude.use_stcorr_hb'        => ['required', 'boolean'],
             'data.pyml_conf.station_magnitude.use_stcorr_db'        => ['required', 'boolean'],
             'data.pyml_conf.station_magnitude.when_no_stcorr_hb'    => ['required', 'boolean'],
@@ -47,18 +48,21 @@ class PyMLRequest extends FormRequest
 
             /* pyml_conf.event_magnitude */
             'data.pyml_conf.event_magnitude'                        => ['required', 'array'],
-            'data.pyml_conf.event_magnitude.mindist'                => ['required', 'boolean'],
-            'data.pyml_conf.event_magnitude.maxdist'                => ['required', 'boolean'],
+            'data.pyml_conf.event_magnitude.mindist'                => ['required', 'numeric'],
+            'data.pyml_conf.event_magnitude.maxdist'                => ['required', 'numeric'],
             'data.pyml_conf.event_magnitude.hm_cutoff'              => ['required', 'array'],
-            'data.pyml_conf.event_magnitude.outliers_max_it'        => ['required', 'numerical'],
-            'data.pyml_conf.event_magnitude.outliers_red_stop'      => ['required', 'numerical'],
-            'data.pyml_conf.event_magnitude.outliers_nstd'          => ['required', 'numerical'],
-            'data.pyml_conf.event_magnitude.outliers_cutoff'        => ['required', 'numerical'],
+            'data.pyml_conf.event_magnitude.outliers_max_it'        => ['required', 'numeric'],
+            'data.pyml_conf.event_magnitude.outliers_red_stop'      => ['required', 'numeric'],
+            'data.pyml_conf.event_magnitude.outliers_nstd'          => ['required', 'numeric'],
+            'data.pyml_conf.event_magnitude.outliers_cutoff'        => ['required', 'numeric'],
 
+            /* origin */
             'data.origin'                                           => ['required', 'array'],
             'data.origin.lat'                                       => $validator_default_check['lat'],
             'data.origin.lon'                                       => $validator_default_check['lon'],
             'data.origin.depth'                                     => $validator_default_check['depth'],
+
+            /* amplitudes */
             'data.amplitudes.*.sta'                                 => $validator_default_check['sta'],
             'data.amplitudes.*.net'                                 => $validator_default_check['net'],
             'data.amplitudes.*.cha'                                 => $validator_default_check['cha'],
