@@ -5,9 +5,9 @@ namespace App\Api\v2\Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 
-class LocationTest extends TestCase
+class Hyp2000Test extends TestCase
 {
-    public function test_location_1()
+    public function test_hyp2000_1()
     {
         $dataInput = '{
             "data": {
@@ -506,7 +506,7 @@ class LocationTest extends TestCase
 
         $dataInput__decoded = json_decode($dataInput, true);
 
-        /* Start location */
+        /* Start hyp2000 */
         $response = $this->postJson(route('v2.location.hyp2000'), $dataInput__decoded);
         $response->assertStatus(200);
 
