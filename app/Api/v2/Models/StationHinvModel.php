@@ -96,7 +96,7 @@ class StationHinvModel extends Model
                             $blank              = self::fromFortranFormatToString('1X',   null, $str_pad_string);
                             $latDegFormatted    = self::fromFortranFormatToString('I2',   $arrayDmsLatLon['lat']['degrees'], $str_pad_string);
                             $latMinFormatted    = self::fromFortranFormatToString('F7.4', $arrayDmsLatLon['lat']['minutes'], $str_pad_string);
-                            $latDirFormatted    = self::fromFortranFormatToString('A1',    $arrayDmsLatLon['lat']['direction'], $str_pad_string);
+                            $latDirFormatted    = self::fromFortranFormatToString('A1',   $arrayDmsLatLon['lat']['direction'], $str_pad_string);
                             $lonDegFormatted    = self::fromFortranFormatToString('I3',   $arrayDmsLatLon['lon']['degrees'], $str_pad_string);
                             $lonMinFormatted    = self::fromFortranFormatToString('F7.4', $arrayDmsLatLon['lon']['minutes'], $str_pad_string);
                             $lonDirFormatted    = self::fromFortranFormatToString('A1',   $arrayDmsLatLon['lon']['direction'], $str_pad_string);

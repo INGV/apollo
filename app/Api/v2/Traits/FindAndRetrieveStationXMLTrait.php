@@ -37,7 +37,7 @@ trait FindAndRetrieveStationXMLTrait
                 $url = 'http://' . $fdsnws_node . '/fdsnws/station/1/query?' . $urlParams;
 
                 /* Retrieve StationXML */
-                $urlOutput = self::getXml($url);
+                $urlOutput = self::retrieveUrl($url);
 
                 $urlOutputData              = $urlOutput['data'];
                 $urlOutputHttpStatusCode    = $urlOutput['httpStatusCode'];
@@ -93,7 +93,7 @@ trait FindAndRetrieveStationXMLTrait
         }
     }
 
-    public static function getXml($url)
+    protected static function retrieveUrl($url)
     {
         Log::debug("  START - " . __CLASS__ . ' -> ' . __FUNCTION__);
 
