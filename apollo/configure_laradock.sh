@@ -123,30 +123,6 @@ cd -
 echo "Done"
 echo ""
 
-# Create sqlite DB and configure Laravel .env file
-echo "Create sqlite db:"
-touch database/mydb.sqlite
-echo "Done"
-echo ""
-
-# Copy my own 'docker-compose.yml'
-#if [ -f ${DIR_CONF}/docker-compose.yml.modified ]; then
-#    cp ${DIR_CONF}/docker-compose.yml.modified ${DIR_SUBMODULE_LARADOCK}/docker-compose.yml
-#else
-#    echo ""
-#    echo "The file \"${DIR_CONF}/docker-compose.yml.modified\" does not exist."
-#    echo ""
-#    exit 1
-#fi
-
-# Set 'laravel' .env file for sqlite DB
-if [[ -f .env ]]; then
-    sed \
-        -e 's|DB_DANTE_GENERAL_PURPOSE_PATH=.*|DB_DANTE_GENERAL_PURPOSE_PATH=/var/www/database/mydb.sqlite|' \
-        .env > .env.update
-        mv .env.update .env
-fi
-
 # Create 'laradock' .env file
 cd ${DIR_WORK}
 if [ "${OSNAME}" == "Linux" ] && [ "$(whoami)" != "root" ]; then
@@ -155,11 +131,6 @@ if [ "${OSNAME}" == "Linux" ] && [ "$(whoami)" != "root" ]; then
 	-e "s|WORKSPACE_PGID=.*|WORKSPACE_PGID=$( id -g )|" \
 	${FILE_ENV_LARADOCK} > ${DIR_SUBMODULE_LARADOCK}/.env.tmp
 	LARADOCK_USER_FOR_WORKSPACE="laradock"
-
-	# Set 777 'database' dir and 'ingvDb/sqlite' file
-	chmod 777 database/
-	chmod 777 database/danteDb.sqlite
-
 else
 	cp ${FILE_ENV_LARADOCK} ${DIR_SUBMODULE_LARADOCK}/.env.tmp
 	LARADOCK_USER_FOR_WORKSPACE="root"
