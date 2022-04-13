@@ -60,6 +60,10 @@ class PyMLController extends Controller
         /* Get validated input */
         $input_parameters = $request->validated();
 
+        /****** START - output ******/
+        $output_format = $input_parameters['data']['output'];
+        /****** END - output ******/
+
         /****** START - amplitudes ******/
         foreach ($input_parameters['data']['amplitudes'] as &$amplitude) {
             $pyMLCoordArray = PyMLModel::getCoord($amplitude, config('apollo.cacheTimeout'));
@@ -92,7 +96,8 @@ class PyMLController extends Controller
         /* Set variables */
         $now            = \DateTime::createFromFormat('U.u', number_format(microtime(true), 6, '.', ''));
         $nowFormatted   = $now->format("Ymd_His");
-        $dir_working    = "/pyml/" . $nowFormatted . "__" . gethostbyaddr(\request()->ip()) . "__" . \Illuminate\Support\Str::random(5);
+        $random_name    = $nowFormatted . "__" . gethostbyaddr(\request()->ip()) . "__" . \Illuminate\Support\Str::random(5);
+        $dir_working    = "/pyml/" . $random_name;
         $dir_data       = config('filesystems.disks.data.root');
 
         /* Write input.json */
@@ -177,77 +182,113 @@ class PyMLController extends Controller
         Log::debug(" Done.");
         /* !!!!!!!! END - Get 'docker run' ToDo better */
 
-        /* Read CSV */
-        $csvToArray = [];
-        if (($open = fopen($dir_data . $dir_working . '/pyml_magnitudes.csv', "r")) !== FALSE) {
-            while (($data = fgetcsv($open, 1000, ";")) !== FALSE) {
-                $csvToArray[] = $data;
+        /* */
+        $file_output_log                = "output.log";
+        $file_output_err                = "output.err";
+        $file_output_fullpath_log       = $dir_working . "/" . $file_output_log;
+        $file_output_fullpath_err       = $dir_working . "/" . $file_output_err;
+
+        /* Write warnings and errors into log file */
+        Log::debug(" Write warnings and errors into \"$file_output_fullpath_err\"");
+        Storage::disk('data')->put($file_output_fullpath_err, $command_process->getErrorOutput());
+
+        /* Write standard output messages into log file */
+        Log::debug(" Write standard output messages into \"$file_output_fullpath_log\"");
+        Storage::disk('data')->put($file_output_fullpath_log, $command_process->getOutput());
+
+        /* Get pyml log file */
+        /*
+        Log::debug(" Get output to return");
+        $contents = Storage::disk('data')->get($dir_working . "/pyml_general.log");
+        $pyml_log = explode("\n", $contents);
+        */
+
+        if ($output_format == 'text') {
+            $contents = Storage::disk('data')->get($dir_working . "/pyml_magnitudes.csv");
+            /* set headers */
+            $headers['Content-type'] = 'text/plain';
+            return response()->make($contents, 200, $headers);
+        } else {
+            /* Get pyml csv file */
+            $csvToArray = [];
+            if (($open = fopen($dir_data . $dir_working . '/pyml_magnitudes.csv', "r")) !== FALSE) {
+                while (($data = fgetcsv(
+                    $open,
+                    1000,
+                    ";"
+                )) !== FALSE) {
+                    $csvToArray[] = $data;
+                }
+                fclose($open);
             }
-            fclose($open);
+
+            /* Build output */
+            $output['data']['random_string'] = $random_name;
+
+            /* START - Magnitudes */
+            $output['data']['magnitudes'] = [
+                'eventid' => $csvToArray[1][0],
+                'hb' => [
+                    'ml' => $csvToArray[1][1],
+                    'std' => $csvToArray[1][2],
+                    'totsta' => $csvToArray[1][3],
+                    'usedsta' => $csvToArray[1][4],
+                ],
+                'db' => [
+                    'ml' => $csvToArray[1][5],
+                    'std' => $csvToArray[1][6],
+                    'totsta' => $csvToArray[1][7],
+                    'usedsta' => $csvToArray[1][8],
+                ],
+                'ampmethod' => $csvToArray[1][9],
+                'magmethod' => $csvToArray[1][10],
+                'loopexitcondition' => $csvToArray[1][11]
+            ];
+            /* END - Magnitudes */
+
+            /* START - Stationmagnitude */
+            unset($csvToArray[0]);
+            unset($csvToArray[1]);
+            foreach ($csvToArray as $value) {
+                list($a, $b, $c, $d, $e, $f, $g) = explode(" ", $value[0]);
+
+                /* Get SCNL */
+                $b_exploded = explode('_', $b);
+                $net = $b_exploded[0];
+                $sta = $b_exploded[1];
+                if ($b_exploded[2] == 'None') {
+                    $loc = '--';
+                } else {
+                    $loc = $b_exploded[2];
+                };
+                $cha = $b_exploded[3];
+
+                foreach (['Z', 'N', 'E'] as $component) {
+                    $stationmagnitude = [
+                        'net' => $net,
+                        'sta' => $sta,
+                        'cha' => $cha . $component,
+                        'loc' => $loc,
+                        'hb'  => [
+                            'ml' => $c,
+                            'w' => $d,
+                        ],
+                        'db'  => [
+                            'ml' => $f,
+                            'w' => $g,
+                        ]
+                    ];
+                    $output['data']['stationmagnitudes'][] = $stationmagnitude;
+                }
+            }
+            /* END - Stationmagnitude */
+
+            $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
+            Log::info("END - " . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
+            return response()->json($output, 200, [], JSON_PRETTY_PRINT);
         }
 
-        /* Build output */
-        /* START - Magnitudes */
-        $output['data']['magnitudes'] = [
-            'eventid' => $csvToArray[1][0],
-            'hb' => [
-                'ml' => $csvToArray[1][1],
-                'std' => $csvToArray[1][2],
-                'totsta' => $csvToArray[1][3],
-                'usedsta' => $csvToArray[1][4],
-            ],
-            'db' => [
-                'ml' => $csvToArray[1][5],
-                'std' => $csvToArray[1][6],
-                'totsta' => $csvToArray[1][7],
-                'usedsta' => $csvToArray[1][8],
-            ],
-            'ampmethod' => $csvToArray[1][9],
-            'magmethod' => $csvToArray[1][10],
-            'loopexitcondition' => $csvToArray[1][11]
-        ];
-        /* END - Magnitudes */
 
-        /* START - Stationmagnitude */
-        unset($csvToArray[0]);
-        unset($csvToArray[1]);
-        foreach ($csvToArray as $value) {
-            list($a, $b, $c, $d, $e, $f, $g) = explode(" ", $value[0]);
-
-            /* Get SCNL */
-            $b_exploded = explode('_', $b);
-            $net = $b_exploded[0];
-            $sta = $b_exploded[1];
-            if ($b_exploded[2] == 'None') {
-                $loc = '--';
-            } else {
-                $loc = $b_exploded[2];
-            };
-            $cha = $b_exploded[3];
-
-            foreach (['Z', 'N', 'E'] as $component) {
-                $stationmagnitude = [
-                    'net' => $net,
-                    'sta' => $sta,
-                    'cha' => $cha . $component,
-                    'loc' => $loc,
-                    'hb'  => [
-                        'ml' => $c,
-                        'w' => $d,
-                    ],
-                    'db'  => [
-                        'ml' => $f,
-                        'w' => $g,
-                    ]
-                ];
-                $output['data']['stationmagnitudes'][] = $stationmagnitude;
-            }
-        }
-        /* END - Stationmagnitude */
-
-        $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
-        Log::info("END - " . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
-        return response()->json($output, 200, [], JSON_PRETTY_PRINT);
 
 
         /*

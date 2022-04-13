@@ -46,9 +46,10 @@ tags:
     description: "location api"
 servers:
 # Added by API Auto Mocking Plugin
+# Added by API Auto Mocking Plugin
 - description: SwaggerHub API Auto Mocking
   url: https://virtserver.swaggerhub.com/vlauciani/location/2.5.0
-- url: http://caravel.int.ingv.it:8480/api/hyp2000
+- url: http://caravel.int.ingv.it:8780/api/location
   description: production
   # 'x-sandbox' is needed to use 'http' instead of 'https'
   x-sandbox: true 
@@ -59,9 +60,9 @@ servers:
   variables:
     hostname:
       enum:
-        - 'localhost:8480'
-        - 'caravel.int.ingv.it:8480'
-      default: 'localhost:8480'
+        - 'localhost:8780'
+        - 'caravel.int.ingv.it:8780'
+      default: 'localhost:8780'
       
 paths:
   /status:
@@ -87,89 +88,6 @@ paths:
                 detail: "The service is working properly"
       tags:
       - status
-
-  /v1/location:
-    post:
-      deprecated: true
-      description: Send new input to HYP2000 WS
-      summary: Hypoinverse 2000 API - v1
-      operationId: v1_postLocation
-      requestBody:
-        description: JSON to post
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                data:
-                  properties:
-                    HYP2000_CONF:
-                      example:
-                      - 200 T 2000 0
-                      - LET 5 2 3 2 2
-                      - H71 1 1 3
-                      - STA './all_stations.hinv'
-                      - CRH 1 './italy.crh'
-                      - MAG 1 T 3 1
-                      - DUR -.81 2.22 0 .0011 0, 5*0, 9999 1
-                      - FC1 'D' 2 'HHZ' 'EHZ'
-                      - PRE 7, 3 0 4 9, 5 6 4 9, 1 1 0 9, 2 1 0 9, 4 4 4 9, 3 0 0
-                        9, 4 0 0 9
-                      - RMS 4 .40 2 4
-                      - ERR .10
-                      - POS 1.78
-                      - REP T T
-                      - JUN T
-                      - MIN 4
-                      - NET 4
-                      - ZTR 5 T
-                      - DIS 6 100 1. 7.
-                      - DAM 7 30 0.5 0.9 0.005 0.02 0.6 100 500
-                      - WET 1. .75 .5 .25
-                      - ERF T
-                      - TOP F
-                      - LST 1 1 0
-                      - KPR 2
-                      - COP 5
-                      - CAR 3
-                      - PRT '../output/hypo.prt'
-                      - SUM '../output/hypo.sum'
-                      - ARC '../output/hypo.arc'
-                      - APP F T F
-                      - CON 25 0.04 0.001
-                      - PHS './input.arc'
-                      - LOC
-                    MODEL:
-                      example:
-                      - Italy
-                      - 5.00  0.00
-                      - 6.00 10.00
-                      - 8.10 30.00
-                    OUTPUT:
-                      example:
-                      - json
-                    TYPE_HYP2000ARC:
-                      allOf:
-                      - properties:
-                          phases:
-                            $ref: 'https://ingv.github.io/openapi/definitions_ew.yaml#/components/schemas/hyp2000arc__phases'
-                          quakeId:
-                            $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/id_localspace'
-                          version:
-                            $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/type_origin__name'
-      responses:
-        <<: *common-responses
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                properties:
-                  data:
-                    allOf:
-                    - $ref: 'https://ingv.github.io/openapi/definitions_ew.yaml#/components/schemas/hyp2000arcSchema'
-      tags:
-      - location
 
   /v2/station-hinv:
     get:
@@ -245,6 +163,8 @@ paths:
               properties:
                 data:
                   properties:
+                    output:
+                      $ref: '#/components/schemas/ObjectPyMLOutput'
                     pyml_conf:
                       $ref: '#/components/schemas/ObjectPyMLConf'
                     origin:
@@ -393,6 +313,11 @@ components:
             time2:
               $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__time2'
       type: array
+    ObjectPyMLOutput:
+      type: string
+      description: Output format
+      default: 'json'
+      enum: [json, text]
     ObjectHyp2000Conf:
         example:
         - 200 T 2000 0
