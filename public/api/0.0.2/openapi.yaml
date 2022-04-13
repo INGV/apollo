@@ -45,10 +45,6 @@ tags:
   - name: location
     description: "location api"
 servers:
-# Added by API Auto Mocking Plugin
-# Added by API Auto Mocking Plugin
-- description: SwaggerHub API Auto Mocking
-  url: https://virtserver.swaggerhub.com/vlauciani/location/2.5.0
 - url: http://caravel.int.ingv.it:8780/api/location
   description: production
   # 'x-sandbox' is needed to use 'http' instead of 'https'
