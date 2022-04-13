@@ -308,12 +308,12 @@ components:
           properties:
             theoretical_p:
               type: boolean
-              example: false
-              default: false
+              example: true
+              default: true
             theoretical_s:
               type: boolean
-              example: false
-              default: false
+              example: true
+              default: true
             delta_corner:
               type: integer
               format: int64
@@ -355,7 +355,7 @@ components:
               format: int64
               example: 600
             hm_cutoff:
-              example: [12,13]
+              example: [0.3,1.0]
             outliers_max_it:
               type: integer
               format: int64
