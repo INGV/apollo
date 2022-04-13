@@ -57,7 +57,7 @@ class PyMLRequest extends FormRequest
             'data.pyml_conf.event_magnitude'                        => ['required', 'array'],
             'data.pyml_conf.event_magnitude.mindist'                => ['required', 'numeric'],
             'data.pyml_conf.event_magnitude.maxdist'                => ['required', 'numeric'],
-            'data.pyml_conf.event_magnitude.hm_cutoff'              => ['required', 'array'],
+            'data.pyml_conf.event_magnitude.hm_cutoff'              => ['nullable', 'array'],
             'data.pyml_conf.event_magnitude.outliers_max_it'        => ['required', 'numeric'],
             'data.pyml_conf.event_magnitude.outliers_red_stop'      => ['required', 'numeric'],
             'data.pyml_conf.event_magnitude.outliers_nstd'          => ['required', 'numeric'],
