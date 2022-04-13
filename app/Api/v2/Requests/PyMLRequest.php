@@ -32,9 +32,11 @@ class PyMLRequest extends FormRequest
             'data.pyml_conf'                                        => ['required', 'array'],
 
             /* pyml_conf.iofilenames */
+            /*
             'data.pyml_conf.iofilenames'                            => ['required', 'array'],
             'data.pyml_conf.iofilenames.magnitudes'                 => ['required', 'string'],
             'data.pyml_conf.iofilenames.log'                        => ['required', 'string'],
+            */
 
             /* pyml_conf.preconditions */
             'data.pyml_conf.preconditions'                          => ['required', 'array'],

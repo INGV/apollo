@@ -75,8 +75,17 @@ class PyMLController extends Controller
         /****** END - amplitudes ******/
 
         /****** START - pyml_conf ******/
+        /*
         foreach ($input_parameters['data']['pyml_conf'] as $key => $value) {
             $input_parameters['data']['pyml_conf'][$key] = array_merge($input_parameters['data']['pyml_conf'][$key], $this->default_pyml_conf[$key]);
+        }
+        */
+        foreach ($this->default_pyml_conf as $key => $value) {
+            if (empty($input_parameters['data']['pyml_conf'][$key])) {
+                $input_parameters['data']['pyml_conf'][$key] = $this->default_pyml_conf[$key];
+            } else {
+                $input_parameters['data']['pyml_conf'][$key] = array_merge($this->default_pyml_conf[$key], $input_parameters['data']['pyml_conf'][$key]);
+            }
         }
         /****** END - pyml_conf ******/
 
@@ -178,12 +187,26 @@ class PyMLController extends Controller
         }
 
         /* Build output */
-        /* START - Event magnitude */
-        $output = [];
-        foreach ($csvToArray[0] as $key => $value) {
-            $output['data']['magnitude'][strtolower($value)] = $csvToArray[1][$key];
-        }
-        /* END - Event magnitude */
+        /* START - Magnitudes */
+        $output['data']['magnitudes'] = [
+            'eventid' => $csvToArray[1][0],
+            'hb' => [
+                'ml' => $csvToArray[1][1],
+                'std' => $csvToArray[1][2],
+                'totsta' => $csvToArray[1][3],
+                'usedsta' => $csvToArray[1][4],
+            ],
+            'db' => [
+                'ml' => $csvToArray[1][5],
+                'std' => $csvToArray[1][6],
+                'totsta' => $csvToArray[1][7],
+                'usedsta' => $csvToArray[1][8],
+            ],
+            'ampmethod' => $csvToArray[1][9],
+            'magmethod' => $csvToArray[1][10],
+            'loopexitcondition' => $csvToArray[1][11]
+        ];
+        /* END - Magnitudes */
 
         /* START - Stationmagnitude */
         unset($csvToArray[0]);
@@ -202,18 +225,23 @@ class PyMLController extends Controller
             };
             $cha = $b_exploded[3];
 
-            $stationmagnitude = [
-                'net' => $net,
-                'sta' => $sta,
-                'cha' => $cha,
-                'loc' => $loc,
-                //'a' => $a,
-                'ml_hb' => $c,
-                'w_hb' => $d,
-                'ml_db' => $f,
-                'w_db' => $g,
-            ];
-            $output['data']['stationmagnitudes'][] = $stationmagnitude;
+            foreach (['Z', 'N', 'E'] as $component) {
+                $stationmagnitude = [
+                    'net' => $net,
+                    'sta' => $sta,
+                    'cha' => $cha . $component,
+                    'loc' => $loc,
+                    'hb'  => [
+                        'ml' => $c,
+                        'w' => $d,
+                    ],
+                    'db'  => [
+                        'ml' => $f,
+                        'w' => $g,
+                    ]
+                ];
+                $output['data']['stationmagnitudes'][] = $stationmagnitude;
+            }
         }
         /* END - Stationmagnitude */
 
