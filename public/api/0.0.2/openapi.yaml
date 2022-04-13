@@ -304,14 +304,6 @@ components:
           $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/depth'
     ObjectPyMLConf:
       properties:
-        iofilenames:
-          properties:
-            magnitudes:
-              type: string
-              example: pyml_magnitudes.csv
-            log:
-              type: string
-              example: pyml_general.log
         preconditions:
           properties:
             theoretical_p:
@@ -392,12 +384,6 @@ components:
               $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__cha'
             loc:
               $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__loc'
-            lat:
-              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/latitude'
-            lon:
-              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/longitude'
-            elev:
-              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__elev'
             amp1:
               $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__amp1'
             time1:
