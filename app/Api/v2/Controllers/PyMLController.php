@@ -247,8 +247,8 @@ class PyMLController extends Controller
             /* END - Magnitudes */
 
             /* START - Stationmagnitude */
-            unset($csvToArray[0]);
-            unset($csvToArray[1]);
+            unset($csvToArray[0]);  // Remove header
+            unset($csvToArray[1]);  // Remove origin magnitude
             foreach ($csvToArray as $value) {
                 list($a, $b, $c, $d, $e, $f, $g) = explode(" ", $value[0]);
 
