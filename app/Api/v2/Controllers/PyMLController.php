@@ -223,25 +223,25 @@ class PyMLController extends Controller
             }
 
             /* Build output */
-            $output['data']['random_string'] = $random_name;
+            $output['data']['random_string']    = $random_name;
+            $output['data']['eventid']          = $csvToArray[1][0];
 
             /* START - Magnitudes */
             $output['data']['magnitudes'] = [
-                'eventid' => $csvToArray[1][0],
                 'hb' => [
-                    'ml' => $csvToArray[1][1],
-                    'std' => $csvToArray[1][2],
-                    'totsta' => $csvToArray[1][3],
-                    'usedsta' => $csvToArray[1][4],
+                    'ml'        => $csvToArray[1][1],
+                    'std'       => $csvToArray[1][2],
+                    'totsta'    => $csvToArray[1][3],
+                    'usedsta'   => $csvToArray[1][4],
                 ],
                 'db' => [
-                    'ml' => $csvToArray[1][5],
-                    'std' => $csvToArray[1][6],
-                    'totsta' => $csvToArray[1][7],
-                    'usedsta' => $csvToArray[1][8],
+                    'ml'        => $csvToArray[1][5],
+                    'std'       => $csvToArray[1][6],
+                    'totsta'    => $csvToArray[1][7],
+                    'usedsta'   => $csvToArray[1][8],
                 ],
-                'ampmethod' => $csvToArray[1][9],
-                'magmethod' => $csvToArray[1][10],
+                'ampmethod'     => $csvToArray[1][9],
+                'magmethod'     => $csvToArray[1][10],
                 'loopexitcondition' => $csvToArray[1][11]
             ];
             /* END - Magnitudes */
