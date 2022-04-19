@@ -100,13 +100,14 @@ build_laravel:
         # Install hyp2000 submodule
         - docker-compose exec -T php-fpm sh -c "if docker image ls | grep -q hyp2000 ; then echo \" nothing to do\"; else cd hyp2000 && docker build --tag hyp2000:ewdevgit -f DockerfileEwDevGit .; fi"
 
+        # Install PyML submodule
+        - docker-compose exec -T php-fpm sh -c "if docker image ls | grep -q pyml ; then echo \" nothing to do\"; else cd pyml && docker build --tag pyml .; fi"
+
         # START - Tests
         # Artisan
         - docker-compose exec -T workspace bash -c "php artisan route:list"
-
         # PHPUnit
         - docker-compose exec -T workspace php artisan test --testsuite=Feature --stop-on-failure
-
         # PHPStan
         - docker-compose exec -T workspace vendor/bin/phpstan
         # END - Tests
