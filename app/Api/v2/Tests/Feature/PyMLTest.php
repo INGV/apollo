@@ -1527,7 +1527,6 @@ class PyMLTest extends TestCase
         $dataOutputStructure = [
             'data' => [
                 'random_string',
-                'eventid',
                 'magnitudes' => [
                     'hb' => [
                         'ml',
