@@ -1,3 +1,7 @@
+|**Service**|**Main**|**Develop**|
+|---|---|---|
+|CI/CD|[![pipeline status](https://gitlab.rm.ingv.it/caravel/apollo/badges/main/pipeline.svg)](https://gitlab.rm.ingv.it/caravel/apollo/-/commits/main)|[![pipeline status](https://gitlab.rm.ingv.it/caravel/apollo/badges/develop/pipeline.svg)](https://gitlab.rm.ingv.it/caravel/apollo/-/commits/develop)|
+
 # apollo
 
 ```
@@ -76,18 +80,20 @@ When all containers are started, connect to:
 - http://<your_host>:<your_port>/
 
 default is:
-- http://localhost:80/
+- http://localhost:8780/
 
 If all works, you should see a web page with OpenAPI3 specification to interact with WS.
 
 ## Thanks to
 This project uses the [Laradock](https://github.com/laradock/laradock) idea to start docker containers
 
+## Download Swagger Generated Class
+- Java: http://caravel.gitpages.rm.ingv.it/apollo/apollo-java-client.zip
+
 ## Contribute
 Please, feel free to contribute.
 
 ## Author
-(c) 2022 Valentino Lauciani valentino.lauciani[at]ingv.it \
-(c) 2022 Sergio Bruni sergio.bruni[at]ingv.it
+(c) 2022 Valentino Lauciani valentino.lauciani[at]ingv.it 
 
 Istituto Nazionale di Geofisica e Vulcanologia, Italia

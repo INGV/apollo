@@ -3,6 +3,7 @@ apollo Release History
 #########################
 
 * Release 2.5.0 (2022-04-07)
+  - Update README to add Download section
   - Add pyml PHPUnit test
   - Update laradock submodule
   - Update PyML submodule

@@ -25,6 +25,7 @@ services:
 
 stages:
   - all_stages
+  - pages_stage
 
 before_script:
     #
@@ -150,7 +151,11 @@ validate_version_number_and_date:
         - ls -l /bin/
         - ./${CI_PROJECT_NAME}/validate_version_number_and_date.sh
     
-#test_ws:
-#    stage: test_2
-#    tags:
-#    script:
+pages:
+  stage: pages_stage
+  script:
+    - cp pages/* public/
+  artifacts:
+    paths:
+      - public/
+
