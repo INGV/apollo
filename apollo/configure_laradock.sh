@@ -98,6 +98,7 @@ checkReturnCode ${?}
 
 # Update Laradock 'docker-compose.yml'. Issue: https://github.com/laradock/laradock/issues/2947
 echo "Update Laradock 'docker-compose.yml':"
+cd ${DIR_SUBMODULE_LARADOCK}
 FILE_DOCKERCOMPOSE="docker-compose.yml"
 if [[ -f ${FILE_DOCKERCOMPOSE} ]]; then
     # this is used only to format original docker-compose.yml file
