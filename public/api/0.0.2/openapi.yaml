@@ -166,7 +166,9 @@ paths:
                     origin:
                       $ref: '#/components/schemas/ObjectOrigin'
                     amplitudes:
-                      $ref: '#/components/schemas/ObjectPyMLAmplitudes'
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/ObjectPyMLAmplitude'
 
       responses:
         <<: *common-responses
@@ -288,27 +290,34 @@ components:
               type: number
               format: float
               example: 0.1
-    ObjectPyMLAmplitudes:
-      items:
-        allOf:
-        - properties:
-            net:
-              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__net'
-            sta:
-              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__sta'
-            cha:
-              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__cha'
-            loc:
-              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__loc'
-            amp1:
-              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__amp1'
-            time1:
-              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__time1'
-            amp2:
-              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__amp2'
-            time2:
-              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__time2'
-      type: array
+    ObjectPyMLAmplitude:
+      type: object
+      required:
+        - net
+        - sta
+        - cha
+        - loc
+        - amp1
+        - time1
+        - amp2
+        - time2
+      properties:
+        net:
+          $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__net'
+        sta:
+          $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__sta'
+        cha:
+          $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__cha'
+        loc:
+          $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__loc'
+        amp1:
+          $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__amp1'
+        time1:
+          $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__time1'
+        amp2:
+          $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__amp2'
+        time2:
+          $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__time2'
     ObjectPyMLOutput:
       type: string
       description: Output format
