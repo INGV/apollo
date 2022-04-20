@@ -224,7 +224,7 @@ class PyMLController extends Controller
 
             /* Build output */
             $output['data']['random_string']    = $random_name;
-            $output['data']['eventid']          = $csvToArray[1][0];
+            //$output['data']['eventid']          = $csvToArray[1][0];
 
             /* START - Magnitudes */
             $output['data']['magnitudes'] = [
