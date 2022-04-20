@@ -74,18 +74,19 @@ if ! grep -q ${DIR_SUBMODULE_LARADOCK} ${FILE_GIT_MODULE}; then
     exit 1
 fi
 
-# Clone submodule
-cd ${DIR_WORK}
-git submodule update --init --recursive
-checkReturnCode ${?}
-
 #
 echo "Restore laradock files with 'git checkout -- .':"
 cd ${DIR_SUBMODULE_LARADOCK}
 git checkout -- .
 checkReturnCode ${?}
+cd -
 echo "Done"
 echo ""
+
+# Clone submodule
+cd ${DIR_WORK}
+git submodule update --init --recursive
+checkReturnCode ${?}
 
 # FIX BUG on COMPOSER_AUTH: https://github.com/laradock/laradock/pull/3190
 #echo "!!! - FIX BUG on COMPOSER_AUTH: https://github.com/laradock/laradock/pull/3190 :"
