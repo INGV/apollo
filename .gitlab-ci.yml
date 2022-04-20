@@ -25,7 +25,6 @@ services:
 
 stages:
   - all_stages
-  - pages_stage
 
 before_script:
     #
@@ -152,7 +151,7 @@ validate_version_number_and_date:
         - ./${CI_PROJECT_NAME}/validate_version_number_and_date.sh
     
 pages:
-  stage: pages_stage
+  stage: all_stages
   script:
     - cp pages/* public/
   artifacts:
