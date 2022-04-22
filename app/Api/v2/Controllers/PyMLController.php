@@ -74,15 +74,17 @@ class PyMLController extends Controller
             if (empty($pyMLCoordArray)) {
                 Log::debug(" No, coordinates");
             } else {
+                /* Add coord to amplitude */
                 $amplitude['lat'] = $pyMLCoordArray['lat'];
                 $amplitude['lon'] = $pyMLCoordArray['lon'];
                 $amplitude['elev'] = $pyMLCoordArray['elev'];
 
+                /* build Cha->Component array */
                 $net = $amplitude['net'];
                 $sta = $amplitude['sta'];
                 $cha = $amplitude['cha'];
                 $loc = $amplitude['loc'] ?? '--';
-                $tmpAmplitudeChaComponents[$net . '.' . $sta . '.' . $loc . '.' . substr($cha, 0, 2)][] = substr($cha, 2, 1); // 'IV.ACER.--.HH' => ['N', 'E']
+                $tmpAmplitudeChaComponents[$net . '.' . $sta . '.' . $loc . '.' . substr($cha, 0, 2)][] = substr($cha, 2, 1); // $tmpAmplitudeChaComponents['IV.ACER.--.HH'] => ['N', 'E']
             }
             $n++;
         }
