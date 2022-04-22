@@ -65,6 +65,7 @@ class PyMLController extends Controller
         /****** END - output ******/
 
         /****** START - amplitudes ******/
+        $tmpAmplitudeChaComponents = [];;
         foreach ($input_parameters['data']['amplitudes'] as &$amplitude) {
             $pyMLCoordArray = PyMLModel::getCoord($amplitude, config('apollo.cacheTimeout'));
 
@@ -74,6 +75,12 @@ class PyMLController extends Controller
                 $amplitude['lat'] = $pyMLCoordArray['lat'];
                 $amplitude['lon'] = $pyMLCoordArray['lon'];
                 $amplitude['elev'] = $pyMLCoordArray['elev'];
+
+                $net = $amplitude['net'];
+                $sta = $amplitude['sta'];
+                $cha = $amplitude['cha'];
+                $loc = $amplitude['loc'] ?? '--';
+                $tmpAmplitudeChaComponents[$net . '.' . $sta . '.' . $loc . '.' . substr($cha, 0, 2)][] = substr($cha, 2, 1); // 'IV.ACER.--.HH' => ['N', 'E']
             }
         }
         /****** END - amplitudes ******/
@@ -263,7 +270,7 @@ class PyMLController extends Controller
                 };
                 $cha = $b_exploded[3];
 
-                foreach (['Z', 'N', 'E'] as $component) {
+                foreach ($tmpAmplitudeChaComponents[$net . '.' . $sta . '.' . $loc . '.' . $cha] as $component) {
                     $stationmagnitude = [
                         'net' => $net,
                         'sta' => $sta,
