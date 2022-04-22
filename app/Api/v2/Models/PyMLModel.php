@@ -12,9 +12,9 @@ class PyMLModel extends Model
 {
     use FindAndRetrieveStationXMLTrait;
 
-    public static function getCoord($input_parameters, $timeoutSeconds = 2880)
+    public static function getCoord($input_parameters, $timeoutSeconds = 2880, $logString = '')
     {
-        Log::debug("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug($logString . 'START - ' . __CLASS__ . ' -> ' . __FUNCTION__);
 
         // Closure for executing a request url
         $func_execute_request_url = function () use ($input_parameters, $timeoutSeconds) {
@@ -92,7 +92,7 @@ class PyMLModel extends Model
         }
 
         Log::debug(' Output: pyMLCoordArray="', $pyMLCoordArray);
-        Log::debug("END - " . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug($logString . 'END - ' . __CLASS__ . ' -> ' . __FUNCTION__);
         if (empty($pyMLCoordArray)) {
             return [];
         } else {
