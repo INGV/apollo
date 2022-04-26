@@ -1550,6 +1550,13 @@ class PyMLTest extends TestCase
                         "sta",
                         "cha",
                         "loc",
+                        "elev",
+                        "lat",
+                        "lon",
+                        "amp1",
+                        "time1",
+                        "amp2",
+                        "time2",
                         'hb' => [
                             'ml',
                             'w'

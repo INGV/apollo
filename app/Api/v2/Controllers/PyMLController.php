@@ -48,6 +48,39 @@ class PyMLController extends Controller
         ]
     ];
 
+    /**
+     * Checks if multiple keys exist in an array
+     *
+     * @param array $array
+     * @param array $keys
+     *
+     * @return array
+     */
+    public static function array_keys_exist($array, $search_list)
+    {
+        // Create the result array
+        $result = array();
+
+        // Iterate over each array element
+        foreach ($array as $key => $value) {
+            // Iterate over each search condition
+            foreach ($search_list as $k => $v) {
+                // If the array element does not meet
+                // the search condition then continue
+                // to the next element
+                if (!isset($value[$k]) || $value[$k] != $v) {
+                    // Skip two loops
+                    continue 2;
+                }
+            }
+            // Append array element's key to the
+            //result array
+            $result[] = $value;
+        }
+        // Return result 
+        return $result;
+    }
+
     /*
      * @param string json input picks
      * @return string json location
@@ -261,36 +294,45 @@ class PyMLController extends Controller
             /* START - Stationmagnitude */
             unset($csvToArray[0]);  // Remove header
             unset($csvToArray[1]);  // Remove origin magnitude
-            foreach ($csvToArray as $value) {
-                list($a, $b, $c, $d, $e, $f, $g) = explode(" ", $value[0]);
+            foreach ($csvToArray as $csvToArrayLine) {
+                list($a, $b, $c, $d, $e, $f, $g) = explode(" ", $csvToArrayLine[0]);
 
-                /* Get SCNL */
+                /* Get SCNL line */
+                $search_items = [];
                 $b_exploded = explode('_', $b);
                 $net = $b_exploded[0];
                 $sta = $b_exploded[1];
                 if ($b_exploded[2] == 'None') {
-                    $loc = '--';
+                    $loc = null;
                 } else {
                     $loc = $b_exploded[2];
+                    $search_items['loc'] = $loc;
                 };
-                $cha = $b_exploded[3];
+                $cha = $b_exploded[3];  // it is only two char. ie: HH, EH, HN, ecc...
+                $search_items['net'] = $net;
+                $search_items['sta'] = $sta;
 
-                foreach ($tmpAmplitudeChaComponents[$net . '.' . $sta . '.' . $loc . '.' . $cha] as $component) {
-                    $stationmagnitude = [
-                        'net' => $net,
-                        'sta' => $sta,
-                        'cha' => $cha . $component,
-                        'loc' => $loc,
-                        'hb'  => [
+                /** Search items, into: 
+                 *   '$input_parameters['data']['amplitudes']' 
+                 *  with: 
+                 *   'net=$net', 'sta=$sta', (optional 'loc=$loc'). 
+                 */
+                $inputAmplitudes = self::array_keys_exist($input_parameters['data']['amplitudes'], $search_items);
+
+                /* build final array */
+                foreach ($inputAmplitudes as $key => $inputAmplitude) {
+                    if (substr($inputAmplitude['cha'], 0, 2) == $cha) {
+                        $stationmagnitude = $inputAmplitude;
+                        $stationmagnitude['hb'] = [
                             'ml' => $c,
                             'w' => $d,
-                        ],
-                        'db'  => [
+                        ];
+                        $stationmagnitude['db'] = [
                             'ml' => $f,
                             'w' => $g,
-                        ]
-                    ];
-                    $output['data']['stationmagnitudes'][] = $stationmagnitude;
+                        ];
+                        $output['data']['stationmagnitudes'][] = $stationmagnitude;
+                    }
                 }
             }
             /* END - Stationmagnitude */
