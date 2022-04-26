@@ -229,31 +229,45 @@ paths:
                             description: To Do
                       stationmagnitudes:
                         items:
-                          allOf:
-                            - properties:
-                                hb:
-                                  properties:
-                                    ml:
-                                      $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/magnitude__mag'
-                                    w:  
-                                      type: number
-                                      format: double
-                                      example: 0.27839883752733147
-                                db:
-                                  properties:
-                                    ml:
-                                      $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/magnitude__mag'
-                                    w:  
-                                      type: number
-                                      format: double
-                                      example: 0.27839883752733147
-                                lat:
-                                  $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/latitude'
-                                lon:
-                                  $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/longitude'
-                                elev:
-                                  $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__elev'
-                            - $ref: '#/components/schemas/ObjectPyMLAmplitude'
+                          properties:
+                            net:
+                              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__net'
+                            sta:
+                              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__sta'
+                            cha:
+                              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__cha'
+                            loc:
+                              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__loc'
+                            amp1:
+                              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__amp1'
+                            time1:
+                              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__time1'
+                            amp2:
+                              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__amp2'
+                            time2:
+                              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__time2'
+                            lat:
+                              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/latitude'
+                            lon:
+                              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/longitude'
+                            elev:
+                              $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__elev'
+                            hb:
+                              properties:
+                                ml:
+                                  $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/magnitude__mag'
+                                w:  
+                                  type: number
+                                  format: double
+                                  example: 0.27839883752733147
+                            db:
+                              properties:
+                                ml:
+                                  $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/magnitude__mag'
+                                w:  
+                                  type: number
+                                  format: double
+                                  example: 0.27839883752733147
                         type: array
       tags:
       - location
