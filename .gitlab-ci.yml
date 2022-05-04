@@ -25,6 +25,7 @@ services:
 
 stages:
   - all_stages
+  - pages
 
 before_script:
     #
@@ -151,10 +152,51 @@ validate_version_number_and_date:
         - ./${CI_PROJECT_NAME}/validate_version_number_and_date.sh
     
 pages:
-  stage: all_stages
+  stage: pages
+  only:
+    - main
+    - develop
   script:
-    - cp pages/* public/
+    - apk add --no-cache git && rm -rf /var/cache/apk/*
+    - export NOW=$(date +%Y%m%dx%H%M%S)
+    - mkdir pages_tmp
+
+    - git fetch
+    - cp pages/index.html.template public/index.html
+    - for BRANCH in main ; do
+        git checkout ${BRANCH} ;
+        for CLIENT_LANGUAGE in java python ; do
+
+          FILE_NAME="apollo-${CLIENT_LANGUAGE}-client-v$(cat VERSION)" ;
+          BRANCH_STRUPPER=$( echo "${BRANCH}" | awk '{print toupper($0)}' ) ;
+          CLIENT_LANGUAGE_STRUPPER=$( echo "${CLIENT_LANGUAGE}" | awk '{print toupper($0)}' ) ;
+          echo "****** FILE_NAME=${FILE_NAME} ******" ;
+
+          docker run
+            --rm
+            -v $(pwd)/pages_tmp:/output
+            -v $(pwd)/public/api/0.0.2:/input
+            swaggerapi/swagger-codegen-cli-v3
+            generate
+            -i /input/openapi.yaml
+            --resolve-fully
+            --artifact-id ${CLIENT_LANGUAGE}-swagger-codegen-apollo
+            --api-package org.ingv.apollo.api
+            --model-package org.ingv.apollo.model
+            --group-id org.ingv.apollo
+            --artifact-version $(cat VERSION)
+            -l ${CLIENT_LANGUAGE}
+            -o /output/${FILE_NAME} &&
+
+            tar -czf public/${FILE_NAME}.tar.gz pages_tmp/${FILE_NAME} ;
+
+            sed -i'' -e "s/__LINK_${BRANCH_STRUPPER}_${CLIENT_LANGUAGE_STRUPPER}__/${FILE_NAME}/g" public/*.html ;
+        done ;
+      done
+    - sed -i'' -e "s/__NOW__/${NOW}/g" public/*.html
+    #- cp pages/* public/
   artifacts:
+    expire_in: 1 week
     paths:
       - public/
 

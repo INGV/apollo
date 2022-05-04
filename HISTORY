@@ -3,6 +3,7 @@ apollo Release History
 #########################
 
 * Release 2.5.0 (2022-04-07)
+  - Add Pages into CI to generate java and python Swagger client
   - Update Laradock
   - Update to read new CSV file (https://gitlab.rm.ingv.it/raffaele.distefano/pyml/-/blob/docker/examples/output/pyml_magnitudes.csv).
   - Output json returns also input value
