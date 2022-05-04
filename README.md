@@ -88,7 +88,7 @@ If all works, you should see a web page with OpenAPI3 specification to interact 
 This project uses the [Laradock](https://github.com/laradock/laradock) idea to start docker containers
 
 ## Download Swagger Generated Class
-- Java: http://caravel.gitpages.rm.ingv.it/apollo/apollo-java-client.zip
+- http://caravel.gitpages.rm.ingv.it/apollo/
 
 ## Contribute
 Please, feel free to contribute.
