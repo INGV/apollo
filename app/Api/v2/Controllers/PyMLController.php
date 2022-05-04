@@ -296,45 +296,42 @@ class PyMLController extends Controller
             unset($csvToArray[0]);  // Remove header
             unset($csvToArray[1]);  // Remove origin magnitude
             foreach ($csvToArray as $csvToArrayLine) {
-                list($a, $b, $c, $d, $e, $f, $g) = explode(" ", $csvToArrayLine[0]);
+                list($mlcha, $scnl, $ml_hb, $ml_hb_weight, $e, $ml_db, $ml_db_weight) = explode(" ", $csvToArrayLine[0]);
 
                 /* Get SCNL line */
                 $search_items = [];
-                $b_exploded = explode('_', $b);
-                $net = $b_exploded[0];
-                $sta = $b_exploded[1];
-                if ($b_exploded[2] == 'None') {
+                $scnl_exploded = explode('_', $scnl);
+                $net = $scnl_exploded[0];
+                $sta = $scnl_exploded[1];
+                if (strtolower($scnl_exploded[2]) == 'none') {
                     $loc = null;
                 } else {
-                    $loc = $b_exploded[2];
+                    $loc = $scnl_exploded[2];
                     $search_items['loc'] = $loc;
                 };
-                $cha = $b_exploded[3];  // it is only two char. ie: HH, EH, HN, ecc...
+                $cha = $scnl_exploded[3];
                 $search_items['net'] = $net;
                 $search_items['sta'] = $sta;
+                $search_items['cha'] = $cha;
 
                 /** Search items, into: 
                  *   '$input_parameters['data']['amplitudes']' 
                  *  with: 
-                 *   'net=$net', 'sta=$sta', (optional 'loc=$loc'). 
+                 *   'net=$net', 'sta=$sta', 'cha=$cha', (optional 'loc=$loc'). 
                  */
-                $inputAmplitudes = self::array_keys_exist($input_parameters['data']['amplitudes'], $search_items);
+                $inputAmplitude = self::array_keys_exist($input_parameters['data']['amplitudes'], $search_items);
 
                 /* build final array */
-                foreach ($inputAmplitudes as $key => $inputAmplitude) {
-                    if (substr($inputAmplitude['cha'], 0, 2) == $cha) {
-                        $stationmagnitude = $inputAmplitude;
-                        $stationmagnitude['hb'] = [
-                            'ml' => $c,
-                            'w' => $d,
-                        ];
-                        $stationmagnitude['db'] = [
-                            'ml' => $f,
-                            'w' => $g,
-                        ];
-                        $output['data']['stationmagnitudes'][] = $stationmagnitude;
-                    }
-                }
+                $stationmagnitude = $inputAmplitude[0];
+                $stationmagnitude['hb'] = [
+                    'ml' => $ml_hb,
+                    'w' => $ml_hb_weight,
+                ];
+                $stationmagnitude['db'] = [
+                    'ml' => $ml_db,
+                    'w' => $ml_db_weight,
+                ];
+                $output['data']['stationmagnitudes'][] = $stationmagnitude;
             }
             /* END - Stationmagnitude */
 
