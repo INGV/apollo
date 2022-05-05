@@ -189,7 +189,7 @@ pages:
             -o /output/${FILE_NAME} &&
 
             cd pages_tmp/ ;
-            tar -czf public/${FILE_NAME}.tar.gz ${FILE_NAME} ;
+            tar -czf ../public/${FILE_NAME}.tar.gz ${FILE_NAME} ;
             cd .. ;
 
             sed -i'' -e "s/__LINK_${BRANCH_STRUPPER}_${CLIENT_LANGUAGE_STRUPPER}__/${FILE_NAME}/g" public/*.html ;
