@@ -84,11 +84,14 @@ default is:
 
 If all works, you should see a web page with OpenAPI3 specification to interact with WS.
 
+## Swagger - OpenAPI
+### Link to OpenAPI Spec: 
+- https://gitlab.rm.ingv.it/caravel/apollo/-/blob/main/public/api/0.0.2/openapi.yaml
+### Download Generated Class
+- http://caravel.gitpages.rm.ingv.it/apollo/
+
 ## Thanks to
 This project uses the [Laradock](https://github.com/laradock/laradock) idea to start docker containers
-
-## Download Swagger Generated Class
-- http://caravel.gitpages.rm.ingv.it/apollo/
 
 ## Contribute
 Please, feel free to contribute.
