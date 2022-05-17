@@ -57,7 +57,7 @@ before_script:
     - echo "HTTP_PORT=${HTTP_PORT}"
     - docker -v
 
-.build_laravel:
+build_laravel:
     stage: all_stages
     tags:
         # Runners:
