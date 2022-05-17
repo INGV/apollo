@@ -35,9 +35,15 @@
                         <div>
                             Platform:
                             <ul>
-                                <li> Python: <a href="__LINK_MAIN_PYTHON__.tar.gz">__LINK_MAIN_PYTHON__.tar.gz</a>
-                                </li>
+                                <li> Python: <a href="__LINK_MAIN_PYTHON__.tar.gz">__LINK_MAIN_PYTHON__.tar.gz</a> </li>
+                                <ul>
+                                    <li>git repo: <a href="https://gitlab.rm.ingv.it/caravel/codegen/apollo-python/-/tree/main">link</a> </li>
+                                </ul>
+
                                 <li> Java: <a href="__LINK_MAIN_JAVA__.tar.gz">__LINK_MAIN_JAVA__.tar.gz</a> </li>
+                                <ul>
+                                    <li>git repo: <a href="https://gitlab.rm.ingv.it/caravel/codegen/apollo-java/-/tree/main">link</a> </li>
+                                </ul>
                             </ul>
                         </div>
                     </div>
