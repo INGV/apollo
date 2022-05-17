@@ -181,7 +181,6 @@ pages:
             openapitools/openapi-generator-cli
             generate
             -i /input/openapi.yaml
-            --resolve-fully
             --artifact-id ${CLIENT_LANGUAGE}-openapi-generator-cli-apollo
             --api-package org.ingv.apollo.api
             --model-package org.ingv.apollo.model
