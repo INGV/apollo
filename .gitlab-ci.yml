@@ -205,11 +205,11 @@ pages:
               git config --global user.email "valentino.lauciani@ingv.it" ;
             fi ;
 
-            cd ${CLIENT_LANGUAGE}/ &&
+            cd apollo-${CLIENT_LANGUAGE}/ &&
             git switch ${BRANCH} &&
             cd .. &&
-            cp -R ${FILE_NAME}/* ${CLIENT_LANGUAGE}/ &&
-            cd ${CLIENT_LANGUAGE}/ &&
+            cp -R ${FILE_NAME}/* apollo-${CLIENT_LANGUAGE}/ &&
+            cd apollo-${CLIENT_LANGUAGE}/ &&
             if [ -f .gitlab-ci.yml ] ; then
               rm .gitlab-ci.yml ;
             fi ;
