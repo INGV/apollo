@@ -57,7 +57,7 @@ before_script:
     - echo "HTTP_PORT=${HTTP_PORT}"
     - docker -v
 
-build_laravel:
+.build_laravel:
     stage: all_stages
     tags:
         # Runners:
@@ -167,7 +167,7 @@ pages:
     # from: openapitools/openapi-generator-cli
     - for BRANCH in main ; do
         git checkout ${BRANCH} ;
-        for CLIENT_LANGUAGE in java python ; do
+        for CLIENT_LANGUAGE in java python html2 ; do
 
           FILE_NAME="apollo-${CLIENT_LANGUAGE}-client-v$(cat VERSION)" ;
           BRANCH_STRUPPER=$( echo "${BRANCH}" | awk '{print toupper($0)}' ) ;
@@ -189,11 +189,38 @@ pages:
             -g ${CLIENT_LANGUAGE}
             -o /output/${FILE_NAME} &&
 
-            cd pages_tmp/ ;
+          cd pages_tmp/ ;
+          if [[ "${CLIENT_LANGUAGE}" == "html2" ]] ; then
+            cp -R ${FILE_NAME} ../public/ ; 
+          else
             tar -czf ../public/${FILE_NAME}.tar.gz ${FILE_NAME} ;
-            cd .. ;
 
-            sed -i'' -e "s/__LINK_${BRANCH_STRUPPER}_${CLIENT_LANGUAGE_STRUPPER}__/${FILE_NAME}/g" public/*.html ;
+            if [[ "${CLIENT_LANGUAGE}" == "python" ]] && [ ! -d ${CLIENT_LANGUAGE} ]; then 
+              git clone https://gitlab+deploy-token-118:glpat-oSYmtZrsqDz1vGiCMPrB@gitlab.rm.ingv.it/caravel/codegen/apollo-${CLIENT_LANGUAGE}.git &&
+              git config --global user.name "GitLab CI" &&
+              git config --global user.email "valentino.lauciani@ingv.it" ;
+            elif [[ "${CLIENT_LANGUAGE}" == "java" ]] && [ ! -d ${CLIENT_LANGUAGE} ]; then 
+              git clone https://gitlab+deploy-token-117:glpat-FhrmFhJG7fYiKXzsGG2M@gitlab.rm.ingv.it/caravel/codegen/apollo-${CLIENT_LANGUAGE}.git &&
+              git config --global user.name "GitLab CI" &&
+              git config --global user.email "valentino.lauciani@ingv.it" ;
+            fi ;
+
+            cd ${CLIENT_LANGUAGE}/ &&
+            git switch ${BRANCH} &&
+            cd .. &&
+            cp -R ${FILE_NAME}/* ${CLIENT_LANGUAGE}/ &&
+            cd ${CLIENT_LANGUAGE}/ &&
+            if [ -f .gitlab-ci.yml ] ; then
+              rm .gitlab-ci.yml ;
+            fi ;
+            git add . &&
+            git commit -m "Update" &&
+            git push origin ${BRANCH} ;
+            cd .. ;
+          fi ;
+          cd .. ;
+
+          sed -i'' -e "s/__LINK_${BRANCH_STRUPPER}_${CLIENT_LANGUAGE_STRUPPER}__/${FILE_NAME}/g" public/*.html ;
         done ;
       done
 
