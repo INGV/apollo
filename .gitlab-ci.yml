@@ -163,6 +163,8 @@ pages:
 
     - git fetch
     - cp pages/index.html.template public/index.html
+
+    # from: openapitools/openapi-generator-cli
     - for BRANCH in main ; do
         git checkout ${BRANCH} ;
         for CLIENT_LANGUAGE in java python ; do
@@ -176,16 +178,16 @@ pages:
             --rm
             -v $(pwd)/pages_tmp:/output
             -v $(pwd)/public/api/0.0.2:/input
-            swaggerapi/swagger-codegen-cli-v3
+            openapitools/openapi-generator-cli
             generate
             -i /input/openapi.yaml
             --resolve-fully
-            --artifact-id ${CLIENT_LANGUAGE}-swagger-codegen-apollo
+            --artifact-id ${CLIENT_LANGUAGE}-openapi-generator-cli-apollo
             --api-package org.ingv.apollo.api
             --model-package org.ingv.apollo.model
             --group-id org.ingv.apollo
             --artifact-version $(cat VERSION)
-            -l ${CLIENT_LANGUAGE}
+            -g ${CLIENT_LANGUAGE}
             -o /output/${FILE_NAME} &&
 
             cd pages_tmp/ ;
@@ -195,6 +197,7 @@ pages:
             sed -i'' -e "s/__LINK_${BRANCH_STRUPPER}_${CLIENT_LANGUAGE_STRUPPER}__/${FILE_NAME}/g" public/*.html ;
         done ;
       done
+
     - sed -i'' -e "s/__NOW__/${NOW}/g" public/*.html
     #- cp pages/* public/
   artifacts:
