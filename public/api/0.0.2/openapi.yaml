@@ -143,7 +143,13 @@ paths:
       responses:
         <<: *common-responses
         '200':
-          description: successful operation   
+          description: successful operation
+          headers:
+            <<: *ratelimit-headers
+          content:
+            application/json:
+              schema:
+                $ref: 'https://ingv.github.io/openapi/definitions_ew.yaml#/components/schemas/hyp2000arcSchema'
       tags:
       - location
 
