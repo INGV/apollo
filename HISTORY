@@ -3,6 +3,7 @@ apollo Release History
 #########################
 
 * Release 2.6.0 (2022-05-27)
+  - Update PHP-Packages ('composer update') 
   - Fix 'locApi.v2PostHyp2000(req)' problem. Issue: https://gitlab.rm.ingv.it/caravel/apollo/-/issues/3
   - Test to fix 'Object hyp2000Conf' and 'Object model' issue: https://gitlab.rm.ingv.it/caravel/apollo/-/issues/3
 
