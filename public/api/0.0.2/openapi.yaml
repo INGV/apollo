@@ -427,7 +427,7 @@ components:
     ObjectHyp2000Conf:
       type: array
       items:
-        properties: {}
+        type: string
       example:
       - 200 T 2000 0
       - LET 5 2 3 2 2
