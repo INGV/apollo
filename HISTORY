@@ -2,9 +2,11 @@
 apollo Release History
 #########################
 
-* Release 2.5.0 (2022-04-07)
+* Release 2.6.0 (2022-05-27)
   - Fix 'locApi.v2PostHyp2000(req)' problem. Issue: https://gitlab.rm.ingv.it/caravel/apollo/-/issues/3
   - Test to fix 'Object hyp2000Conf' and 'Object model' issue: https://gitlab.rm.ingv.it/caravel/apollo/-/issues/3
+
+* Release 2.5.0 (2022-04-07)
   - Update PHP-Packages ('composer update')
   - Add Pages into CI to generate java and python Swagger client
   - Update Laradock
