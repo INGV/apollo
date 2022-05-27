@@ -899,7 +899,7 @@
             "source": {
                 "type": "git",
                 "url": "https://gitlab+deploy-token-68:zLTL4P53W2RWvoumJZ9B@gitlab.rm.ingv.it/caravel/php-pkg/hyp2000-converter.git",
-                "reference": "8d674f68f9d085ddcba29a80bf628f8f326963dc"
+                "reference": "cc44035659f6b6507f42ec04224ba2bf7d3e59f6"
             },
             "require": {
                 "illuminate/support": "^8.17|^9.0",
@@ -940,7 +940,7 @@
                 }
             ],
             "description": "hyp2000 IO converter to json format",
-            "time": "2022-05-27T09:29:25+00:00"
+            "time": "2022-05-27T10:25:33+00:00"
         },
         {
             "name": "ingv/ingv-logging",
