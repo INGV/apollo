@@ -371,16 +371,16 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "3.1.2",
+            "version": "3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "ee0db30118f661fb166bcffbf5d82032df484697"
+                "reference": "a5ed8d58ed0c340a7c2109f587951b1c84cf6286"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/ee0db30118f661fb166bcffbf5d82032df484697",
-                "reference": "ee0db30118f661fb166bcffbf5d82032df484697",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/a5ed8d58ed0c340a7c2109f587951b1c84cf6286",
+                "reference": "a5ed8d58ed0c340a7c2109f587951b1c84cf6286",
                 "shasum": ""
             },
             "require": {
@@ -427,7 +427,7 @@
             ],
             "support": {
                 "issues": "https://github.com/egulias/EmailValidator/issues",
-                "source": "https://github.com/egulias/EmailValidator/tree/3.1.2"
+                "source": "https://github.com/egulias/EmailValidator/tree/3.2"
             },
             "funding": [
                 {
@@ -435,7 +435,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-10-11T09:18:27+00:00"
+            "time": "2022-05-28T22:19:18+00:00"
         },
         {
             "name": "fruitcake/php-cors",
@@ -2513,16 +2513,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.11.4",
+            "version": "v0.11.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "05c544b339b112226ad14803e1e5b09a61957454"
+                "reference": "c23686f9c48ca202710dbb967df8385a952a2daf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/05c544b339b112226ad14803e1e5b09a61957454",
-                "reference": "05c544b339b112226ad14803e1e5b09a61957454",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/c23686f9c48ca202710dbb967df8385a952a2daf",
+                "reference": "c23686f9c48ca202710dbb967df8385a952a2daf",
                 "shasum": ""
             },
             "require": {
@@ -2583,9 +2583,9 @@
             ],
             "support": {
                 "issues": "https://github.com/bobthecow/psysh/issues",
-                "source": "https://github.com/bobthecow/psysh/tree/v0.11.4"
+                "source": "https://github.com/bobthecow/psysh/tree/v0.11.5"
             },
-            "time": "2022-05-06T12:49:14+00:00"
+            "time": "2022-05-27T18:03:49+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -4992,16 +4992,16 @@
         },
         {
             "name": "vlauciani/laravel-validation-rules",
-            "version": "v1.2.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vlauciani/laravel-validation-rules.git",
-                "reference": "4ad52e70cb073d72d3499224acf43dd5f40450e8"
+                "reference": "735ee6d78cf3400f15032fd5c774ce0a52f6f1fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vlauciani/laravel-validation-rules/zipball/4ad52e70cb073d72d3499224acf43dd5f40450e8",
-                "reference": "4ad52e70cb073d72d3499224acf43dd5f40450e8",
+                "url": "https://api.github.com/repos/vlauciani/laravel-validation-rules/zipball/735ee6d78cf3400f15032fd5c774ce0a52f6f1fe",
+                "reference": "735ee6d78cf3400f15032fd5c774ce0a52f6f1fe",
                 "shasum": ""
             },
             "require": {
@@ -5046,9 +5046,9 @@
             ],
             "support": {
                 "issues": "https://github.com/vlauciani/laravel-validation-rules/issues",
-                "source": "https://github.com/vlauciani/laravel-validation-rules/tree/v1.2.0"
+                "source": "https://github.com/vlauciani/laravel-validation-rules/tree/v1.3.0"
             },
-            "time": "2022-04-06T15:50:20+00:00"
+            "time": "2022-05-31T07:11:24+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -6752,16 +6752,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.7.2",
+            "version": "1.7.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "c602f80d66ba425943b0f4aaa27010c822dd8f87"
+                "reference": "1af9271ea529f995e57a1f493bebba6b830a97d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c602f80d66ba425943b0f4aaa27010c822dd8f87",
-                "reference": "c602f80d66ba425943b0f4aaa27010c822dd8f87",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/1af9271ea529f995e57a1f493bebba6b830a97d0",
+                "reference": "1af9271ea529f995e57a1f493bebba6b830a97d0",
                 "shasum": ""
             },
             "require": {
@@ -6787,7 +6787,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/1.7.2"
+                "source": "https://github.com/phpstan/phpstan/tree/1.7.6"
             },
             "funding": [
                 {
@@ -6807,7 +6807,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-26T12:59:20+00:00"
+            "time": "2022-05-30T21:29:45+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
