@@ -206,13 +206,23 @@ pages:
             cd apollo-${CLIENT_LANGUAGE}/ &&
             git switch ${BRANCH} &&
             cd .. &&
-            cp -R ${FILE_NAME}/* apollo-${CLIENT_LANGUAGE}/ &&
+            echo "---1---" &&
+            ls -al ${FILE_NAME}/ &&
+            echo "---2---" &&
+            ls -al apollo-${CLIENT_LANGUAGE}/ &&
+            echo "---3---" &&
+            rsync -avh --delete --exclude '.git/' --exclude '.gitlab-ci.yml' ${FILE_NAME}/ apollo-${CLIENT_LANGUAGE}/ &&
+            echo "---4---" &&
             cd apollo-${CLIENT_LANGUAGE}/ &&
-            if [ -f .gitlab-ci.yml ] ; then
-              rm .gitlab-ci.yml ;
-            fi ;
+            echo "---5---" &&
+            git status &&
+            echo "---6---" &&
             git add . &&
+            echo "---7---" &&
             git commit -m "Update" &&
+            echo "---8---" &&
+            git branch -avv &&
+            echo "---9---" &&
             git push origin ${BRANCH} ;
             cd .. ;
           fi ;
