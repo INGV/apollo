@@ -155,7 +155,7 @@ pages:
     - main
     - develop
   script:
-    - apk add --no-cache git && rm -rf /var/cache/apk/*
+    - apk add --no-cache git rsync && rm -rf /var/cache/apk/*
     - export NOW=$(date +%Y%m%dx%H%M%S)
     - mkdir pages_tmp
 
