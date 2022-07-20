@@ -147,9 +147,7 @@ validate_version_number_and_date:
     stage: all_stages
     script:
         - apk add --no-cache bash git
-        - which bash
-        - ls -l /bin/
-        - ./${CI_PROJECT_NAME}/validate_version_number_and_date.sh
+        - ./${CI_PROJECT_NAME}/scripts/validate_version_number_and_date.sh
     
 pages:
   stage: pages
