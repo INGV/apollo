@@ -2,10 +2,10 @@
 apollo Release History
 #########################
 
-* Release 2.7.0 (2022-07-20)
+* Release 2.7.0 (2022-07-27)
+  - Update PHP-Packages ('composer update') 
   - Update PyML submodule
   - Add 'laravel/pint' PHP-Package
-  - Update PHP-Packages ('composer update') 
 
 * Release 2.6.0 (2022-07-20)
   - Update PHP-Packages ('composer update') 
