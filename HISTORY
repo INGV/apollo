@@ -3,6 +3,7 @@ apollo Release History
 #########################
 
 * Release 2.7.0 (2022-07-27)
+  - When a station is not found in the FDSN nodes, try on 'webservices.ingv.it' with 'authoritative=any'
   - Update PHP-Packages ('composer update') 
   - Update PyML submodule
   - Add 'laravel/pint' PHP-Package
