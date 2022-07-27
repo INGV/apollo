@@ -67,7 +67,7 @@ class PyMLController extends Controller
                 // If the array element does not meet
                 // the search condition then continue
                 // to the next element
-                if (! isset($value[$k]) || $value[$k] != $v) {
+                if (!isset($value[$k]) || $value[$k] != $v) {
                     // Skip two loops
                     continue 2;
                 }
@@ -86,7 +86,7 @@ class PyMLController extends Controller
      */
     public function location(PyMLRequest $request)
     {
-        Log::debug('START - '.__CLASS__.' -> '.__FUNCTION__);
+        Log::debug('START - ' . __CLASS__ . ' -> ' . __FUNCTION__);
         $locationTimeStart = microtime(true);
 
         /* Get validated input */
@@ -101,7 +101,7 @@ class PyMLController extends Controller
         $tmpAmplitudeChaComponents = [];
         $nAmplitudes = count($input_parameters['data']['amplitudes']);
         foreach ($input_parameters['data']['amplitudes'] as &$amplitude) {
-            $pyMLCoordArray = PyMLModel::getCoord($amplitude, config('apollo.cacheTimeout'), $n.'/'.$nAmplitudes.' - ');
+            $pyMLCoordArray = PyMLModel::getCoord($amplitude, config('apollo.cacheTimeout'), $n . '/' . $nAmplitudes . ' - ');
 
             if (empty($pyMLCoordArray)) {
                 Log::debug(' No, coordinates');
@@ -116,7 +116,7 @@ class PyMLController extends Controller
                 $sta = $amplitude['sta'];
                 $cha = $amplitude['cha'];
                 $loc = $amplitude['loc'] ?? '--';
-                $tmpAmplitudeChaComponents[$net.'.'.$sta.'.'.$loc.'.'.substr($cha, 0, 2)][] = substr($cha, 2, 1); // $tmpAmplitudeChaComponents['IV.ACER.--.HH'] => ['N', 'E']
+                $tmpAmplitudeChaComponents[$net . '.' . $sta . '.' . $loc . '.' . substr($cha, 0, 2)][] = substr($cha, 2, 1); // $tmpAmplitudeChaComponents['IV.ACER.--.HH'] => ['N', 'E']
             }
             $n++;
         }
@@ -140,13 +140,13 @@ class PyMLController extends Controller
         /* Set variables */
         $now = \DateTime::createFromFormat('U.u', number_format(microtime(true), 6, '.', ''));
         $nowFormatted = $now->format('Ymd_His');
-        $random_name = $nowFormatted.'__'.gethostbyaddr(\request()->ip()).'__'.\Illuminate\Support\Str::random(5);
-        $dir_working = '/pyml/'.$random_name;
+        $random_name = $nowFormatted . '__' . gethostbyaddr(\request()->ip()) . '__' . \Illuminate\Support\Str::random(5);
+        $dir_working = '/pyml/' . $random_name;
         $dir_data = config('filesystems.disks.data.root');
 
         /* Write input.json */
         $file_input_json = 'input.json';
-        $file_input_fullpath_arc = $dir_working.'/'.$file_input_json;
+        $file_input_fullpath_arc = $dir_working . '/' . $file_input_json;
         Storage::disk('data')->put($file_input_fullpath_arc, json_encode($input_parameters));
 
         /* !!!!!!!! START - Get 'id -u' ToDo better */
@@ -165,9 +165,9 @@ class PyMLController extends Controller
         $command_process->setTimeout($command_timeout);
         $command_process->run();
         $uid = preg_replace("/\r|\n/", '', $command_process->getOutput());
-        Log::debug(' getOutput:'.$uid);
-        Log::debug(' getErrorOutput:'.$command_process->getErrorOutput());
-        if (! $command_process->isSuccessful()) {
+        Log::debug(' getOutput:' . $uid);
+        Log::debug(' getErrorOutput:' . $command_process->getErrorOutput());
+        if (!$command_process->isSuccessful()) {
             throw new ProcessFailedException($command_process);
         }
         Log::debug(' Done.');
@@ -189,9 +189,9 @@ class PyMLController extends Controller
         $command_process->setTimeout($command_timeout);
         $command_process->run();
         $gid = preg_replace("/\r|\n/", '', $command_process->getOutput());
-        Log::debug(' getOutput:'.$gid);
-        Log::debug(' getErrorOutput:'.$command_process->getErrorOutput());
-        if (! $command_process->isSuccessful()) {
+        Log::debug(' getOutput:' . $gid);
+        Log::debug(' getErrorOutput:' . $command_process->getErrorOutput());
+        if (!$command_process->isSuccessful()) {
             throw new ProcessFailedException($command_process);
         }
         Log::debug(' Done.');
@@ -205,8 +205,8 @@ class PyMLController extends Controller
                     'run',
                     '--rm',
                     '--user',
-                    $uid.':'.$gid,
-                    '-v', $dir_data.$dir_working.':/opt/data',
+                    $uid . ':' . $gid,
+                    '-v', $dir_data . $dir_working . ':/opt/data',
                     config('apollo.docker_pyml'),
                     '--json', '/opt/data/input.json',
                 ]
@@ -218,9 +218,9 @@ class PyMLController extends Controller
         $command_process = new Process($command);
         $command_process->setTimeout($command_timeout);
         $command_process->run();
-        Log::debug(' getOutput:'.$command_process->getOutput());
-        Log::debug(' getErrorOutput:'.$command_process->getErrorOutput());
-        if (! $command_process->isSuccessful()) {
+        Log::debug(' getOutput:' . $command_process->getOutput());
+        Log::debug(' getErrorOutput:' . $command_process->getErrorOutput());
+        if (!$command_process->isSuccessful()) {
             throw new ProcessFailedException($command_process);
         }
         Log::debug(' Done.');
@@ -229,8 +229,8 @@ class PyMLController extends Controller
         /* */
         $file_output_log = 'output.log';
         $file_output_err = 'output.err';
-        $file_output_fullpath_log = $dir_working.'/'.$file_output_log;
-        $file_output_fullpath_err = $dir_working.'/'.$file_output_err;
+        $file_output_fullpath_log = $dir_working . '/' . $file_output_log;
+        $file_output_fullpath_err = $dir_working . '/' . $file_output_err;
 
         /* Write warnings and errors into log file */
         Log::debug(" Write warnings and errors into \"$file_output_fullpath_err\"");
@@ -248,7 +248,7 @@ class PyMLController extends Controller
         */
 
         if ($output_format == 'text') {
-            $contents = Storage::disk('data')->get($dir_working.'/pyml_magnitudes.csv');
+            $contents = Storage::disk('data')->get($dir_working . '/pyml_magnitudes.csv');
             /* set headers */
             $headers['Content-type'] = 'text/plain';
 
@@ -256,7 +256,7 @@ class PyMLController extends Controller
         } else {
             /* Get pyml csv file */
             $csvToArray = [];
-            if (($open = fopen($dir_data.$dir_working.'/pyml_magnitudes.csv', 'r')) !== false) {
+            if (($open = fopen($dir_data . $dir_working . '/pyml_magnitudes.csv', 'r')) !== false) {
                 while (($data = fgetcsv(
                     $open,
                     1000,
@@ -295,47 +295,52 @@ class PyMLController extends Controller
             unset($csvToArray[0]);  // Remove header
             unset($csvToArray[1]);  // Remove origin magnitude
             foreach ($csvToArray as $csvToArrayLine) {
-                [$mlcha, $scnl, $ml_hb, $ml_hb_weight, $e, $ml_db, $ml_db_weight] = explode(' ', $csvToArrayLine[0]);
+                Log::debug(' ==== csvToArrayLine ====:', $csvToArrayLine);
+                [$mlcha, $scnl, $ml_hb, $ml_hb_weight, $e, $ml_db, $ml_db_weight] = explode(' ', $csvToArrayLine[0]) + ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']; // the second array (['a', 'b', ecc..]) is used to set 'default' value.
 
-                /* Get SCNL line */
-                $search_items = [];
-                $scnl_exploded = explode('_', $scnl);
-                $net = $scnl_exploded[0];
-                $sta = $scnl_exploded[1];
-                if (strtolower($scnl_exploded[2]) == 'none') {
-                    $loc = null;
+                if (strtoupper($mlcha) == 'MLCHA') {
+                    /* Get SCNL line */
+                    $search_items = [];
+                    $scnl_exploded = explode('_', $scnl);
+                    $net = $scnl_exploded[0];
+                    $sta = $scnl_exploded[1];
+                    if (strtolower($scnl_exploded[2]) == 'none') {
+                        $loc = null;
+                    } else {
+                        $loc = $scnl_exploded[2];
+                        $search_items['loc'] = $loc;
+                    }
+                    $cha = $scnl_exploded[3];
+                    $search_items['net'] = $net;
+                    $search_items['sta'] = $sta;
+                    $search_items['cha'] = $cha;
+
+                    /** Search items, into:
+                     *   '$input_parameters['data']['amplitudes']'
+                     *  with:
+                     *   'net=$net', 'sta=$sta', 'cha=$cha', (optional 'loc=$loc').
+                     */
+                    $inputAmplitude = self::array_keys_exist($input_parameters['data']['amplitudes'], $search_items);
+
+                    /* build final array */
+                    $stationmagnitude = $inputAmplitude[0];
+                    $stationmagnitude['hb'] = [
+                        'ml' => $ml_hb,
+                        'w' => $ml_hb_weight,
+                    ];
+                    $stationmagnitude['db'] = [
+                        'ml' => $ml_db,
+                        'w' => $ml_db_weight,
+                    ];
+                    $output['data']['stationmagnitudes'][] = $stationmagnitude;
                 } else {
-                    $loc = $scnl_exploded[2];
-                    $search_items['loc'] = $loc;
+                    Log::debug('  the line doesn\'t start with "MLCHA"; skip...');
                 }
-                $cha = $scnl_exploded[3];
-                $search_items['net'] = $net;
-                $search_items['sta'] = $sta;
-                $search_items['cha'] = $cha;
-
-                /** Search items, into:
-                 *   '$input_parameters['data']['amplitudes']'
-                 *  with:
-                 *   'net=$net', 'sta=$sta', 'cha=$cha', (optional 'loc=$loc').
-                 */
-                $inputAmplitude = self::array_keys_exist($input_parameters['data']['amplitudes'], $search_items);
-
-                /* build final array */
-                $stationmagnitude = $inputAmplitude[0];
-                $stationmagnitude['hb'] = [
-                    'ml' => $ml_hb,
-                    'w' => $ml_hb_weight,
-                ];
-                $stationmagnitude['db'] = [
-                    'ml' => $ml_db,
-                    'w' => $ml_db_weight,
-                ];
-                $output['data']['stationmagnitudes'][] = $stationmagnitude;
             }
             /* END - Stationmagnitude */
 
             $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
-            Log::info('END - '.__CLASS__.' -> '.__FUNCTION__.' | locationExecutionTime='.$locationExecutionTime.' Milliseconds');
+            Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
 
             return response()->json($output, 200, [], JSON_PRETTY_PRINT);
         }
