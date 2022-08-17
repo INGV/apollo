@@ -65,6 +65,7 @@ class Hyp2000Controller extends Controller
      */
     public function location(Hyp2000Request $request)
     {
+
         //        Log::info("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
         //        /* Run process */
         //        //$command[] = 'ls';
@@ -351,12 +352,12 @@ class Hyp2000Controller extends Controller
 
     public function getStationInv($phases)
     {
-        Log::debug('START - '.__CLASS__.' -> '.__FUNCTION__);
+        Log::info('START - '.__CLASS__.' -> '.__FUNCTION__);
+        $getStationInvTimeStart = microtime(true);
 
         /* Build 'all_stations.hinv' file */
         $textHyp2000Stations = '';
-        //$Hyp2000StationsController = new Hyp2000StationsController;
-        $Hyp2000StationsController = new StationHinvController;
+        $StationHinvController = new StationHinvController;
 
         /* Number of stations */
         $n_hyp2000Sation = count($phases);
@@ -382,10 +383,13 @@ class Hyp2000Controller extends Controller
                 'endtime' => $endtime,
                 'cache' => 'true',
             ], $insertRequest->rules()));
-            $stationLine = $Hyp2000StationsController->query($insertRequest);
+            $stationLine = $StationHinvController->query($insertRequest);
             $textHyp2000Stations .= $stationLine->content();
             $count++;
         }
+
+        $getStationInvExecutionTime = number_format((microtime(true) - $getStationInvTimeStart) * 1000, 2);
+        Log::info('END - '.__CLASS__.' -> '.__FUNCTION__.' | getStationInvExecutionTime='.$getStationInvExecutionTime.' Milliseconds');
 
         return $textHyp2000Stations;
     }
