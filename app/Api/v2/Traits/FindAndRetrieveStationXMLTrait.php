@@ -107,7 +107,7 @@ trait FindAndRetrieveStationXMLTrait
         }
     }
 
-    protected static function retrieveUrl($url)
+    public static function retrieveUrl($url)
     {
         Log::debug('  START - '.__CLASS__.' -> '.__FUNCTION__);
 
