@@ -2,7 +2,8 @@
 apollo Release History
 #########################
 
-* Release 2.7.0 (2022-07-27)
+* Release 2.7.0 (2022-08-17)
+  - 1)Formatting code with 'laravel/pint' PHP-Package 2)Add route '/populate-cache'.
   - When a station is not found in the FDSN nodes, try on 'webservices.ingv.it' with 'authoritative=any'
   - Update PHP-Packages ('composer update') 
   - Update PyML submodule
