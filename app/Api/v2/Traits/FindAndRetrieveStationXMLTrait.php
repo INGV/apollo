@@ -26,6 +26,9 @@ trait FindAndRetrieveStationXMLTrait
         if (isset($input_parameters['endtime'])) {
             $urlParams .= '&endtime='.$input_parameters['endtime'];
         }
+        if (isset($input_parameters['format'])) {
+            $urlParams .= '&format='.$input_parameters['format'];
+        }
         if (isset($input_parameters['cache'])) {
             $cache = $input_parameters['cache'];
         } else {
@@ -63,13 +66,23 @@ trait FindAndRetrieveStationXMLTrait
         };
 
         /* START - Set Redis chache key */
-        $redisCacheKey = 'stationxml__'.$input_parameters['net'].'.'.$input_parameters['sta'];
+        $redisCacheKey = 'stationxml';
+        if (isset($input_parameters['format']) && ! empty($input_parameters['format'])) {
+            $redisCacheKey .= $input_parameters['format'];
+        }
+        $redisCacheKey .= '__'.$input_parameters['net'].'.'.$input_parameters['sta'];
         if (isset($input_parameters['loc']) && ! empty($input_parameters['loc'])) {
             $redisCacheKey .= '.'.$input_parameters['loc'];
         } else {
             $redisCacheKey .= '.--';
         }
         $redisCacheKey .= '.'.$input_parameters['cha'];
+        if (isset($input_parameters['starttime']) && ! empty($input_parameters['starttime'])) {
+            $redisCacheKey .= '__'.str_replace('-', '', substr($input_parameters['starttime'], 0, 7));
+        }
+        if (isset($input_parameters['endtime']) && ! empty($input_parameters['endtime'])) {
+            $redisCacheKey .= '-'.str_replace('-', '', substr($input_parameters['endtime'], 0, 7));
+        }
         /* END - Set Redis chache key */
 
         if (config('apollo.cacheEnabled')) {
