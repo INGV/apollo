@@ -62,91 +62,102 @@ class StationHinvModel extends Model
     {
         Log::debug('START - '.__CLASS__.' -> '.__FUNCTION__);
 
+        // Add 'format=text'
+        $input_parameters['format'] = 'text';
+
+        // Check 'starttime' and 'endtime'
+        if (isset($input_parameters['starttime']) && ! empty($input_parameters['starttime'])) {
+            $input_parameters['starttime'] = substr($input_parameters['starttime'], 0, 10).'T00:00:00';
+        } else {
+            $input_parameters['starttime'] = now()->format('Y-m-d').'T00:00:00';
+        }
+        if (isset($input_parameters['endtime']) && ! empty($input_parameters['endtime'])) {
+            $input_parameters['endtime'] = substr($input_parameters['endtime'], 0, 10).'T23:59:59';
+        } else {
+            $input_parameters['endtime'] = now()->format('Y-m-d').'T23:59:59';
+        }
+
         // Closure for executing a request url
         $func_execute_request_url = function () use ($input_parameters, $timeoutSeconds) {
-            $stationXML = FindAndRetrieveStationXMLTrait::get($input_parameters, $timeoutSeconds);
+            $stationXMLText = FindAndRetrieveStationXMLTrait::get($input_parameters, $timeoutSeconds);
 
-            if (is_null($stationXML)) {
+            if (is_null($stationXMLText)) {
                 $text = '--';
             } else {
-                $stationXMLObj = simplexml_load_string($stationXML);
+                $stationXMLText = explode("\n", $stationXMLText);
+                unset($stationXMLText[0]); // remove comment line
 
+                $stationXMLTextExploded = explode('|', $stationXMLText[1]);
                 $text = '';
                 $str_pad_string = ' ';
-                foreach ($stationXMLObj->Network as $network) {
-                    $net = (string) $network->attributes()->code;
-                    foreach ($network->Station as $station) {
-                        $sta = (string) $station->attributes()->code;
-                        foreach ($station->Channel as $channel) {
-                            $cha = (string) $channel->attributes()->code;
-                            $loc = (string) $channel->attributes()->locationCode;
-                            $lat = (float) $channel->Latitude;
-                            $lon = (float) $channel->Longitude;
-                            $elev = (float) $channel->Elevation;
 
-                            /* Convert 'lat' and 'lon' */
-                            $arrayDmsLatLon = self::DECtoDMS($lat, $lon);
+                $net = (string) $stationXMLTextExploded[0];
+                $sta = (string) $stationXMLTextExploded[1];
+                $cha = (string) $stationXMLTextExploded[3];
+                $loc = (string) $stationXMLTextExploded[2];
+                $lat = (float) $stationXMLTextExploded[4];
+                $lon = (float) $stationXMLTextExploded[5];
+                $elev = (float) $stationXMLTextExploded[6];
 
-                            /* Format data */
-                            $staFormatted = self::fromFortranFormatToString('A5', $sta, $str_pad_string, STR_PAD_RIGHT);
-                            $netFormatted = self::fromFortranFormatToString('A2', $net, $str_pad_string);
-                            $chaCompFormatted = self::fromFortranFormatToString('A1', substr($cha, 2, 1), $str_pad_string);
-                            $chaFormatted = self::fromFortranFormatToString('A3', $cha, $str_pad_string);
-                            $blank = self::fromFortranFormatToString('1X', null, $str_pad_string);
-                            $latDegFormatted = self::fromFortranFormatToString('I2', $arrayDmsLatLon['lat']['degrees'], $str_pad_string);
-                            $latMinFormatted = self::fromFortranFormatToString('F7.4', $arrayDmsLatLon['lat']['minutes'], $str_pad_string);
-                            $latDirFormatted = self::fromFortranFormatToString('A1', $arrayDmsLatLon['lat']['direction'], $str_pad_string);
-                            $lonDegFormatted = self::fromFortranFormatToString('I3', $arrayDmsLatLon['lon']['degrees'], $str_pad_string);
-                            $lonMinFormatted = self::fromFortranFormatToString('F7.4', $arrayDmsLatLon['lon']['minutes'], $str_pad_string);
-                            $lonDirFormatted = self::fromFortranFormatToString('A1', $arrayDmsLatLon['lon']['direction'], $str_pad_string);
-                            $elevFormatted = self::fromFortranFormatToString('I4', explode('.', $elev)[0], $str_pad_string);
+                /* Convert 'lat' and 'lon' */
+                $arrayDmsLatLon = self::DECtoDMS($lat, $lon);
 
-                            $arrayKey = $net.'_'.$sta.'_'.$cha.'_'.$loc;
-                            $text =
-                                $staFormatted.
-                                $blank.
-                                $netFormatted.
-                                $blank.
-                                $chaCompFormatted.
-                                $chaFormatted.
-                                $blank.
-                                $blank.
-                                $latDegFormatted.
-                                $blank.
-                                $latMinFormatted.
-                                $latDirFormatted.
-                                $lonDegFormatted.
-                                $blank.
-                                $lonMinFormatted.
-                                $lonDirFormatted.
-                                $elevFormatted.
-                                $blank.
-                                $blank.
-                                $blank.
-                                $blank.
-                                $blank.
-                                '1'.
-                                $blank.
-                                $blank.
-                                '0.00'.
-                                $blank.
-                                $blank.
-                                '0.00'.
-                                $blank.
-                                $blank.
-                                '0.00'.
-                                $blank.
-                                $blank.
-                                '0.00'.
-                                $blank.
-                                '0'.
-                                $blank.
-                                $blank.
-                                '1.00--'.
-                                "\n";
-                        }
-                    }
-                }
+                /* Format data */
+                $staFormatted = self::fromFortranFormatToString('A5', $sta, $str_pad_string, STR_PAD_RIGHT);
+                $netFormatted = self::fromFortranFormatToString('A2', $net, $str_pad_string);
+                $chaCompFormatted = self::fromFortranFormatToString('A1', substr($cha, 2, 1), $str_pad_string);
+                $chaFormatted = self::fromFortranFormatToString('A3', $cha, $str_pad_string);
+                $blank = self::fromFortranFormatToString('1X', null, $str_pad_string);
+                $latDegFormatted = self::fromFortranFormatToString('I2', $arrayDmsLatLon['lat']['degrees'], $str_pad_string);
+                $latMinFormatted = self::fromFortranFormatToString('F7.4', $arrayDmsLatLon['lat']['minutes'], $str_pad_string);
+                $latDirFormatted = self::fromFortranFormatToString('A1', $arrayDmsLatLon['lat']['direction'], $str_pad_string);
+                $lonDegFormatted = self::fromFortranFormatToString('I3', $arrayDmsLatLon['lon']['degrees'], $str_pad_string);
+                $lonMinFormatted = self::fromFortranFormatToString('F7.4', $arrayDmsLatLon['lon']['minutes'], $str_pad_string);
+                $lonDirFormatted = self::fromFortranFormatToString('A1', $arrayDmsLatLon['lon']['direction'], $str_pad_string);
+                $elevFormatted = self::fromFortranFormatToString('I4', explode('.', $elev)[0], $str_pad_string);
+
+                $text =
+                    $staFormatted.
+                    $blank.
+                    $netFormatted.
+                    $blank.
+                    $chaCompFormatted.
+                    $chaFormatted.
+                    $blank.
+                    $blank.
+                    $latDegFormatted.
+                    $blank.
+                    $latMinFormatted.
+                    $latDirFormatted.
+                    $lonDegFormatted.
+                    $blank.
+                    $lonMinFormatted.
+                    $lonDirFormatted.
+                    $elevFormatted.
+                    $blank.
+                    $blank.
+                    $blank.
+                    $blank.
+                    $blank.
+                    '1'.
+                    $blank.
+                    $blank.
+                    '0.00'.
+                    $blank.
+                    $blank.
+                    '0.00'.
+                    $blank.
+                    $blank.
+                    '0.00'.
+                    $blank.
+                    $blank.
+                    '0.00'.
+                    $blank.
+                    '0'.
+                    $blank.
+                    $blank.
+                    '1.00--'.
+                    "\n";
             }
 
             return $text;
@@ -160,6 +171,12 @@ class StationHinvModel extends Model
             $redisCacheKey .= '.--';
         }
         $redisCacheKey .= '.'.$input_parameters['cha'];
+        if (isset($input_parameters['starttime']) && ! empty($input_parameters['starttime'])) {
+            $redisCacheKey .= '__'.str_replace('-', '', substr($input_parameters['starttime'], 0, 7));
+        }
+        if (isset($input_parameters['endtime']) && ! empty($input_parameters['endtime'])) {
+            $redisCacheKey .= '-'.str_replace('-', '', substr($input_parameters['endtime'], 0, 7));
+        }
         /* END - Set Redis chache key */
 
         /* Set $cache */
