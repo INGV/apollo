@@ -365,11 +365,11 @@ class Hyp2000Controller extends Controller
         foreach ($phases as $phase) {
             // cerca su 'arrival_time' altrimenti 'now'
             if (isset($phase['arrival_time']) && ! empty($phase['arrival_time'])) {
-                $starttime = substr($phase['arrival_time'], 0, 10).'T00:00:00';
-                $endtime = substr($phase['arrival_time'], 0, 10).'T23:59:59';
+                $starttime = substr($phase['arrival_time'], 0, 10).'T00:00:00.000Z';
+                $endtime = substr($phase['arrival_time'], 0, 10).'T23:59:59.999Z';
             } else {
-                $starttime = now()->format('Y-m-d').'T00:00:00';
-                $endtime = now()->format('Y-m-d').'T23:59:59';
+                $starttime = now()->format('Y-m-d').'T00:00:00.000Z';
+                $endtime = now()->format('Y-m-d').'T23:59:59.999Z';
             }
 
             Log::info($count.'/'.$n_hyp2000Sation.' - Searching: '.$phase['net'].'.'.$phase['sta'].'.'.$phase['loc'].'.'.$phase['cha']);
