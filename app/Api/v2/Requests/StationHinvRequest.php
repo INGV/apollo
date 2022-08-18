@@ -3,6 +3,7 @@
 namespace App\Api\v2\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use VLauciani\LaravelValidationRules\Rules\RFC3339ExtendedRule;
 
 class StationHinvRequest extends FormRequest
 {
@@ -24,11 +25,13 @@ class StationHinvRequest extends FormRequest
     public function rules()
     {
         $validationRules = [
-            'sta'                 => ['required', 'string'],
-            'net'                 => ['required', 'string', 'between:1,2'],
-            'cha'                 => ['required', 'string', 'size:3'],
-            'loc'                 => ['nullable', 'string'],
-            'cache'               => ['in:true,false'],
+            'sta' => ['required', 'string'],
+            'net' => ['required', 'string', 'between:1,2'],
+            'cha' => ['required', 'string', 'size:3'],
+            'loc' => ['nullable', 'string'],
+            'starttime' => ['nullable', new RFC3339ExtendedRule()],
+            'endtime' => ['nullable', new RFC3339ExtendedRule()],
+            'cache' => ['in:true,false'],
         ];
 
         return $validationRules;
