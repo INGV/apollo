@@ -6,6 +6,9 @@ use App\Api\v2\Models\StationHinvModel;
 use App\Api\v2\Requests\PopulateCacheRequest;
 use App\Api\v2\Traits\FindAndRetrieveStationXMLTrait;
 use App\Http\Controllers\Controller;
+use Async;
+use Illuminate\Http\Client\Pool;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class PopulateCacheController extends Controller
@@ -14,7 +17,8 @@ class PopulateCacheController extends Controller
 
     public function query(PopulateCacheRequest $request)
     {
-        Log::debug('START - '.__CLASS__.' -> '.__FUNCTION__);
+        Log::info('START - '.__CLASS__.' -> '.__FUNCTION__);
+        $queryTimeStart = microtime(true);
 
         /* From GET, process only '$parameters_permitted' */
         $requestOnly = $request->validated();
@@ -34,7 +38,7 @@ class PopulateCacheController extends Controller
         if (isset($requestOnly['cha'])) {
             $urlParams .= '&cha='.$requestOnly['cha'];
         } else {
-            $urlParams .= '&cha=*';
+            $urlParams .= '&cha=HH?,EH?,HN?';
         }
         if (isset($requestOnly['cache'])) {
             $cache = $requestOnly['cache'];
@@ -52,53 +56,102 @@ class PopulateCacheController extends Controller
 
         /* */
         $url = 'http://webservices.ingv.it/fdsnws/station/1/query?'.$urlParams;
-        $urlOutput = FindAndRetrieveStationXMLTrait::retrieveUrl($url);
+        $urlOutput = FindAndRetrieveStationXMLTrait::retrieveUrl($url.'&format=text');
         $urlOutputData = $urlOutput['data'];
         $urlOutputHttpStatusCode = $urlOutput['httpStatusCode'];
         Log::debug(' urlOutputHttpStatusCode='.$urlOutputHttpStatusCode);
-        //Log::debug(' urlOutputData='.$urlOutputData);
         if ($urlOutputHttpStatusCode != 200) {
-            abort(500, 'Error retrieving data!');
+            abort($urlOutputHttpStatusCode);
         }
 
-        $stationXMLObj = simplexml_load_string($urlOutputData);
-
-        $textHyp2000Stations = '';
-        $channelPermittedArray = [
-            'HH',
-            'EH',
-            'HN',
-        ];
-        foreach ($stationXMLObj->Network as $network) {
-            $netCode = (string) $network->attributes()->code;
-            foreach ($network->Station as $station) {
-                $staCode = (string) $station->attributes()->code;
-                foreach ($station->Channel as $channel) {
-                    $chaCode = (string) $channel->attributes()->code;
-                    if (in_array(substr($chaCode, 0, 2), $channelPermittedArray)) {
-                        Log::debug('***** SCNL='.$netCode.'.'.$staCode.'.'.$chaCode.' ***** ');
-                        $stationLine = StationHinvModel::getData([
-                            'net' => $netCode,
-                            'sta' => $staCode,
-                            'cha' => $chaCode,
-                            'cache' => $cache,
-                        ], config('apollo.cacheTimeout'));
-                        $textHyp2000Stations .= $stationLine;
-                        /*
-                        FindAndRetrieveStationXMLTrait::get([
-                            'net' => $netCode,
-                            'sta' => $staCode,
-                            'cha' => $chaCode,
-                        ], config('apollo.cacheTimeout'));
-                        */
-                    }
-                }
+        // Prepare data
+        $arrayScnls = [];
+        $urlOutputData = explode("\n", $urlOutputData);
+        unset($urlOutputData[0]);
+        foreach ($urlOutputData as $line) {
+            $b = explode('|', $line);
+            if (! empty($b[3])) {
+                $arrayScnls[] = [
+                    'net' => $b[0],
+                    'sta' => $b[1],
+                    'cha' => $b[3],
+                ];
             }
         }
+
+        // Process data
+        $count = 1;
+        foreach ($arrayScnls as $arrayScnl) {
+            Log::debug('***** '.$count.'/'.count($arrayScnls).' - SCNL='.$arrayScnl['net'].'.'.$arrayScnl['sta'].'.'.$arrayScnl['cha'].' ***** ');
+            // ===== 1 =====
+            FindAndRetrieveStationXMLTrait::get([
+                'net' => $arrayScnl['net'],
+                'sta' => $arrayScnl['sta'],
+                'cha' => $arrayScnl['cha'],
+                'starttime' => now()->format('Y-m-d').'T00:00:00',
+                'endtime' => now()->format('Y-m-d').'T23:59:59',
+                'cache' => 'false',
+            ], config('apollo.cacheTimeout'));
+
+            // ===== 2 =====
+            //$promises[] = 'http://webservices.ingv.it/fdsnws/station/1/query?net='.$arrayScnl['net'].'&sta='.$arrayScnl['sta'].'&cha='.$arrayScnl['cha'];
+
+            /*
+            // ===== 3 =====
+            Async::run(function () use ($arrayScnl) {
+                /*
+                Async::run(function () use ($netCode, $staCode, $chaCode, $cache) {
+                    Log::debug('==== Async ====');
+                    \App\Api\v2\Models\StationHinvModel::getData([
+                        'net' => $netCode,
+                        'sta' => $staCode,
+                        'cha' => $chaCode,
+                        'cache' => $cache,
+                    ], config('apollo.cacheTimeout'));
+
+                    return 1;
+                });
+                */
+
+            // ===== 4 =====
+            //StationHinvModel::getData([
+            //    'net' => $netCode,
+            //    'sta' => $staCode,
+            //    'cha' => $chaCode,
+            //    'cache' => $cache,
+            //], config('apollo.cacheTimeout'));
+
+            /*
+                // ===== 5 =====
+                FindAndRetrieveStationXMLTrait::get([
+                    'net' => $arrayScnl['net'],
+                    'sta' => $arrayScnl['sta'],
+                    'cha' => $arrayScnl['cha'],
+                    'cache' => 'false',
+                ], config('apollo.cacheTimeout'));
+
+                return $arrayScnl['net'].'.'.$arrayScnl['sta'].'.'.$arrayScnl['cha'];
+            });
+            */
+            $count++;
+        }
+        // ===== 2 =====
+        /*
+        $responses = Http::pool(function (Pool $pool) use ($promises) {
+            return collect($promises)
+                ->map(fn ($line) => $pool->get($line));
+        });
+        $queryExecutionTime = number_format((microtime(true) - $queryTimeStart) * 1000, 2);
+        Log::info('END - '.__CLASS__.' -> '.__FUNCTION__.' | queryExecutionTime='.$queryExecutionTime.' Milliseconds');
+        dd($promises, $responses, $responses[0]->ok(), $responses[0]->getBody()->getContents());
+        */
+
         /* set headers */
         $headers['Content-type'] = 'text/plain';
 
-        Log::debug('END - '.__CLASS__.' -> '.__FUNCTION__);
+        $queryExecutionTime = number_format((microtime(true) - $queryTimeStart) * 1000, 2);
+        Log::info('END - '.__CLASS__.' -> '.__FUNCTION__.' | queryExecutionTime='.$queryExecutionTime.' Milliseconds');
+        $textHyp2000Stations = 'ok';
 
         return response()->make($textHyp2000Stations, 200, $headers);
     }
