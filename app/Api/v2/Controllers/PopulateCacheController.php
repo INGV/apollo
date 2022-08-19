@@ -25,7 +25,7 @@ class PopulateCacheController extends Controller
         $requestOnly = $request->validated();
 
         /* Set Url params */
-        $urlParams = 'level=channel&format=text&starttime='.now()->format('Y-m-d');
+        $urlParams = 'authoritative=any&level=channel&format=text&starttime='.now()->format('Y-m-d');
         if (isset($requestOnly['net'])) {
             $urlParams .= '&net='.$requestOnly['net'];
         } else {
