@@ -19,6 +19,7 @@ class PyMLModel extends Model
         $input_parameters['format'] = 'text';
 
         // Check 'starttime' and 'endtime'
+        /*
         if (isset($input_parameters['time1']) && ! empty($input_parameters['time1'])) {
             $input_parameters['starttime'] = substr($input_parameters['time1'], 0, 10).'T00:00:00';
             $input_parameters['endtime'] = substr($input_parameters['time1'], 0, 10).'T23:59:59';
@@ -29,6 +30,7 @@ class PyMLModel extends Model
             $input_parameters['starttime'] = now()->format('Y-m-d').'T00:00:00';
             $input_parameters['endtime'] = now()->format('Y-m-d').'T23:59:59';
         }
+        */
 
         // Closure for executing a request url
         $func_execute_request_url = function () use ($input_parameters, $timeoutSeconds) {
@@ -68,12 +70,14 @@ class PyMLModel extends Model
             $redisCacheKey .= '.--';
         }
         $redisCacheKey .= '.'.$input_parameters['cha'];
+        /*
         if (isset($input_parameters['starttime']) && ! empty($input_parameters['starttime'])) {
             $redisCacheKey .= '__'.str_replace('-', '', substr($input_parameters['starttime'], 0, 7));
         }
         if (isset($input_parameters['endtime']) && ! empty($input_parameters['endtime'])) {
             $redisCacheKey .= '-'.str_replace('-', '', substr($input_parameters['endtime'], 0, 7));
         }
+        */
         /* END - Set Redis chache key */
 
         /* Set $cache */

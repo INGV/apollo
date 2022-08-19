@@ -24,7 +24,7 @@ class PopulateCacheController extends Controller
         $requestOnly = $request->validated();
 
         /* Set Url params */
-        $urlParams = 'level=channel&format=xml&starttime='.now()->format('Y-m-d');
+        $urlParams = 'level=channel&format=text&starttime='.now()->format('Y-m-d');
         if (isset($requestOnly['net'])) {
             $urlParams .= '&net='.$requestOnly['net'];
         } else {
@@ -56,7 +56,7 @@ class PopulateCacheController extends Controller
 
         /* */
         $url = 'http://webservices.ingv.it/fdsnws/station/1/query?'.$urlParams;
-        $urlOutput = FindAndRetrieveStationXMLTrait::retrieveUrl($url.'&format=text');
+        $urlOutput = FindAndRetrieveStationXMLTrait::retrieveUrl($url);
         $urlOutputData = $urlOutput['data'];
         $urlOutputHttpStatusCode = $urlOutput['httpStatusCode'];
         Log::debug(' urlOutputHttpStatusCode='.$urlOutputHttpStatusCode);
@@ -81,16 +81,18 @@ class PopulateCacheController extends Controller
 
         // Process data
         $count = 1;
+        $textHyp2000Stations = '';
         foreach ($arrayScnls as $arrayScnl) {
             Log::debug('***** '.$count.'/'.count($arrayScnls).' - SCNL='.$arrayScnl['net'].'.'.$arrayScnl['sta'].'.'.$arrayScnl['cha'].' ***** ');
+            $textHyp2000Stations .= $arrayScnl['net'].'.'.$arrayScnl['sta'].'.'.$arrayScnl['cha']."\n";
+
             // ===== 1 =====
             FindAndRetrieveStationXMLTrait::get([
                 'net' => $arrayScnl['net'],
                 'sta' => $arrayScnl['sta'],
                 'cha' => $arrayScnl['cha'],
-                'starttime' => now()->format('Y-m-d').'T00:00:00',
-                'endtime' => now()->format('Y-m-d').'T23:59:59',
-                'cache' => 'false',
+                'format' => 'text',
+                'cache' => $cache,
             ], config('apollo.cacheTimeout'));
 
             // ===== 2 =====
@@ -151,7 +153,6 @@ class PopulateCacheController extends Controller
 
         $queryExecutionTime = number_format((microtime(true) - $queryTimeStart) * 1000, 2);
         Log::info('END - '.__CLASS__.' -> '.__FUNCTION__.' | queryExecutionTime='.$queryExecutionTime.' Milliseconds');
-        $textHyp2000Stations = 'ok';
 
         return response()->make($textHyp2000Stations, 200, $headers);
     }

@@ -22,9 +22,13 @@ trait FindAndRetrieveStationXMLTrait
         }
         if (isset($input_parameters['starttime'])) {
             $urlParams .= '&starttime='.$input_parameters['starttime'];
+        } else {
+            $urlParams .= '&starttime='.now()->format('Y-m-d').'T00:00:00';
         }
         if (isset($input_parameters['endtime'])) {
             $urlParams .= '&endtime='.$input_parameters['endtime'];
+        } else {
+            $urlParams .= '&endtime='.now()->format('Y-m-d').'T23:59:59';
         }
         if (isset($input_parameters['format'])) {
             $urlParams .= '&format='.$input_parameters['format'];
@@ -77,12 +81,14 @@ trait FindAndRetrieveStationXMLTrait
             $redisCacheKey .= '.--';
         }
         $redisCacheKey .= '.'.$input_parameters['cha'];
+        /*
         if (isset($input_parameters['starttime']) && ! empty($input_parameters['starttime'])) {
             $redisCacheKey .= '__'.str_replace('-', '', substr($input_parameters['starttime'], 0, 7));
         }
         if (isset($input_parameters['endtime']) && ! empty($input_parameters['endtime'])) {
             $redisCacheKey .= '-'.str_replace('-', '', substr($input_parameters['endtime'], 0, 7));
         }
+        */
         /* END - Set Redis chache key */
 
         if (config('apollo.cacheEnabled')) {
