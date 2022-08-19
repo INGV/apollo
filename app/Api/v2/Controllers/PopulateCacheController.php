@@ -2,6 +2,7 @@
 
 namespace App\Api\v2\Controllers;
 
+use App\Api\v2\Models\PyMLModel;
 use App\Api\v2\Models\StationHinvModel;
 use App\Api\v2\Requests\PopulateCacheRequest;
 use App\Api\v2\Traits\FindAndRetrieveStationXMLTrait;
@@ -87,13 +88,13 @@ class PopulateCacheController extends Controller
             $textHyp2000Stations .= $arrayScnl['net'].'.'.$arrayScnl['sta'].'.'.$arrayScnl['cha']."\n";
 
             // ===== 1 =====
-            FindAndRetrieveStationXMLTrait::get([
-                'net' => $arrayScnl['net'],
-                'sta' => $arrayScnl['sta'],
-                'cha' => $arrayScnl['cha'],
-                'format' => 'text',
-                'cache' => $cache,
-            ], config('apollo.cacheTimeout'));
+            //FindAndRetrieveStationXMLTrait::get([
+            //    'net' => $arrayScnl['net'],
+            //    'sta' => $arrayScnl['sta'],
+            //    'cha' => $arrayScnl['cha'],
+            //    'format' => 'text',
+            //    'cache' => $cache,
+            //], config('apollo.cacheTimeout'));
 
             // ===== 2 =====
             //$promises[] = 'http://webservices.ingv.it/fdsnws/station/1/query?net='.$arrayScnl['net'].'&sta='.$arrayScnl['sta'].'&cha='.$arrayScnl['cha'];
@@ -116,12 +117,19 @@ class PopulateCacheController extends Controller
                 */
 
             // ===== 4 =====
-            //StationHinvModel::getData([
-            //    'net' => $netCode,
-            //    'sta' => $staCode,
-            //    'cha' => $chaCode,
-            //    'cache' => $cache,
-            //], config('apollo.cacheTimeout'));
+            StationHinvModel::getData([
+                'net' => $arrayScnl['net'],
+                'sta' => $arrayScnl['sta'],
+                'cha' => $arrayScnl['cha'],
+                'cache' => $cache,
+            ], config('apollo.cacheTimeout'));
+
+            PyMLModel::getCoord([
+                'net' => $arrayScnl['net'],
+                'sta' => $arrayScnl['sta'],
+                'cha' => $arrayScnl['cha'],
+                'cache' => $cache,
+            ], config('apollo.cacheTimeout'));
 
             /*
                 // ===== 5 =====
