@@ -22,7 +22,7 @@ class StationHinvTest extends TestCase
             'sta'    => 'ACER',
             'cha'    => 'HHZ',
             'loc'    => '--',
-            'starttime' => '2021-03-24'
+            'starttime' => '2021-03-24T00:00:00.000Z'
         ];
 
         $response = $this->get(route('v2.location.station-hinv', $input));
