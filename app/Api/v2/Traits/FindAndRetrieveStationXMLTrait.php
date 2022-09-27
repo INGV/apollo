@@ -10,28 +10,28 @@ trait FindAndRetrieveStationXMLTrait
 {
     public static function get($input_parameters, $timeoutSeconds = 2880)
     {
-        Log::debug(' START - '.__CLASS__.' -> '.__FUNCTION__);
+        Log::debug(' START - ' . __CLASS__ . ' -> ' . __FUNCTION__);
 
         /* Get all FDSNWS nodes */
         $fdsnws_nodes = config('apollo.fdsnws_nodes');
 
         /* Set Url params */
-        $urlParams = 'level=channel&net='.$input_parameters['net'].'&sta='.$input_parameters['sta'].'&cha='.$input_parameters['cha'];
+        $urlParams = 'level=channel&net=' . $input_parameters['net'] . '&sta=' . $input_parameters['sta'] . '&cha=' . $input_parameters['cha'];
         if (isset($input_parameters['loc'])) {
-            $urlParams .= '&loc='.$input_parameters['loc'];
+            $urlParams .= '&loc=' . $input_parameters['loc'];
         }
         if (isset($input_parameters['starttime'])) {
-            $urlParams .= '&starttime='.$input_parameters['starttime'];
+            $urlParams .= '&starttime=' . $input_parameters['starttime'];
         } else {
-            $urlParams .= '&starttime='.now()->format('Y-m-d').'T00:00:00';
+            $urlParams .= '&starttime=' . now()->format('Y-m-d') . 'T00:00:00';
         }
         if (isset($input_parameters['endtime'])) {
-            $urlParams .= '&endtime='.$input_parameters['endtime'];
+            $urlParams .= '&endtime=' . $input_parameters['endtime'];
         } else {
-            $urlParams .= '&endtime='.now()->format('Y-m-d').'T23:59:59';
+            $urlParams .= '&endtime=' . now()->format('Y-m-d') . 'T23:59:59';
         }
         if (isset($input_parameters['format'])) {
-            $urlParams .= '&format='.$input_parameters['format'];
+            $urlParams .= '&format=' . $input_parameters['format'];
         }
         if (isset($input_parameters['cache'])) {
             $cache = $input_parameters['cache'];
@@ -41,14 +41,14 @@ trait FindAndRetrieveStationXMLTrait
 
         $func_execute_request_url = function () use ($fdsnws_nodes, $urlParams) {
             foreach ($fdsnws_nodes as $fdsnws_node) {
-                $url = 'http://'.$fdsnws_node.'/fdsnws/station/1/query?'.$urlParams;
+                $url = 'http://' . $fdsnws_node . '/fdsnws/station/1/query?' . $urlParams;
 
                 /* Retrieve StationXML */
                 $urlOutput = self::retrieveUrl($url);
 
                 $urlOutputData = $urlOutput['data'];
                 $urlOutputHttpStatusCode = $urlOutput['httpStatusCode'];
-                Log::debug(' urlOutputHttpStatusCode='.$urlOutputHttpStatusCode);
+                Log::debug(' urlOutputHttpStatusCode=' . $urlOutputHttpStatusCode);
 
                 if ($urlOutputHttpStatusCode == 200) {
                     return $urlOutputData;
@@ -56,11 +56,11 @@ trait FindAndRetrieveStationXMLTrait
             }
 
             // START - Retry INGV StationXML with extra param(s)
-            $url = 'http://webservices.ingv.it/fdsnws/station/1/query?'.$urlParams.'&authoritative=any';
+            $url = 'http://webservices.ingv.it/fdsnws/station/1/query?' . $urlParams . '&authoritative=any';
             $urlOutput = self::retrieveUrl($url);
             $urlOutputData = $urlOutput['data'];
             $urlOutputHttpStatusCode = $urlOutput['httpStatusCode'];
-            Log::debug(' urlOutputHttpStatusCode='.$urlOutputHttpStatusCode);
+            Log::debug(' urlOutputHttpStatusCode=' . $urlOutputHttpStatusCode);
             if ($urlOutputHttpStatusCode == 200) {
                 return $urlOutputData;
             }
@@ -71,16 +71,16 @@ trait FindAndRetrieveStationXMLTrait
 
         /* START - Set Redis chache key */
         $redisCacheKey = 'stationxml';
-        if (isset($input_parameters['format']) && ! empty($input_parameters['format'])) {
+        if (isset($input_parameters['format']) && !empty($input_parameters['format'])) {
             $redisCacheKey .= $input_parameters['format'];
         }
-        $redisCacheKey .= '__'.$input_parameters['net'].'.'.$input_parameters['sta'];
-        if (isset($input_parameters['loc']) && ! empty($input_parameters['loc'])) {
-            $redisCacheKey .= '.'.$input_parameters['loc'];
+        $redisCacheKey .= '__' . $input_parameters['net'] . '.' . $input_parameters['sta'];
+        if (isset($input_parameters['loc']) && !empty($input_parameters['loc'])) {
+            $redisCacheKey .= '.' . $input_parameters['loc'];
         } else {
             $redisCacheKey .= '.--';
         }
-        $redisCacheKey .= '.'.$input_parameters['cha'];
+        $redisCacheKey .= '.' . $input_parameters['cha'];
         /*
         if (isset($input_parameters['starttime']) && ! empty($input_parameters['starttime'])) {
             $redisCacheKey .= '__'.str_replace('-', '', substr($input_parameters['starttime'], 0, 7));
@@ -92,7 +92,7 @@ trait FindAndRetrieveStationXMLTrait
         /* END - Set Redis chache key */
 
         if (config('apollo.cacheEnabled')) {
-            Log::debug('  Query cache enabled (timeout='.$timeoutSeconds.'sec), redisCacheKey="'.$redisCacheKey.'"');
+            Log::debug('  Query cache enabled (timeout=' . $timeoutSeconds . 'sec), redisCacheKey="' . $redisCacheKey . '"');
             if ($cache == 'false') {
                 Log::debug('   GET request contains \'cache=false\', forget cache');
                 Cache::forget($redisCacheKey);
@@ -101,24 +101,24 @@ trait FindAndRetrieveStationXMLTrait
         } else {
             Log::debug('  Query cache NOT enabled');
             if (Cache::has($redisCacheKey)) {
-                Log::debug('   forget:'.$redisCacheKey);
+                Log::debug('   forget:' . $redisCacheKey);
                 Cache::forget($redisCacheKey);
             }
             $stationXML = $func_execute_request_url();
         }
 
         if ($stationXML == '--') {
-            $textMessage = '!ATTENTION! - Not found: "'.$redisCacheKey.'"';
+            $textMessage = '!ATTENTION! - Not found: "' . $redisCacheKey . '"';
             if (config('apollo.cacheEnabled')) {
                 if (Cache::has($redisCacheKey)) {
                     $textMessage .= ' change cache timeout to 86400sec (24h).';
                     Cache::put($redisCacheKey, $stationXML, 86400);
                 }
             }
-            Log::debug('   '.$textMessage);
+            Log::debug('   ' . $textMessage);
         }
 
-        Log::debug(' END - '.__CLASS__.' -> '.__FUNCTION__);
+        Log::debug(' END - ' . __CLASS__ . ' -> ' . __FUNCTION__);
         if ($stationXML == '--') {
             return null;
         } else {
@@ -128,14 +128,14 @@ trait FindAndRetrieveStationXMLTrait
 
     public static function retrieveUrl($url)
     {
-        Log::debug('  START - '.__CLASS__.' -> '.__FUNCTION__);
+        Log::debug('  START - ' . __CLASS__ . ' -> ' . __FUNCTION__);
 
         /* Set variables */
         $outputData = '';
         $outputHttpStatusCode = 404;
 
         try {
-            Log::debug('   step_1a: '.$url);
+            Log::debug('   step_1a: ' . $url);
             /* https://laravel.com/docs/8.x/http-client */
             $response = Http::timeout(10)->get($url);
             $responseStatus = $response->status();
@@ -145,29 +145,29 @@ trait FindAndRetrieveStationXMLTrait
 
             Log::debug('   step_3');
             if ($responseStatus == 200) {
-                Log::debug('   step_4a - httpStatusCode='.$responseStatus);
+                Log::debug('   step_4a - httpStatusCode=' . $responseStatus);
                 $outputData = $response->body();
             } else {
-                Log::debug('   step_4b - httpStatusCode='.$responseStatus);
+                Log::debug('   step_4b - httpStatusCode=' . $responseStatus);
             }
             $outputHttpStatusCode = $responseStatus;
         } catch (\Illuminate\Http\Client\RequestException $e) {
             Log::debug('   step_1b');
-            Log::debug('    getCode:'.$e->getCode());
-            Log::debug('    getMessage:'.$e->getMessage());
+            Log::debug('    getCode:' . $e->getCode());
+            Log::debug('    getMessage:' . $e->getMessage());
             $outputHttpStatusCode = $e->getCode();
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             Log::debug('   step_1c');
-            Log::debug('    getCode:'.$e->getCode());
-            Log::debug('    getMessage:'.$e->getMessage());
+            Log::debug('    getCode:' . $e->getCode());
+            Log::debug('    getMessage:' . $e->getMessage());
             $outputHttpStatusCode = $e->getCode();
         } catch (\Exception $e) {
             Log::debug('   step_1d');
-            Log::debug('    getCode:'.$e->getCode());
-            Log::debug('    getMessage:'.$e->getMessage());
+            Log::debug('    getCode:' . $e->getCode());
+            Log::debug('    getMessage:' . $e->getMessage());
         }
 
-        Log::debug('  END - '.__CLASS__.' -> '.__FUNCTION__);
+        Log::debug('  END - ' . __CLASS__ . ' -> ' . __FUNCTION__);
 
         return $outputData = [
             'data' => $outputData,
