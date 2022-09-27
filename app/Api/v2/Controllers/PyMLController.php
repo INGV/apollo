@@ -86,7 +86,7 @@ class PyMLController extends Controller
      */
     public function location(PyMLRequest $request)
     {
-        Log::debug('START - ' . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::info('START - ' . __CLASS__ . ' -> ' . __FUNCTION__);
         $locationTimeStart = microtime(true);
 
         /* Get validated input */
@@ -213,7 +213,7 @@ class PyMLController extends Controller
             );
 
         /* Run process */
-        Log::debug(' Running docker: ', $command);
+        Log::info(' Running docker: ', $command);
         $command_timeout = 120;
         $command_process = new Process($command);
         $command_process->setTimeout($command_timeout);

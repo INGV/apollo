@@ -25,11 +25,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Log::info(' ----- NEW REQUEST ----- ');
-        Log::info(' $request->getMethod()                  = ' . $this->app->request->getMethod());
-        Log::info(' $request->fullUrl()                    = ' . $this->app->request->fullUrl());
-        Log::info(' $request->all()                        = ',  $this->app->request->all());
-        Log::info(' $request->getSchemeAndHttpHost()       = ' . $this->app->request->getSchemeAndHttpHost());
-        Log::info(' $request->ip()                         = ' . $this->app->request->ip());
+        Log::info(' $request->getMethod()              = ' . $this->app->request->getMethod());
+        Log::info(' $request->fullUrl()                = ' . $this->app->request->fullUrl());
+        Log::info(' $request->all()                    = ',  $this->app->request->all());
+        Log::info(' $request->getSchemeAndHttpHost()   = ' . $this->app->request->getSchemeAndHttpHost());
+        Log::info(' $request->ip()                     = ' . $this->app->request->ip());
 
         /**
          * The 'App\Http\Middleware/TrustProxies' is executed AFTER this 'AppServiceProvider' then the '$this->app->request->ip()'

@@ -66,45 +66,7 @@ class Hyp2000Controller extends Controller
     public function location(Hyp2000Request $request)
     {
 
-        //        Log::info("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
-        //        /* Run process */
-        //        //$command[] = 'ls';
-        //        $command = [
-        //            'docker',
-        //           'run',
-        //            '--rm',
-        //            '--user',
-        //            '0:0',
-        //            '-v',
-        //            "/var/www/storage/app:/opt/app",
-        //            'ew-sandbox:trunk_r8304',
-        //            'bash',
-        //            '-c',
-        //            ". ~/.bashrc &&
-        //            env"
-        //        ];
-        //        /*
-        //        $command2 = "docker run
-        //        --rm
-        //        -v /var/www/storage/app/data/hyp2000/20220309_113323__172.26.0.1__HkdFS:/opt/data
-        //        ew-sandbox:trunk_r8304
-        //        ls";
-        //        */
-        //        Log::debug(" Running command: ", $command);
-        //        $command_timeout = 120;
-        //        $command_process = new Process($command);
-        //        //$command_process = Process::fromShellCommandline($command2);
-        //        $command_process->setTimeout($command_timeout);
-        //        $command_process->run();
-        //        Log::debug(" getOutput:" . $command_process->getOutput());
-        //        Log::debug(" getErrorOutput:" . $command_process->getErrorOutput());
-        //        if (!$command_process->isSuccessful()) {
-        //            throw new ProcessFailedException($command_process);
-        //        }
-        //        dd(1);
-        //        Log::debug(" Done.");
-        //        /* !!!!!!!! END - Get 'whoami' ToDo better */
-
+        Log::info("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
         $locationTimeStart = microtime(true);
 
         $input_parameters = $request->validated();
@@ -120,7 +82,7 @@ class Hyp2000Controller extends Controller
         $textArch = $json2Arc->convert($input_parameters['data']);
 
         /****** START - hyp2000_conf ******/
-        if ((isset($input_parameters['data']['hyp2000_conf'])) && ! empty($input_parameters['data']['hyp2000_conf'])) {
+        if ((isset($input_parameters['data']['hyp2000_conf'])) && !empty($input_parameters['data']['hyp2000_conf'])) {
             $hyp2000Conf = $input_parameters['data']['hyp2000_conf'];
         } else {
             $hyp2000Conf = $this->default_hyp2000_conf;
@@ -128,7 +90,7 @@ class Hyp2000Controller extends Controller
         /****** END - hyp2000_conf ******/
 
         /****** START - model ******/
-        if ((isset($input_parameters['data']['model'])) && ! empty($input_parameters['data']['model'])) {
+        if ((isset($input_parameters['data']['model'])) && !empty($input_parameters['data']['model'])) {
             $model = $input_parameters['data']['model'];
         } else {
             $model = $this->default_model;
@@ -136,7 +98,7 @@ class Hyp2000Controller extends Controller
         /****** END - model ******/
 
         /****** START - output ******/
-        if ((isset($input_parameters['data']['output'])) && ! empty($input_parameters['data']['output'])) {
+        if ((isset($input_parameters['data']['output'])) && !empty($input_parameters['data']['output'])) {
             $output_format = $input_parameters['data']['output'];
         } else {
             $output_format = $this->default_output;
@@ -145,13 +107,13 @@ class Hyp2000Controller extends Controller
 
         $now = \DateTime::createFromFormat('U.u', number_format(microtime(true), 6, '.', ''));
         $nowFormatted = $now->format('Ymd_His');
-        $dir_working = '/hyp2000/'.$nowFormatted.'__'.gethostbyaddr(\request()->ip()).'__'.\Illuminate\Support\Str::random(5);
+        $dir_working = '/hyp2000/' . $nowFormatted . '__' . gethostbyaddr(\request()->ip()) . '__' . \Illuminate\Support\Str::random(5);
         $dir_input = 'input';
         $dir_data = config('filesystems.disks.data.root');
 
         /* Write ARC file on disk */
         $file_input_arc = 'input.arc';
-        $file_input_fullpath_arc = $dir_working.'/'.$dir_input.'/'.$file_input_arc;
+        $file_input_fullpath_arc = $dir_working . '/' . $dir_input . '/' . $file_input_arc;
         Storage::disk('data')->put($file_input_fullpath_arc, $textArch);
 
         /* Write hyp2000 conf file on disk */
@@ -181,7 +143,7 @@ class Hyp2000Controller extends Controller
             }
 
             if ($skip == 0) {
-                $textHyp2000Conf .= $line." \n";
+                $textHyp2000Conf .= $line . " \n";
             }
         }
 
@@ -193,32 +155,32 @@ class Hyp2000Controller extends Controller
         $file_output_json = 'hypo.json'; // generated from ew2openap
         $dir_output = 'output';
         $file_input_conf = 'italy2000.hyp';
-        $file_input_fullpath_conf = $dir_working.'/'.$dir_input.'/'.$file_input_conf;
+        $file_input_fullpath_conf = $dir_working . '/' . $dir_input . '/' . $file_input_conf;
 
-        $textHyp2000Conf .= "STA './".$file_input_stations."' \n";
-        $textHyp2000Conf .= "CRH 1 './".$file_input_model."' \n";
-        $textHyp2000Conf .= "PRT '../".$dir_output.'/'.$file_output_prt."' \n";
-        $textHyp2000Conf .= "SUM '../".$dir_output.'/'.$file_output_sum."' \n";
-        $textHyp2000Conf .= "ARC '../".$dir_output.'/'.$file_output_arc."' \n";
-        $textHyp2000Conf .= "PHS './".$file_input_arc."' \n";
+        $textHyp2000Conf .= "STA './" . $file_input_stations . "' \n";
+        $textHyp2000Conf .= "CRH 1 './" . $file_input_model . "' \n";
+        $textHyp2000Conf .= "PRT '../" . $dir_output . '/' . $file_output_prt . "' \n";
+        $textHyp2000Conf .= "SUM '../" . $dir_output . '/' . $file_output_sum . "' \n";
+        $textHyp2000Conf .= "ARC '../" . $dir_output . '/' . $file_output_arc . "' \n";
+        $textHyp2000Conf .= "PHS './" . $file_input_arc . "' \n";
         $textHyp2000Conf .= "LOC \n";
         Storage::disk('data')->put($file_input_fullpath_conf, $textHyp2000Conf);
 
         /* Write hyp2000 model file on disk */
         $textModel = '';
         foreach ($model as $line) {
-            $textModel .= $line."\n";
+            $textModel .= $line . "\n";
         }
         $file_input_model = 'italy.crh';
-        $file_input_fullpath_model = $dir_working.'/'.$dir_input.'/'.$file_input_model;
+        $file_input_fullpath_model = $dir_working . '/' . $dir_input . '/' . $file_input_model;
         Storage::disk('data')->put($file_input_fullpath_model, $textModel);
 
         /* Write 'all_stations.hinv' file on disk */
-        $file_input_fullpath_stations = $dir_working.'/'.$dir_input.'/'.$file_input_stations;
+        $file_input_fullpath_stations = $dir_working . '/' . $dir_input . '/' . $file_input_stations;
         Storage::disk('data')->put($file_input_fullpath_stations, $textHyp2000Stations);
 
         /* Copy stations file and create output dir */
-        Storage::disk('data')->makeDirectory($dir_working.'/'.$dir_output.'');
+        Storage::disk('data')->makeDirectory($dir_working . '/' . $dir_output . '');
 
         /* !!!!!!!! START - Get 'whoami' ToDo better */
         $command =
@@ -234,9 +196,9 @@ class Hyp2000Controller extends Controller
         $command_process = new Process($command);
         $command_process->setTimeout($command_timeout);
         $command_process->run();
-        Log::debug(' getOutput:'.$command_process->getOutput());
-        Log::debug(' getErrorOutput:'.$command_process->getErrorOutput());
-        if (! $command_process->isSuccessful()) {
+        Log::debug(' getOutput:' . $command_process->getOutput());
+        Log::debug(' getErrorOutput:' . $command_process->getErrorOutput());
+        if (!$command_process->isSuccessful()) {
             throw new ProcessFailedException($command_process);
         }
         Log::debug(' Done.');
@@ -258,9 +220,9 @@ class Hyp2000Controller extends Controller
         $command_process->setTimeout($command_timeout);
         $command_process->run();
         $uid = preg_replace("/\r|\n/", '', $command_process->getOutput());
-        Log::debug(' getOutput:'.$uid);
-        Log::debug(' getErrorOutput:'.$command_process->getErrorOutput());
-        if (! $command_process->isSuccessful()) {
+        Log::debug(' getOutput:' . $uid);
+        Log::debug(' getErrorOutput:' . $command_process->getErrorOutput());
+        if (!$command_process->isSuccessful()) {
             throw new ProcessFailedException($command_process);
         }
         Log::debug(' Done.');
@@ -282,9 +244,9 @@ class Hyp2000Controller extends Controller
         $command_process->setTimeout($command_timeout);
         $command_process->run();
         $gid = preg_replace("/\r|\n/", '', $command_process->getOutput());
-        Log::debug(' getOutput:'.$gid);
-        Log::debug(' getErrorOutput:'.$command_process->getErrorOutput());
-        if (! $command_process->isSuccessful()) {
+        Log::debug(' getOutput:' . $gid);
+        Log::debug(' getErrorOutput:' . $command_process->getErrorOutput());
+        if (!$command_process->isSuccessful()) {
             throw new ProcessFailedException($command_process);
         }
         Log::debug(' Done.');
@@ -298,22 +260,22 @@ class Hyp2000Controller extends Controller
                     'run',
                     '--rm',
                     '--user',
-                    $uid.':'.$gid,
-                    '-v', $dir_data.$dir_working.':/opt/data',
+                    $uid . ':' . $gid,
+                    '-v', $dir_data . $dir_working . ':/opt/data',
                     config('apollo.docker_hyp2000'),
                     $file_input_conf,
                 ]
             );
 
         /* Run process */
-        Log::debug(' Running docker: ', $command);
+        Log::info(' Running docker: ', $command);
         $command_timeout = 120;
         $command_process = new Process($command);
         $command_process->setTimeout($command_timeout);
         $command_process->run();
-        Log::debug(' getOutput:'.$command_process->getOutput());
-        Log::debug(' getErrorOutput:'.$command_process->getErrorOutput());
-        if (! $command_process->isSuccessful()) {
+        Log::debug(' getOutput:' . $command_process->getOutput());
+        Log::debug(' getErrorOutput:' . $command_process->getErrorOutput());
+        if (!$command_process->isSuccessful()) {
             throw new ProcessFailedException($command_process);
         }
         Log::debug(' Done.');
@@ -321,8 +283,8 @@ class Hyp2000Controller extends Controller
 
         $file_output_log = 'output.log';
         $file_output_err = 'output.err';
-        $file_output_fullpath_log = $dir_working.'/'.$dir_output.'/'.$file_output_log;
-        $file_output_fullpath_err = $dir_working.'/'.$dir_output.'/'.$file_output_err;
+        $file_output_fullpath_log = $dir_working . '/' . $dir_output . '/' . $file_output_log;
+        $file_output_fullpath_err = $dir_working . '/' . $dir_output . '/' . $file_output_err;
 
         /* Write warnings and errors into log file */
         Log::debug(" Write warnings and errors into \"$file_output_fullpath_err\"");
@@ -334,10 +296,10 @@ class Hyp2000Controller extends Controller
 
         /* Get output to return */
         Log::debug(' Get output to return');
-        $contents = Storage::disk('data')->get($dir_working.'/'.$dir_output.'/'.${'file_output_'.$output_format});
+        $contents = Storage::disk('data')->get($dir_working . '/' . $dir_output . '/' . ${'file_output_' . $output_format});
 
         $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
-        Log::info('END - '.__CLASS__.' -> '.__FUNCTION__.' | locationExecutionTime='.$locationExecutionTime.' Milliseconds');
+        Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
         if ($output_format == 'json') {
             //$contents = date_format(date_create($arcMessage['originTime']), 'Y-m-d');
             //$contents .= "\n\n";
@@ -352,7 +314,7 @@ class Hyp2000Controller extends Controller
 
     public function getStationInv($phases)
     {
-        Log::info('START - '.__CLASS__.' -> '.__FUNCTION__);
+        Log::debug('START - ' . __CLASS__ . ' -> ' . __FUNCTION__);
         $getStationInvTimeStart = microtime(true);
 
         /* Build 'all_stations.hinv' file */
@@ -364,15 +326,15 @@ class Hyp2000Controller extends Controller
         $count = 1;
         foreach ($phases as $phase) {
             // cerca su 'arrival_time' altrimenti 'now'
-            if (isset($phase['arrival_time']) && ! empty($phase['arrival_time'])) {
-                $starttime = substr($phase['arrival_time'], 0, 10).'T00:00:00.000Z';
-                $endtime = substr($phase['arrival_time'], 0, 10).'T23:59:59.999Z';
+            if (isset($phase['arrival_time']) && !empty($phase['arrival_time'])) {
+                $starttime = substr($phase['arrival_time'], 0, 10) . 'T00:00:00.000Z';
+                $endtime = substr($phase['arrival_time'], 0, 10) . 'T23:59:59.999Z';
             } else {
-                $starttime = now()->format('Y-m-d').'T00:00:00.000Z';
-                $endtime = now()->format('Y-m-d').'T23:59:59.999Z';
+                $starttime = now()->format('Y-m-d') . 'T00:00:00.000Z';
+                $endtime = now()->format('Y-m-d') . 'T23:59:59.999Z';
             }
 
-            Log::info($count.'/'.$n_hyp2000Sation.' - Searching: '.$phase['net'].'.'.$phase['sta'].'.'.$phase['loc'].'.'.$phase['cha']);
+            Log::debug($count . '/' . $n_hyp2000Sation . ' - Searching: ' . $phase['net'] . '.' . $phase['sta'] . '.' . $phase['loc'] . '.' . $phase['cha']);
             $insertRequest = new StationHinvRequest();
             $insertRequest->setValidator(Validator::make([
                 'net' => $phase['net'],
@@ -389,7 +351,7 @@ class Hyp2000Controller extends Controller
         }
 
         $getStationInvExecutionTime = number_format((microtime(true) - $getStationInvTimeStart) * 1000, 2);
-        Log::info('END - '.__CLASS__.' -> '.__FUNCTION__.' | getStationInvExecutionTime='.$getStationInvExecutionTime.' Milliseconds');
+        Log::debug('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | getStationInvExecutionTime=' . $getStationInvExecutionTime . ' Milliseconds');
 
         return $textHyp2000Stations;
     }

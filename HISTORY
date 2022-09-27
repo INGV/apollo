@@ -2,6 +2,11 @@
 apollo Release History
 #########################
 
+* Release 2.8.0 (2022-09-27)
+  - Update Log 'info/debug' message
+  - Enanched code to retrieve 'net=IT' stations
+  - Fix latency on request 'timeout'
+
 * Release 2.7.0 (2022-08-18)
   - Update PHP-Packages ('composer update') 
   - 1)Formatting code with 'laravel/pint' PHP-Package 2)Add route '/populate-cache'.

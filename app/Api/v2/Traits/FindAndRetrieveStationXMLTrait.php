@@ -40,6 +40,11 @@ trait FindAndRetrieveStationXMLTrait
         }
 
         $func_execute_request_url = function () use ($fdsnws_nodes, $urlParams) {
+            /* If 'net=IT' set directly 'authoritative=any' to avoid timeout */
+            if (str_contains($urlParams, 'net=IT')) {
+                $urlParams .= '&authoritative=any';
+            }
+
             foreach ($fdsnws_nodes as $fdsnws_node) {
                 $url = 'http://' . $fdsnws_node . '/fdsnws/station/1/query?' . $urlParams;
 
