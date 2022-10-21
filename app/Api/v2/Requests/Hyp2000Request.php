@@ -50,7 +50,7 @@ class Hyp2000Request extends FormRequest
             'data.phases.*.isc_code'            => ['nullable', 'string', 'not_in:"0"', 'min:1', 'max:8'],
             'data.phases.*.firstmotion'         => ['nullable', 'string', 'size:1', 'in:U,D'],
             'data.phases.*.emersio'             => ['nullable', 'string', 'size:1', 'in:E,I'],
-            'data.phases.*.weight'              => ['nullable', 'integer'],
+            'data.phases.*.weight'              => ['nullable', 'integer', 'size:1', 'in:0,1,2,3,4'],
             'data.phases.*.amplitude'           => ['nullable', 'numeric'],
             'data.phases.*.ampType'             => ['nullable', 'integer'],
         ];
@@ -66,6 +66,7 @@ class Hyp2000Request extends FormRequest
     public function messages()
     {
         return [
+            'size' => 'The :attribute must be :size char.',
             'in' => 'The :attribute must be :values.',
         ];
     }
