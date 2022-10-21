@@ -3,6 +3,7 @@ apollo Release History
 #########################
 
 * Release 2.9.0 (2022-10-21)
+  - Update PHP-Packages ('composer update') 
   - Fix validator on 'weight' value
 
 * Release 2.8.0 (2022-09-27)
