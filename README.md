@@ -21,6 +21,28 @@ cd dante
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up --remove-orphans -d
 ```
 
+## Configure Laravel - 1st step
+Copy laravel environment file and set it:
+```
+$ cp ./.env.example ./.env
+```
+
+install dependencies:
+```
+echo "----- 1 -----" && \
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo composer install && \
+echo "----- 2 -----" && \
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo php artisan key:generate && \
+echo "----- 3 -----" && \
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo chown -R $(id -u):$(id -g) ./storage && \
+echo "----- 4 -----" && \
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo chown -R $(id -u):$(id -g) ./bootstrap/cache/ && \
+```
+
+## Production
+In *production* mode, all files are "copied" into the container (also `.env`) and you do not need "bind" files:
+
+
 ## --- END - New ---
 
 
