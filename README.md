@@ -36,7 +36,7 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=ap
 echo "----- 3 -----" && \
 docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo chown -R $(id -u):$(id -g) ./storage && \
 echo "----- 4 -----" && \
-docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo chown -R $(id -u):$(id -g) ./bootstrap/cache/ && \
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo chown -R $(id -u):$(id -g) ./bootstrap/cache/ 
 ```
 
 ## Production
