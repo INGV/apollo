@@ -4,6 +4,26 @@
 
 # apollo
 
+## --- START - New ---
+## Clone project
+```
+git clone --recursive https://gitlab.rm.ingv.it/caravel/apollo.git apollo
+```
+or using deploy token (*read-only*):
+```
+git clone --recursive https://gitlab+deploy-token-71:TWxRfoetzHXxpsLbckbb@gitlab.rm.ingv.it/caravel/apollo.git apollo
+```
+## Develop
+In *develop* mode, all files are "binded" into the container; it is useful to develop code.
+```
+cd dante
+# (optional; build image locally) docker compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache --pull --progress=plain
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --remove-orphans -d
+```
+
+## --- END - New ---
+
+
 ```
 $ git clone --recursive https://gitlab+deploy-token-71:TWxRfoetzHXxpsLbckbb@gitlab.rm.ingv.it/caravel/apollo.git
 $ cd apollo
