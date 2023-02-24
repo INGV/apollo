@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  apollo:
+    build:
+      context: ./
+      dockerfile: ./docker/apollo/Dockerfile
+      target: apollo-dev
+      cache_from:
+        - "vlauciani/caravel-apollo:latest"
+    #environment:
+    #  - DB_HOST=casa
+    ports:
+      - 8586:80

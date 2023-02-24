@@ -1,0 +1,45 @@
+version: '3.9'
+services:
+  apollo:
+    image: "vlauciani/caravel-apollo:${DANTE_VERSION:-latest}"
+    volumes:
+      - ./:/app
+      - docker-in-docker:/certs/client
+    environment:
+      - DOCKER_HOST=tcp://docker-in-docker:2376
+      - DOCKER_TLS_VERIFY=1
+      - DOCKER_TLS_CERTDIR=/certs
+      - DOCKER_CERT_PATH=/certs/client
+    networks:
+      - network-caravel-apollo
+    links:
+      - docker-in-docker
+  docker-in-docker:
+    image: docker:20.10-dind
+    environment:
+      DOCKER_TLS_SAN: DNS:docker-in-docker
+    privileged: true
+    volumes:
+      - ./:/app
+      - docker-in-docker:/certs/client
+    expose:
+      - 2375
+    networks:
+      - network-caravel-apollo
+  redis:
+    image: redis:7.0.7
+    volumes:
+      - 'data.redis:/data'
+    networks:
+      - network-caravel-apollo
+    command: --requirepass r3d15
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+volumes:
+  data.redis:
+    driver: local
+  docker-in-docker:
+    driver: local
+networks:
+  network-caravel-apollo:
+    driver: bridge

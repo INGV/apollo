@@ -36,7 +36,11 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=ap
 echo "----- 3 -----" && \
 docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo chown -R $(id -u):$(id -g) ./storage && \
 echo "----- 4 -----" && \
-docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo chown -R $(id -u):$(id -g) ./bootstrap/cache/ 
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo chown -R $(id -u):$(id -g) ./bootstrap/cache/ && \ 
+echo "----- 5 -----" && \
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo bash -c "if docker image ls | grep -q hyp2000 ; then echo \" nothing to do\"; else cd hyp2000 && docker build --tag hyp2000:ewdevgit -f DockerfileEwDevGit .; fi" && \
+echo "----- 6 -----" && \
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo bash -c "if docker image ls | grep -q pyml ; then echo \" nothing to do\"; else cd pyml && docker build --tag pyml .; fi"
 ```
 
 ## Production

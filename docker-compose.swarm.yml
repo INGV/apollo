@@ -1,0 +1,44 @@
+version: '3.9'
+services:
+  apollo:
+    image: vlauciani/caravel-apollo:${DANTE_VERSION:-2.77.0}
+    volumes:
+      - v-caravel-apollo-storage-log:/app/storage/logs
+      - /mnt/gfs/apollo/.env:/app/.env
+    ports:
+      - "8280:80"
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+      update_config:
+        parallelism: 2
+        delay: 10s
+        order: start-first
+  redis:
+    image: redis:7.0.7
+    volumes:
+      - v-redis:/data
+    command: --requirepass r3d15
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+volumes:
+  v-redis:
+  v-caravel-apollo-storage-log:
+    driver: local
+    driver_opts:
+      o: bind
+      device: /mnt/gfs/apollo/storage/logs/apollo
+      type: none
+  v-caravel-apollo-horizon-storage-log:
+    driver: local
+    driver_opts:
+      o: bind
+      device: /mnt/gfs/apollo/storage/logs/horizon
+      type: none

@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  apollo:
+    build:
+      context: ./
+      dockerfile: ./docker/apollo/Dockerfile
+      target: apollo-prod
+      cache_from:
+        - "vlauciani/caravel-apollo:latest"
+    ports:
+      - 8000:80
