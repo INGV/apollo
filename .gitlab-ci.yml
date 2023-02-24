@@ -143,6 +143,8 @@ Build:
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} push
     # Clean all
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} down -v
+    - ls -l
+    - ls -l vendor/
     - docker images
 
 PHPUnit Test:
@@ -165,6 +167,8 @@ PHPUnit Test:
     - echo APOLLO_VERSION=${APOLLO_VERSION}
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} up -d --remove-orphans
     # START - Tests
+    - ls -l
+    - ls -l vendor/
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T appollo bash -c 'php artisan route:list'
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T appollo php artisan test --stop-on-failure
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T appollo vendor/bin/phpstan
