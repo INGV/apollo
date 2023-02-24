@@ -131,7 +131,7 @@ Build:
     #- docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'chown -R application:application /app'
     #- docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'ls -la'
     #- docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'id -u; id -g'        
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo composer install
+    #- docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo composer install
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo php artisan key:generate
     # Push to DockerHub
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} push
