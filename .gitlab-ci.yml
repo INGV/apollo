@@ -165,6 +165,13 @@ PHPUnit Test:
     - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP}
     - echo APOLLO_VERSION=${APOLLO_VERSION}
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} up -d --remove-orphans
+
+    #
+    - > 
+      if [[ "${CI_COMMIT_REF_NAME}" == "main" ]]; then
+        docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo composer install;
+      fi
+
     # START - Tests
     - ls -l
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'php artisan route:list'
