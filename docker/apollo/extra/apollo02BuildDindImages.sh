@@ -1,5 +1,4 @@
 #!/bin/bash
-
 DIR_HYP2000=/app/hyp2000
 DIR_PYML=/app/pyml
 FILE_DOCKER_PID=/var/run/docker.pid

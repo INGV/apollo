@@ -7,8 +7,8 @@ WORKDIR /app
 
 #RUN if [ ! -d /opt/docker/etc/cron ]; then mkdir -p /opt/docker/etc/cron; fi
 #COPY ./docker/apollo/extra/etc/cron/application /opt/docker/etc/cron/
-COPY ./docker/apollo/extra/apolloFixPermissions.sh /entrypoint.d/
-COPY ./docker/apollo/extra/apolloBuildDindImages.sh /entrypoint.d/
+COPY ./docker/apollo/extra/apollo01FixPermissions.sh /entrypoint.d/
+COPY ./docker/apollo/extra/apollo02BuildDindImages.sh /entrypoint.d/
 
 # Install docker client
 RUN curl -sS https://download.docker.com/linux/static/stable/x86_64/docker-20.10.3.tgz -o /tmp/docker.tar.gz \
