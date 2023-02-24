@@ -46,5 +46,8 @@ else
     echo "END - ${BASENAME}"
     exit 1
 fi
+
+cd /app
+
 echo "END - ${BASENAME} -> apolloBuildDindImages.sh"
 echo ""
