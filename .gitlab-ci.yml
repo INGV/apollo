@@ -1,6 +1,6 @@
 #image: docker:stable
 #image: docker:19.03.1
-image: docker:20.10.12
+image: docker:20.10.22
 
 # When using dind, it's wise to use the overlayfs driver for
 # improved performance.
@@ -13,9 +13,14 @@ variables:
     GIT_STRATEGY: clone
     # BUG!!! - Remove this (DOCKER_TLS_CERTDIR: "") when solved!!! - https://gitlab.com/gitlab-org/gitlab-runner/issues/4501
     DOCKER_TLS_CERTDIR: ""
-    # DockerHub
-    DOCKERHUB_REGISTRY_USER: vlauciani
-    DOCKERHUB_REGISTRY_PSW: 56a161d2-0851-4445-a37f-41e071bdd646
+    #
+    OAS_BASEDIR: "public/api/0.0.2"
+    OAS_FILENAME: "openapi.yaml"
+    #
+    DOCKER_BUILDKIT: 1
+    COMPOSE_DOCKER_CLI_BUILD: 1
+    #
+    DOCKER_IMAGE_TAG_TMP: gitlab-ci-${CI_COMMIT_REF_NAME}
 
 services:
     # Remeber to set 'privileged = true' into the runner 'config.toml' file (es on hgp5: /srv/gitlab-runner/config/config.toml)
@@ -24,29 +29,28 @@ services:
     - command:["--registry-mirror", "https://mirror.gcr.io"]
 
 stages:
+  - dockerhub
+  - pre_check
+  - build
+  - test
+  - rebuild_without_dev
+  - push
+  - clean_dockerhub
   - all_stages
   - pages
+  - deploy
+
+include:
+  - remote: 'https://raw.githubusercontent.com/vlauciani/gitlabci-include-for-dockerhub-rate-limit/main/dockerhub-rate-limit.yml'
+  - remote: 'https://raw.githubusercontent.com/vlauciani/gitlabci-include-for-api-oas-checker/main/api-oas-checker.yml'
 
 before_script:
-    #
-    - date
-    #
-    - uname -a
     # Install common dependecies
     - apk update
     - apk upgrade   
-    - apk add --no-cache curl wget jq
+    #- apk add --no-cache curl wget jq
     # Print project name
     - echo ${CI_PROJECT_NAME}
-    # Get DockerHub RateLimit without login
-    - TOKEN=$(curl "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
-    - curl --head -H "Authorization:Bearer ${TOKEN}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | grep -i "RateLimit"
-    # DockerHub login
-    - echo ${DOCKERHUB_REGISTRY_PSW} | docker login -u ${DOCKERHUB_REGISTRY_USER} --password-stdin
-    # Get DockerHub RateLimit with login
-    - docker system info | grep -E 'Username'
-    - TOKEN=$(curl --user "${DOCKERHUB_REGISTRY_USER}:${DOCKERHUB_REGISTRY_PSW}" "https://auth.docker.io/token?service=registry.docker.io&scope=repository:ratelimitpreview/test:pull" | jq -r .token)
-    - curl --head -H "Authorization:Bearer ${TOKEN}" https://registry-1.docker.io/v2/ratelimitpreview/test/manifests/latest 2>&1 | grep -i "RateLimit"
     # Set HTTP PORT variable
     - >
       if [[ "${CI_COMMIT_REF_NAME}" == "master" ]]; then
@@ -56,6 +60,92 @@ before_script:
       fi
     - echo "HTTP_PORT=${HTTP_PORT}"
     - docker -v
+    - ALPINE_VERSION=$( cat /etc/os-release | grep "VERSION_ID" | awk -F"=" '{print $2}' )
+    - > 
+      if [[ "${CI_COMMIT_REF_NAME}" == "develop" ]]; then
+        FILE_DOCKER_COMPOSE="docker-compose.dev.yml";
+      else
+        FILE_DOCKER_COMPOSE="docker-compose.prod.yml";
+      fi
+    - echo FILE_DOCKER_COMPOSE=${FILE_DOCKER_COMPOSE}
+    - echo DOCKER_IMAGE_TAG_TMP=${DOCKER_IMAGE_TAG_TMP}
+    - DANTE_VERSION_WITHOUT_V=$( cat VERSION | sed "s/^v//" )
+    - echo DANTE_VERSION_WITHOUT_V=${DANTE_VERSION_WITHOUT_V}
+
+# From: https://www.docker.com/blog/checking-your-current-docker-pull-rate-limits-and-status/
+dockerhub-rate-limit:
+    stage: dockerhub
+    variables:
+      INCLUDE_DOCKERHUB_REGISTRY_USER: ${CI_DOCKERHUB_REGISTRY_USER}
+      INCLUDE_DOCKERHUB_REGISTRY_PSW: ${CI_DOCKERHUB_REGISTRY_TOKEN}
+
+api-oas-checker:
+    stage: pre_check
+    variables:
+      INCLUDE_OAS_BASEDIR: ${OAS_BASEDIR}
+      INCLUDE_OAS_FILENAME: ${OAS_FILENAME}
+
+validate_oa3:
+    stage: pre_check
+    script:
+        - ls -l $(pwd)/public/api/0.0.2 # to be removed when https://github.com/italia/api-oas-checker/issues/60 is solved
+        
+        # This command should work, but the command 'spectral lint --version' doesn't work: https://github.com/stoplightio/spectral/issues/1483
+        #  then I wrote a workaround 
+        #- docker run --rm -v $(pwd)/public/api/0.0.3:/tmp stoplight/spectral lint -r https://italia.github.io/api-oas-checker/spectral.yml "/tmp/openapi.yaml"
+        
+        # This is the workaround 
+        - docker run --rm --entrypoint=sh -v $(pwd)/public/api/0.0.2:/tmp stoplight/spectral:5.9.1 -c "spectral lint -r https://italia.github.io/api-oas-checker/spectral.yml /tmp/openapi.yaml"
+
+validate_publiccode:
+    stage: pre_check
+    script:
+        - docker run --rm -v $(pwd)/publiccode.yml:/publiccode_folder/publiccode.yml italia/publiccode-parser-go /publiccode_folder/publiccode.yml
+
+validate_version_number_and_date:
+    stage: pre_check
+    script:
+        - apk add --no-cache bash git
+        - ./${CI_PROJECT_NAME}/scripts/validate_version_number_and_date.sh
+
+Build:
+  stage: build
+  tags:
+    # Runners:
+    # 1) 'laradock' runner is working on 'albus.int.ingv.it' valentino's MAC.
+    # 2) 'test' runner is working on 'docker.int.ingv.it' server.
+    # 3) 'hgp5_runner' runner is working on 'hgp5.int.ingv.it' server.
+    # 4) 'sqlx2-srvr_runner' runner is working on 'sqlx2-srvr.int.ingv.it' server.
+    - sqlx2-srvr_runner
+  # !!! Attenzione !!!, per sfruttare la cache il runner deve essere lo stessi in quanto la cache e' 'local' e quindi e' sull'host.  
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-composer
+    paths:
+      - vendor/
+      - .env
+  script:
+    # Configure Laravel ENV
+    - cp ./.env.example ./.env
+    - cat ./.env
+
+    # Set version
+    - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP}
+    - echo APOLLO_VERSION=${APOLLO_VERSION}
+    # Build and up
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} build --no-cache --pull --progress=plain
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} up -d --remove-orphans
+    # Configure
+    #- docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'ls -la'
+    #- docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'chown -R application:application /app'
+    #- docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'ls -la'
+    #- docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'id -u; id -g'        
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo composer install
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo php artisan key:generate
+    # Push to DockerHub
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} push
+    # Clean all
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} down -v
+    - docker images
 
 build_laravel:
     stage: all_stages
@@ -118,36 +208,11 @@ build_laravel:
             - storage/logs
         expire_in: 1 day
 
-validate_oa3:
-    stage: all_stages
-    #tags:
-        # Runners:
-        # 1) 'laradock' runner is working on 'albus.int.ingv.it' valentino's MAC.
-        # 2) 'test' runner is working on 'docker.int.ingv.it' server.
-        # 3) 'hgp5_runner' runner is working on 'hgp5.int.ingv.it' server.
-        # 4) 'sqlx2-srvr_runner' runner is working on 'sqlx2-srvr.int.ingv.it' server.        
-        #- hgp5_runner
 
-    script:
-        - ls -l $(pwd)/public/api/0.0.2 # to be removed when https://github.com/italia/api-oas-checker/issues/60 is solved
-        
-        # This command should work, but the command 'spectral lint --version' doesn't work: https://github.com/stoplightio/spectral/issues/1483
-        #  then I wrote a workaround 
-        #- docker run --rm -v $(pwd)/public/api/0.0.3:/tmp stoplight/spectral lint -r https://italia.github.io/api-oas-checker/spectral.yml "/tmp/openapi.yaml"
-        
-        # This is the workaround 
-        - docker run --rm --entrypoint=sh -v $(pwd)/public/api/0.0.2:/tmp stoplight/spectral:5.9.1 -c "spectral lint -r https://italia.github.io/api-oas-checker/spectral.yml /tmp/openapi.yaml"
 
-validate_publiccode:
-    stage: all_stages
-    script:
-        - docker run --rm -v $(pwd)/publiccode.yml:/publiccode_folder/publiccode.yml italia/publiccode-parser-go /publiccode_folder/publiccode.yml
 
-validate_version_number_and_date:
-    stage: all_stages
-    script:
-        - apk add --no-cache bash git
-        - ./${CI_PROJECT_NAME}/scripts/validate_version_number_and_date.sh
+
+
     
 pages:
   stage: pages
