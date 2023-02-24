@@ -45,12 +45,18 @@ include:
   - remote: 'https://raw.githubusercontent.com/vlauciani/gitlabci-include-for-api-oas-checker/main/api-oas-checker.yml'
 
 before_script:
-    # Install common dependecies
-    - apk update
-    - apk upgrade   
-    #- apk add --no-cache curl wget jq
     # Print project name
     - echo ${CI_PROJECT_NAME}
+    # DockerHub login
+    - echo ${CI_DOCKERHUB_REGISTRY_TOKEN} | docker login -u ${CI_DOCKERHUB_REGISTRY_USER} --password-stdin
+    #
+    - date
+    - uname -a
+    - echo ${OAS_DIR}
+    # Update repo
+    - apk update
+    - apk upgrade   
+    #
     - docker -v
     - ALPINE_VERSION=$( cat /etc/os-release | grep "VERSION_ID" | awk -F"=" '{print $2}' )
     - > 
