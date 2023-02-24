@@ -85,8 +85,8 @@ return [
     | Email recipients
     |--------------------------------------------------------------------------
     */
-    'emailRecipients'               => array_map('trim', explode(',', env('MAIL_RECIPIENTS'))), 'valentino.lauciani@ingv.it',
-    'emailToFromEventdbToSeisev'    => array_map('trim', explode(',', env('MAIL_TO_FROM_EVENTDB_TO_SEISEV'))), 'valentino.lauciani@ingv.it',
+    'emailRecipients'               => array_map('trim', explode(',', env('MAIL_RECIPIENTS', ''))), 'valentino.lauciani@ingv.it',
+    'emailToFromEventdbToSeisev'    => array_map('trim', explode(',', env('MAIL_TO_FROM_EVENTDB_TO_SEISEV', ''))), 'valentino.lauciani@ingv.it',
 
     /*
     |--------------------------------------------------------------------------
