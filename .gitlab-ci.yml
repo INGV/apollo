@@ -169,9 +169,9 @@ PHPUnit Test:
     # START - Tests
     - ls -l
     - ls -l vendor/
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T appollo bash -c 'php artisan route:list'
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T appollo php artisan test --stop-on-failure
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T appollo vendor/bin/phpstan
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'php artisan route:list'
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo php artisan test --stop-on-failure
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo vendor/bin/phpstan
     # END - Tests 
 
 build_laravel:
