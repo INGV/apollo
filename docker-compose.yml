@@ -2,12 +2,11 @@ version: '3.9'
 services:
   apollo:
     image: "vlauciani/caravel-apollo:${APOLLO_VERSION:-latest}"
-    environment:
-      - PHP_MEMORY_LIMIT=2048M
     volumes:
-      - ./:/app
+      #- ./:/app
       - docker-in-docker:/certs/client
     environment:
+      - PHP_MEMORY_LIMIT=2048M
       - DOCKER_HOST=tcp://docker-in-docker:2376
       - DOCKER_TLS_VERIFY=1
       - DOCKER_TLS_CERTDIR=/certs
