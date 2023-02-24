@@ -145,6 +145,31 @@ Build:
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} down -v
     - docker images
 
+PHPUnit Test:
+  stage: test
+  tags: 
+    # Runners:
+    # 1) 'laradock' runner is working on 'albus.int.ingv.it' valentino's MAC.
+    # 2) 'test' runner is working on 'docker.int.ingv.it' server.
+    # 3) 'hgp5_runner' runner is working on 'hgp5.int.ingv.it' server.
+    # 4) 'sqlx2-srvr_runner' runner is working on 'sqlx2-srvr.int.ingv.it' server.
+    - sqlx2-srvr_runner
+  # !!! Attenzione !!!, per sfruttare la cache il runner deve essere lo stessi in quanto la cache e' 'local' e quindi e' sull'host.  
+  cache: 
+    key: ${CI_COMMIT_REF_SLUG}-composer
+    paths:
+      - vendor/
+      - .env
+  script:
+    - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP}
+    - echo APOLLO_VERSION=${APOLLO_VERSION}
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} up -d --remove-orphans
+    # START - Tests
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T appollo bash -c 'php artisan route:list'
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T appollo php artisan test --stop-on-failure
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T appollo vendor/bin/phpstan
+    # END - Tests 
+
 build_laravel:
     stage: all_stages
     tags:
