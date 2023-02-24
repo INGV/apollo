@@ -5,12 +5,7 @@ DIR_PYML=/app/pyml
 FILE_DOCKER_PID=/var/run/docker.pid
 BASENAME=$( basename $0 )
 
-echo "START - ${BASENAME}"
-
-
-
-chown -R application:application /app
-
+echo "START - ${BASENAME} -> apolloBuildDindImages.sh"
 #
 if [ ! -f $(which docker) ]; then
     echo " docker doesn't exist!"
@@ -52,5 +47,5 @@ else
     echo "END - ${BASENAME}"
     exit 1
 fi
-echo "END - ${BASENAME}"
+echo "END - ${BASENAME} -> apolloBuildDindImages.sh"
 echo ""
