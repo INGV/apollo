@@ -51,14 +51,6 @@ before_script:
     #- apk add --no-cache curl wget jq
     # Print project name
     - echo ${CI_PROJECT_NAME}
-    # Set HTTP PORT variable
-    - >
-      if [[ "${CI_COMMIT_REF_NAME}" == "master" ]]; then
-        HTTP_PORT=80
-      else
-        HTTP_PORT=8585
-      fi
-    - echo "HTTP_PORT=${HTTP_PORT}"
     - docker -v
     - ALPINE_VERSION=$( cat /etc/os-release | grep "VERSION_ID" | awk -F"=" '{print $2}' )
     - > 
