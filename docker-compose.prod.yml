@@ -8,4 +8,4 @@ services:
       cache_from:
         - "vlauciani/caravel-apollo:latest"
     ports:
-      - 8000:80
+      - 8086:80

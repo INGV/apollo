@@ -1,7 +1,9 @@
 version: '3.9'
 services:
   apollo:
-    image: "vlauciani/caravel-apollo:${DANTE_VERSION:-latest}"
+    image: "vlauciani/caravel-apollo:${APOLLO_VERSION:-latest}"
+    environment:
+      - PHP_MEMORY_LIMIT=2048M
     volumes:
       - ./:/app
       - docker-in-docker:/certs/client

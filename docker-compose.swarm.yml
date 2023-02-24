@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   apollo:
-    image: vlauciani/caravel-apollo:${DANTE_VERSION:-2.77.0}
+    image: vlauciani/caravel-apollo:${APOLLO_VERSION:-2.77.0}
     volumes:
       - v-caravel-apollo-storage-log:/app/storage/logs
       - /mnt/gfs/apollo/.env:/app/.env

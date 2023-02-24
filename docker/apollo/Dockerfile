@@ -7,8 +7,12 @@ WORKDIR /app
 
 #RUN if [ ! -d /opt/docker/etc/cron ]; then mkdir -p /opt/docker/etc/cron; fi
 #COPY ./docker/apollo/extra/etc/cron/application /opt/docker/etc/cron/
-COPY ./docker/apollo/extra/apollo01FixPermissions.sh /entrypoint.d/
-COPY ./docker/apollo/extra/apollo02BuildDindImages.sh /entrypoint.d/
+COPY ./docker/apollo/extra/apollo01FixPermissions.sh /opt/docker/provision/entrypoint.d/
+COPY ./docker/apollo/extra/apollo02BuildDindImages.sh /opt/docker/provision/entrypoint.d/
+
+COPY ./docker/apollo/extra/casa1.sh /opt/docker/provision/bootstrap.d/
+COPY ./docker/apollo/extra/casa2.sh /opt/docker/provision/build.d/
+COPY ./docker/apollo/extra/casa3.sh /opt/docker/provision/onbuild.d/
 
 # Install docker client
 RUN curl -sS https://download.docker.com/linux/static/stable/x86_64/docker-20.10.3.tgz -o /tmp/docker.tar.gz \
@@ -21,10 +25,12 @@ FROM base as apollo-dev
 #USER application
 
 FROM base as apollo-prod
-COPY . .
-#COPY --chown 1000:1000 src /app                    # https://github.com/webdevops/Dockerfile/issues/366
+
+COPY --chown=1000:1000 . .
+#COPY . .
+
 COPY .env.example .env
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 RUN php artisan key:generate
-RUN chown -R application:application .
+#RUN chown -R application:application .
 #USER application
