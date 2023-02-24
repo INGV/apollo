@@ -13,4 +13,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::redirect('/', '/swagger-ui/dist/?url=' . request()->getSchemeAndHttpHost() . '/api/0.0.2/openapi.yaml');
+Route::redirect('/', '/swagger-ui/dist/index.html?url=' . request()->getSchemeAndHttpHost() . '/api/0.0.2/openapi.yaml');
