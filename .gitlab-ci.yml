@@ -97,7 +97,7 @@ validate_oa3:
 
 validate_publiccode:
   stage: pre_check
-   script:
+  script:
     - >
       COUNT=1;
       COUNT_LIMIT=20;
