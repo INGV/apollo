@@ -96,9 +96,18 @@ validate_oa3:
         - docker run --rm --entrypoint=sh -v $(pwd)/public/api/0.0.2:/tmp stoplight/spectral:5.9.1 -c "spectral lint -r https://italia.github.io/api-oas-checker/spectral.yml /tmp/openapi.yaml"
 
 validate_publiccode:
-    stage: pre_check
-    script:
-      - docker run --rm -v $(pwd)/publiccode.yml:/publiccode_folder/publiccode.yml italia/publiccode-parser-go /publiccode_folder/publiccode.yml
+  stage: pre_check
+   script:
+    - >
+      COUNT=1;
+      COUNT_LIMIT=20;
+      while [[ 10 -le 20 ]] && [[ "${COUNT}" -le "${COUNT_LIMIT}" ]]; do 
+        echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts.";
+        COUNT=$(( ${COUNT} + 1 ));
+        sleep 1;
+      done
+    - exit 1
+    - docker run --rm -v $(pwd)/publiccode.yml:/publiccode_folder/publiccode.yml italia/publiccode-parser-go /publiccode_folder/publiccode.yml
 
 validate_version_number_and_date:
     stage: pre_check
@@ -187,7 +196,7 @@ PHPUnit Test:
     - >
       COUNT=1;
       COUNT_LIMIT=10;
-      while [[ $(docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep hyp2000 2>&1 >/dev/null) ]] && (( ${COUNT} < ${COUNT_LIMIT} )); do
+      while [[ $(docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep hyp2000 2>&1 >/dev/null) ]] && [[ ${COUNT} -le ${COUNT_LIMIT} ]]; do
         echo " ${COUNT}/${COUNT_LIMIT} - waiting hyp2000 starts." ;
         COUNT=$(( ${COUNT} + 1));
         sleep 1;
@@ -201,7 +210,7 @@ PHPUnit Test:
     - >
       COUNT=1
       COUNT_LIMIT=10
-      while [[ $(docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep pyml 2>&1 >/dev/null) ]] && (( ${COUNT} < ${COUNT_LIMIT} )); do
+      while [[ $(docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep pyml 2>&1 >/dev/null) ]] && [[ ${COUNT} -le ${COUNT_LIMIT} ]]; do
         echo " ${COUNT}/${COUNT_LIMIT} - waiting pyml starts." ;
         COUNT=$(( ${COUNT} + 1));
         sleep 1;
