@@ -122,6 +122,15 @@ Build:
       - vendor/
       - .env
   script:
+    - >
+      COUNT=1;
+      COUNT_LIMIT=20;
+      while (( ${COUNT} < ${COUNT_LIMIT} )); do \
+        echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts." ;
+        COUNT=$(( ${COUNT} + 1)) ;
+        sleep 1 ;
+      done 
+
     # Configure Laravel ENV
     - cp ./.env.example ./.env
     - cat ./.env
