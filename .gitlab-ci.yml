@@ -98,7 +98,6 @@ validate_oa3:
 validate_publiccode:
     stage: pre_check
     script:
-      - exit 1
       - docker run --rm -v $(pwd)/publiccode.yml:/publiccode_folder/publiccode.yml italia/publiccode-parser-go /publiccode_folder/publiccode.yml
 
 validate_version_number_and_date:
