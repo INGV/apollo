@@ -98,13 +98,15 @@ validate_oa3:
 validate_publiccode:
     stage: pre_check
     script:
-        - docker run --rm -v $(pwd)/publiccode.yml:/publiccode_folder/publiccode.yml italia/publiccode-parser-go /publiccode_folder/publiccode.yml
+      - COUNT=1; COUNT_LIMIT=20; while (( ${COUNT} < ${COUNT_LIMIT} )); do echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts." ; COUNT=$(( ${COUNT} + 1 )); sleep 1 ; done 
+      - exit 1
+      - docker run --rm -v $(pwd)/publiccode.yml:/publiccode_folder/publiccode.yml italia/publiccode-parser-go /publiccode_folder/publiccode.yml
 
 validate_version_number_and_date:
     stage: pre_check
     script:
-        - apk add --no-cache bash git
-        - ./${CI_PROJECT_NAME}/scripts/validate_version_number_and_date.sh
+      - apk add --no-cache bash git
+      - ./${CI_PROJECT_NAME}/scripts/validate_version_number_and_date.sh
 
 Build:
   stage: build
@@ -122,8 +124,6 @@ Build:
       - vendor/
       - .env
   script:
-    - COUNT=1; COUNT_LIMIT=20; while (( ${COUNT} < ${COUNT_LIMIT} )); do echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts." ; COUNT=$(( ${COUNT} + 1)); sleep 1 ; done
-
     # Configure Laravel ENV
     - cp ./.env.example ./.env
     - cat ./.env
