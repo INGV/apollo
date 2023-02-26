@@ -101,7 +101,7 @@ validate_publiccode:
     - >
       COUNT=1;
       COUNT_LIMIT=20;
-      while [[ $( ls /tmpp 2>&1 >/dev/null ) ]] && [[ "${COUNT}" -le "${COUNT_LIMIT}" ]]; do 
+      while [ $( ls /tmpp 2>&1 >/dev/null ) ] && [[ "${COUNT}" -le "${COUNT_LIMIT}" ]]; do 
         echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts.";
         COUNT=$(( ${COUNT} + 1 ));
         sleep 1;
