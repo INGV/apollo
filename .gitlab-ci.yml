@@ -178,26 +178,27 @@ PHPUnit Test:
       COUNT_LIMIT=10;
       while [[ $(docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T apollo docker images | grep hyp2000 2>&1 >/dev/null) ]] && (( ${COUNT} < ${COUNT_LIMIT} )); do
         echo " ${COUNT}/${COUNT_LIMIT} - waiting hyp2000 starts." ;
-        COUNT=$(( ${COUNT} + 1))
+        COUNT=$(( ${COUNT} + 1));
         sleep 1;
       done;
       if (( ${COUNT} >= ${COUNT_LIMIT} )); then
         exit 1;
       fi
+    - docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T apollo docker images
 
     # Check pyml is started
     - >
       COUNT=1
       COUNT_LIMIT=10
       while [[ $(docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T apollo docker images | grep pyml 2>&1 >/dev/null) ]] && (( ${COUNT} < ${COUNT_LIMIT} )); do
-        echo " ${COUNT}/${COUNT_LIMIT} - waiting pyml starts." 
-        COUNT=$(( ${COUNT} + 1))
-        sleep 1
+        echo " ${COUNT}/${COUNT_LIMIT} - waiting pyml starts." ;
+        COUNT=$(( ${COUNT} + 1));
+        sleep 1;
       done
       if (( ${COUNT} >= ${COUNT_LIMIT} )); then
-        exit 1
+        exit 1;
       fi
-
+    - docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T apollo docker images
 
     # START - Tests
     - ls -l
