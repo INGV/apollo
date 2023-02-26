@@ -166,7 +166,7 @@ PHPUnit Test:
     - echo APOLLO_VERSION=${APOLLO_VERSION}
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} up -d --remove-orphans
 
-    #
+    # Install 'dev' packages (removing option '--no-dev') to execute tests
     - > 
       if [[ "${CI_COMMIT_REF_NAME}" == "main" ]]; then
         docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo composer install;
@@ -174,8 +174,8 @@ PHPUnit Test:
 
     # Check hyp2000 is started
     - >
-      COUNT=1
-      COUNT_LIMIT=10
+      COUNT=1;
+      COUNT_LIMIT=10;
       while [[ $(docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T apollo docker images | grep hyp2000 2>&1 >/dev/null) ]] && (( ${COUNT} < ${COUNT_LIMIT} )); do
         echo " ${COUNT}/${COUNT_LIMIT} - waiting hyp2000 starts." 
         COUNT=$(( ${COUNT} + 1))
