@@ -100,12 +100,12 @@ validate_publiccode:
     script:
       #- while (( ${COUNT} < ${COUNT_LIMIT} )); do echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts." ; COUNT=$(( ${COUNT} + 1 )); sleep 1 ; done 
       - >
-        COUNT=1
-        COUNT_LIMIT=20
+        COUNT=1;
+        COUNT_LIMIT=20;
         while [ "${COUNT}" -ne "${COUNT_LIMIT}" ]; do 
-          echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts."
-          COUNT=$(( ${COUNT} + 1 ))
-          sleep 1
+          echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts.";
+          COUNT=$(( ${COUNT} + 1 ));
+          sleep 1;
         done
       - exit 1
       - docker run --rm -v $(pwd)/publiccode.yml:/publiccode_folder/publiccode.yml italia/publiccode-parser-go /publiccode_folder/publiccode.yml
