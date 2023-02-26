@@ -175,14 +175,23 @@ PHPUnit Test:
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} up -d --remove-orphans
 
     # Check 'docker-in-docker' is started
-    - >
-      COUNT=1;
-      COUNT_LIMIT=20;
+    #- >
+    #  COUNT=1;
+    #  COUNT_LIMIT=20;
+      #while [[ $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker -v 2>&1 >/dev/null ) ]] && [[ "${COUNT}" -le "${COUNT_LIMIT}" ]]; do 
+    #  while [[ "${COUNT}" -le "${COUNT_LIMIT}" ]]; do 
+    #    echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts.";
+    #    COUNT=$(( ${COUNT} + 1 ));
+    #    sleep 1;
+    #  done
+    - |
+      COUNT=1
+      COUNT_LIMIT=20
       #while [[ $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker -v 2>&1 >/dev/null ) ]] && [[ "${COUNT}" -le "${COUNT_LIMIT}" ]]; do 
       while [[ "${COUNT}" -le "${COUNT_LIMIT}" ]]; do 
-        echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts.";
-        COUNT=$(( ${COUNT} + 1 ));
-        sleep 1;
+        echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts."
+        COUNT=$(( ${COUNT} + 1 ))
+        sleep 1
       done
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
 
