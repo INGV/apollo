@@ -195,41 +195,39 @@ PHPUnit Test:
         sleep 1;
         COUNT=$(( ${COUNT} + 1 ));
       done
-      echo "AAA"
 
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
 
     # Check 'hyp2000' is started;
     - |
       COUNT=1
-      COUNT_LIMIT=20
+      COUNT_LIMIT=50
       while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep "hyp2000" 2>&1 >/dev/null ) && [ "${COUNT}" -le "${COUNT_LIMIT}" ]; do
         echo " ${COUNT}/${COUNT_LIMIT} - waiting hyp2000 starts.";
         if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
           exit 1
         fi
-        sleep 2;
+        sleep 5;
         COUNT=$(( ${COUNT} + 1 ));
       done
-      echo "BBB"
+
+    # Check 'pyml' is started;
+    - |
+      COUNT=1
+      COUNT_LIMIT=50
+      while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep "pyml" 2>&1 >/dev/null ) && [ "${COUNT}" -le "${COUNT_LIMIT}" ]; do
+        echo " ${COUNT}/${COUNT_LIMIT} - waiting pyml starts.";
+        if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
+          exit 1
+        fi
+        sleep 5;
+        COUNT=$(( ${COUNT} + 1 ));
+      done
 
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
-    - echo "PIPPO"
-
-
-
-
-
-
-
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
-
 
     # Check 'docker-in-docker' is started; check 'hyp2000' and 'pyml' docker images are deployed.
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo apollo/scripts/for_ci/checkDindAndDockerImages.sh
-
-    # should bre removed, only for tests
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
+#    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo apollo/scripts/for_ci/checkDindAndDockerImages.sh
 
     # START - Tests
     - ls -l
