@@ -174,66 +174,16 @@ PHPUnit Test:
     - echo APOLLO_VERSION=${APOLLO_VERSION}
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} up -d --remove-orphans
 
-    # Check 'docker-in-docker' is started
-    #- >
-    #  COUNT=1;
-    #  COUNT_LIMIT=20;
-      #while [[ $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker -v 2>&1 >/dev/null ) ]] && [[ "${COUNT}" -le "${COUNT_LIMIT}" ]]; do 
-    #  while [[ "${COUNT}" -le "${COUNT_LIMIT}" ]]; do 
-    #    echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts.";
-    #    COUNT=$(( ${COUNT} + 1 ));
-    #    sleep 1;
-    #  done
-
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo apollo/scripts/for_ci/checkDindAndDockerImages.sh
-
-    #while [[ $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker -v 2>&1 >/dev/null ) ]] && [[ "${COUNT}" -le "${COUNT_LIMIT}" ]]; do 
-    - COUNT=1
-    - COUNT_LIMIT=20
-    - P=$(docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'docker -v 2>&1 >/dev/null' && echo ${?})
-    - echo "P1=${P}"
-    - |
-      while (( ${P} != 0 )); do
-        echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts."
-        COUNT=$(( ${COUNT} + 1 ))
-        sleep 1
-        P=$(docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'docker -v 2>&1 >/dev/null' && echo ${?})
-        echo "P2=${P}"
-      done
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
-
     # Install 'dev' packages (removing option '--no-dev') to execute tests
     - > 
       if [[ "${CI_COMMIT_REF_NAME}" == "main" ]]; then
         docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo composer install;
       fi
 
-    # Check hyp2000 is started
-    - >
-      COUNT=1;
-      COUNT_LIMIT=10;
-      while [[ $(docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep hyp2000 2>&1 >/dev/null) ]] && [[ ${COUNT} -le ${COUNT_LIMIT} ]]; do
-        echo " ${COUNT}/${COUNT_LIMIT} - waiting hyp2000 starts." ;
-        COUNT=$(( ${COUNT} + 1));
-        sleep 1;
-      done;
-      if (( ${COUNT} >= ${COUNT_LIMIT} )); then
-        exit 1;
-      fi
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
+    # Check 'docker-in-docker' is started; check 'hyp2000' and 'pyml' docker images are deployed.
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo apollo/scripts/for_ci/checkDindAndDockerImages.sh
 
-    # Check pyml is started
-    - >
-      COUNT=1
-      COUNT_LIMIT=10
-      while [[ $(docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep pyml 2>&1 >/dev/null) ]] && [[ ${COUNT} -le ${COUNT_LIMIT} ]]; do
-        echo " ${COUNT}/${COUNT_LIMIT} - waiting pyml starts." ;
-        COUNT=$(( ${COUNT} + 1));
-        sleep 1;
-      done
-      if (( ${COUNT} >= ${COUNT_LIMIT} )); then
-        exit 1;
-      fi
+    # should bre removed, only for tests
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
 
     # START - Tests
