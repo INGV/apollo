@@ -192,8 +192,10 @@ PHPUnit Test:
         COUNT=$(( ${COUNT} + 1 ));
         sleep 1;
       done
+      echo "AAA"
 
     - if [ ${COUNT} -gt ${COUNT_LIMIT} ]; then exit 1; fi
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
 
     # Check 'hyp2000' is started;
     - |
@@ -204,9 +206,11 @@ PHPUnit Test:
         COUNT=$(( ${COUNT} + 1 ));
         sleep 1;
       done
+      echo "BBB"
 
     - if [ ${COUNT} -gt ${COUNT_LIMIT} ]; then exit 1; fi
-
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
+    - echo "PIPPO"
 
 
 
