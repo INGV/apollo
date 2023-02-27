@@ -12,7 +12,7 @@ done
 if [[ ! $( docker -v 2>&1 >/dev/null ) ]]; then
     echo "A"
     exit 1
-elif
+else
     echo "B"
     exit 1
 fi
