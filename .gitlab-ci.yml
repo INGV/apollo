@@ -187,14 +187,16 @@ PHPUnit Test:
     - |
       COUNT=1
       COUNT_LIMIT=20
-      while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker -v 2>&1 >/dev/null ) && [ "${COUNT}" -le "${COUNT_LIMIT}" ]; do
+      while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker -v 2>&1 >/dev/null ); do
         echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts.";
-        COUNT=$(( ${COUNT} + 1 ));
+        if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
+          exit 1
+        fi
         sleep 1;
+        COUNT=$(( ${COUNT} + 1 ));
       done
       echo "AAA"
 
-    - if [ ${COUNT} -gt ${COUNT_LIMIT} ]; then exit 1; fi
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
 
     # Check 'hyp2000' is started;
@@ -203,12 +205,14 @@ PHPUnit Test:
       COUNT_LIMIT=20
       while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep "hyp2000" 2>&1 >/dev/null ) && [ "${COUNT}" -le "${COUNT_LIMIT}" ]; do
         echo " ${COUNT}/${COUNT_LIMIT} - waiting hyp2000 starts.";
+        if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
+          exit 1
+        fi
+        sleep 2;
         COUNT=$(( ${COUNT} + 1 ));
-        sleep 1;
       done
       echo "BBB"
 
-    - if [ ${COUNT} -gt ${COUNT_LIMIT} ]; then exit 1; fi
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
     - echo "PIPPO"
 
