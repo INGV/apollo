@@ -19,6 +19,11 @@ echo ""
 #
 COUNT=1
 COUNT_LIMIT=50
+echo "--A--"
+docker images
+echo "--B--"
+docker images | grep "hyp2000"
+echo "--C--"
 while [[ $( docker images | grep "hyp2000" 2>&1 >/dev/null) ]] && [[ "${COUNT}" -le "${COUNT_LIMIT}" ]]; do
     echo " ${COUNT}/${COUNT_LIMIT} - waiting hyp2000 starts." 
     COUNT=$(( ${COUNT} + 1))
