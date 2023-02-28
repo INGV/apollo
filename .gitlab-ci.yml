@@ -67,8 +67,8 @@ before_script:
       fi
     - echo FILE_DOCKER_COMPOSE=${FILE_DOCKER_COMPOSE}
     - echo DOCKER_IMAGE_TAG_TMP=${DOCKER_IMAGE_TAG_TMP}
-    - DANTE_VERSION_WITHOUT_V=$( cat VERSION | sed "s/^v//" )
-    - echo DANTE_VERSION_WITHOUT_V=${DANTE_VERSION_WITHOUT_V}
+    - APOLLO_VERSION_WITHOUT_V=$( cat VERSION | sed "s/^v//" )
+    - echo APOLLO_VERSION_WITHOUT_V=${APOLLO_VERSION_WITHOUT_V}
 
 # From: https://www.docker.com/blog/checking-your-current-docker-pull-rate-limits-and-status/
 dockerhub-rate-limit:
@@ -183,12 +183,12 @@ PHPUnit Test:
     #- $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker -v 2>&1 >/dev/null )
     #- echo "PIPPO=${?}"
     
-    # Check 'docker-in-docker' is started;
+    # Check 'docker-in-docker' is started
     - |
       COUNT=1
       COUNT_LIMIT=20
       while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker -v 2>&1 >/dev/null ); do
-        echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts.";
+        echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts...";
         if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
           exit 1
         fi
@@ -198,25 +198,12 @@ PHPUnit Test:
 
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
 
-    # Check 'hyp2000' is started;
+    # Check 'hyp2000' is started
     - |
       COUNT=1
       COUNT_LIMIT=50
       while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep "hyp2000" 2>&1 >/dev/null ) && [ "${COUNT}" -le "${COUNT_LIMIT}" ]; do
-        echo " ${COUNT}/${COUNT_LIMIT} - waiting hyp2000 starts.";
-        if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
-          exit 1
-        fi
-        sleep 5;
-        COUNT=$(( ${COUNT} + 1 ));
-      done
-
-    # Check 'pyml' is started;
-    - |
-      COUNT=1
-      COUNT_LIMIT=50
-      while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep "pyml" 2>&1 >/dev/null ) && [ "${COUNT}" -le "${COUNT_LIMIT}" ]; do
-        echo " ${COUNT}/${COUNT_LIMIT} - waiting pyml starts.";
+        echo " ${COUNT}/${COUNT_LIMIT} - waiting hyp2000 starts...";
         if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
           exit 1
         fi
@@ -226,15 +213,71 @@ PHPUnit Test:
 
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
 
-    # Check 'docker-in-docker' is started; check 'hyp2000' and 'pyml' docker images are deployed.
-#    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo apollo/scripts/for_ci/checkDindAndDockerImages.sh
+    # Check 'pyml' is started
+    - |
+      COUNT=1
+      COUNT_LIMIT=50
+      while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep "pyml" 2>&1 >/dev/null ) && [ "${COUNT}" -le "${COUNT_LIMIT}" ]; do
+        echo " ${COUNT}/${COUNT_LIMIT} - waiting pyml starts...";
+        if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
+          exit 1
+        fi
+        sleep 5;
+        COUNT=$(( ${COUNT} + 1 ));
+      done
+
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
 
     # START - Tests
-    - ls -l
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'php artisan route:list'
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo php artisan test --stop-on-failure
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo vendor/bin/phpstan
     # END - Tests 
+
+# Push only 'develop' and 'tags' image. For 'tags', a 'latest' tag will be created
+Push final image to DockerHub:
+  stage: push
+  script:
+    - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP}
+    - echo APOLLO_VERSION=${APOLLO_VERSION}
+    - docker images
+    - docker compose pull
+    - > 
+      if [[ "${CI_COMMIT_REF_NAME}" == "develop" ]]; then
+        APOLLO_VERSION=${CI_COMMIT_REF_NAME};
+      else
+        APOLLO_VERSION=${APOLLO_VERSION_WITHOUT_V};
+      fi
+    - echo APOLLO_VERSION=${APOLLO_VERSION}
+    - docker images
+    #
+    - docker tag vlauciani/caravel-apollo:${DOCKER_IMAGE_TAG_TMP} vlauciani/caravel-apollo:${APOLLO_VERSION}
+    - > 
+      if [[ "${CI_COMMIT_REF_NAME}" != "develop" ]]; then
+        docker tag vlauciani/caravel-apollo:${DOCKER_IMAGE_TAG_TMP} vlauciani/caravel-apollo:latest;
+      fi
+    #
+    - docker images
+    #
+    - docker push vlauciani/caravel-apollo:${APOLLO_VERSION}
+    - > 
+      if [[ "${CI_COMMIT_REF_NAME}" != "develop" ]]; then
+        docker push vlauciani/caravel-apollo:latest
+      fi
+  except:
+    - schedule
+  only:
+    - develop
+    - tags
+
+Clean DockerHub:
+  stage: clean_dockerhub
+  script:
+    - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP}
+    - echo APOLLO_VERSION=${APOLLO_VERSION}
+    - docker images
+    - sleep 2
+    - docker run --rm lumir/remove-dockerhub-tag --user ${CI_DOCKERHUB_REGISTRY_USER}  --password ${CI_DOCKERHUB_REGISTRY_TOKEN} vlauciani/caravel-apollo:${DOCKER_IMAGE_TAG_TMP}
 
 #build_laravel:
 #    stage: all_stages
