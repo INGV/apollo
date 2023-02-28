@@ -3,8 +3,7 @@ services:
   apollo:
     image: "vlauciani/caravel-apollo:${APOLLO_VERSION:-latest}"
     volumes:
-      #- ./:/app
-      - docker-in-docker:/certs/client
+      - docker-in-docker.data:/certs/client
     environment:
       - PHP_MEMORY_LIMIT=2048M
       - DOCKER_HOST=tcp://docker-in-docker:2376
@@ -21,8 +20,7 @@ services:
       DOCKER_TLS_SAN: DNS:docker-in-docker
     privileged: true
     volumes:
-      - ./:/app
-      - docker-in-docker:/certs/client
+      - docker-in-docker.data:/certs/client
     expose:
       - 2375
     networks:
@@ -30,16 +28,16 @@ services:
   redis:
     image: redis:7.0.7
     volumes:
-      - 'data.redis:/data'
+      - 'redis.data:/data'
     networks:
       - network-caravel-apollo
     command: --requirepass r3d15
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
 volumes:
-  data.redis:
+  redis.data:
     driver: local
-  docker-in-docker:
+  docker-in-docker.data:
     driver: local
 networks:
   network-caravel-apollo:
