@@ -236,66 +236,66 @@ PHPUnit Test:
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo vendor/bin/phpstan
     # END - Tests 
 
-build_laravel:
-    stage: all_stages
-    tags:
+#build_laravel:
+#    stage: all_stages
+#    tags:
         # Runners:
         # 1) 'laradock' runner is working on 'albus.int.ingv.it' valentino's MAC.
         # 2) 'test' runner is working on 'docker.int.ingv.it' server.
         # 3) 'hgp5_runner' runner is working on 'hgp5.int.ingv.it' server.
         # 4) 'sqlx2-srvr_runner' runner is working on 'sqlx2-srvr.int.ingv.it' server.
-        - sqlx2-srvr_runner
+#        - sqlx2-srvr_runner
         
-    cache:
-        key: ${CI_COMMIT_REF_SLUG}-composer
-        paths:
-            - vendor/ 
+#    cache:
+#        key: ${CI_COMMIT_REF_SLUG}-composer
+#        paths:
+#            - vendor/ 
 
-    script:
+#    script:
         # Install common dependecies
-        - apk add --no-cache bash vim python3 py-pip python3-dev libffi-dev openssl-dev gcc libc-dev make git
-        - pip install --upgrade pip
-        - pip install --no-cache-dir docker-compose 
+#        - apk add --no-cache bash vim python3 py-pip python3-dev libffi-dev openssl-dev gcc libc-dev make git
+#        - pip install --upgrade pip
+#        - pip install --no-cache-dir docker-compose 
         
         # Configure Laravel ENV
-        - cp ./.env.example ./.env
-        - cat ./.env
-        - whoami
+#        - cp ./.env.example ./.env
+#        - cat ./.env
+#        - whoami
         
         # Remove file to re-build 'laradock'
-        - if [ -f laradock-${CI_PROJECT_NAME}/.env ]; then rm -v laradock-${CI_PROJECT_NAME}/.env ; fi
+#        - if [ -f laradock-${CI_PROJECT_NAME}/.env ]; then rm -v laradock-${CI_PROJECT_NAME}/.env ; fi
         
         # Configure laradock
-        - ./${CI_PROJECT_NAME}/configure_laradock.sh
-        - cat ./laradock-${CI_PROJECT_NAME}/.env
+#        - ./${CI_PROJECT_NAME}/configure_laradock.sh
+#        - cat ./laradock-${CI_PROJECT_NAME}/.env
 
         # Start Laradock
-        - cd laradock-${CI_PROJECT_NAME}
-        - docker-compose build --no-cache --pull nginx php-fpm redis workspace laravel-horizon ;
-        - docker-compose up -d nginx php-fpm redis workspace laravel-horizon
-        - docker-compose exec -T workspace composer install
-        - docker-compose exec -T workspace composer update
-        - docker-compose exec -T workspace php artisan key:generate 
+#        - cd laradock-${CI_PROJECT_NAME}
+#        - docker-compose build --no-cache --pull nginx php-fpm redis workspace laravel-horizon ;
+#        - docker-compose up -d nginx php-fpm redis workspace laravel-horizon
+#        - docker-compose exec -T workspace composer install
+#        - docker-compose exec -T workspace composer update
+#        - docker-compose exec -T workspace php artisan key:generate 
 
         # Install hyp2000 submodule
-        - docker-compose exec -T php-fpm sh -c "if docker image ls | grep -q hyp2000 ; then echo \" nothing to do\"; else cd hyp2000 && docker build --tag hyp2000:ewdevgit -f DockerfileEwDevGit .; fi"
+#        - docker-compose exec -T php-fpm sh -c "if docker image ls | grep -q hyp2000 ; then echo \" nothing to do\"; else cd hyp2000 && docker build --tag hyp2000:ewdevgit -f DockerfileEwDevGit .; fi"
 
         # Install PyML submodule
-        - docker-compose exec -T php-fpm sh -c "if docker image ls | grep -q pyml ; then echo \" nothing to do\"; else cd pyml && docker build --tag pyml .; fi"
+#        - docker-compose exec -T php-fpm sh -c "if docker image ls | grep -q pyml ; then echo \" nothing to do\"; else cd pyml && docker build --tag pyml .; fi"
 
         # START - Tests
         # Artisan
-        - docker-compose exec -T workspace bash -c "php artisan route:list"
+#        - docker-compose exec -T workspace bash -c "php artisan route:list"
         # PHPUnit
-        - docker-compose exec -T workspace php artisan test --testsuite=Feature --stop-on-failure
+#        - docker-compose exec -T workspace php artisan test --testsuite=Feature --stop-on-failure
         # PHPStan
-        - docker-compose exec -T workspace vendor/bin/phpstan
+#        - docker-compose exec -T workspace vendor/bin/phpstan
         # END - Tests
-    artifacts:
-        when: always
-        paths:
-            - storage/logs
-        expire_in: 1 day
+#    artifacts:
+#        when: always
+#        paths:
+#            - storage/logs
+#        expire_in: 1 day
 
 
 
