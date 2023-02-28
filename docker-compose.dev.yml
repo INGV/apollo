@@ -7,13 +7,10 @@ services:
       target: apollo-dev
       cache_from:
         - "vlauciani/caravel-apollo:latest"
-    volumes:
-      - ./:/app:cached
-    #environment:
-    #  - DB_HOST=casa
     ports:
       - 8586:80
+    volumes:
+      - ./:/app:cached
   docker-in-docker:
     volumes:
-      - docker-in-docker.data:/certs/client
       - ./:/app:cached

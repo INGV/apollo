@@ -3,10 +3,11 @@ services:
   apollo:
     image: vlauciani/caravel-apollo:${APOLLO_VERSION:-2.77.0}
     volumes:
-      - v-caravel-apollo-storage-log:/app/storage/logs
+      - v-caravel-apollo-storage:/app/storage
       - /mnt/gfs/apollo/.env:/app/.env
+      - docker-in-docker.data:/certs/client
     ports:
-      - "8280:80"
+      - "8380:80"
     deploy:
       mode: replicated
       replicas: 2
@@ -16,6 +17,16 @@ services:
         parallelism: 2
         delay: 10s
         order: start-first
+  docker-in-docker:
+    image: docker:20.10-dind
+    environment:
+      DOCKER_TLS_SAN: DNS:docker-in-docker
+    privileged: true
+    volumes:
+      - docker-in-docker.data:/certs/client
+      - v-caravel-apollo-storage:/app/storage
+    #expose:
+    #  - 2375
   redis:
     image: redis:7.0.7
     volumes:
@@ -30,15 +41,9 @@ services:
       test: [ "CMD", "redis-cli", "ping" ]
 volumes:
   v-redis:
-  v-caravel-apollo-storage-log:
+  v-caravel-apollo-storage:
     driver: local
     driver_opts:
       o: bind
-      device: /mnt/gfs/apollo/storage/logs/apollo
-      type: none
-  v-caravel-apollo-horizon-storage-log:
-    driver: local
-    driver_opts:
-      o: bind
-      device: /mnt/gfs/apollo/storage/logs/horizon
+      device: /mnt/gfs/apollo/storage
       type: none
