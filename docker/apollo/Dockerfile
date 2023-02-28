@@ -27,9 +27,10 @@ FROM base as apollo-dev
 FROM base as apollo-prod
 
 COPY --chown=1000:1000 . .
-#COPY . .
-
 COPY .env.example .env
+RUN rm -fr ./storage/app/data/hyp2000/*
+RUN rm -fr ./storage/app/data/pyml/*
+RUN rm -fr ./storage/logs/*
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 RUN php artisan key:generate
 #RUN chown -R application:application .
