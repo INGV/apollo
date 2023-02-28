@@ -22,17 +22,32 @@ while [[ $(docker -v 2>&1 >/dev/null) ]] && (( ${COUNT} < ${COUNT_LIMIT} )); do
 done
 
 if docker -v 2>&1 >/dev/null ; then
-    # hyp2000
-    if docker image ls | grep -q hyp2000 ; then 
+    # START - hyp2000
+    echo "Pull/Build hyp2000:"
+    if docker image ls | grep -q "ingv/hyp2000" ; then 
         echo " nothing to do" 
     else 
-        if [ -d ${DIR_HYP2000} ]; then
-            cd ${DIR_HYP2000}
-            docker build --tag hyp2000:ewdevgit -f DockerfileEwDevGit .
+        echo " try to pull: \"ingv/hyp2000:ewdevgit\""
+        RET=$(docker pull ingv/hyp2000:ewdevgit 2>/dev/null >/dev/null && echo y || echo n)
+        if [[ "${RET}" == "n" ]]; then
+            echo "  pull error! try to build locally"
+            if [ -d ${DIR_HYP2000} ]; then
+                cd ${DIR_HYP2000}
+                docker build --tag ingv/hyp2000:ewdevgit -f DockerfileEwDevGit .
+            fi
+        fi
+        # Final check
+        if ! docker image ls | grep -q "ingv/hyp2000" ; then
+            echo " docker image \"ingv/hyp2000\" doesn't exist."
+            exit 1
         fi
     fi
+    echo "done"
+    echo ""
+    # END - hyp2000
 
-    # pyml
+    # START - pyml
+    echo "Pull/Build pyml:"
     if docker image ls | grep -q pyml ; then 
         echo " nothing to do" 
     else
@@ -41,6 +56,9 @@ if docker -v 2>&1 >/dev/null ; then
             docker build --tag pyml .
         fi
     fi
+    echo "done"
+    echo ""
+    # END - pyml
 else
     echo " ERROR: docker-in-docker not started!"
     echo "END - ${BASENAME}"
