@@ -16,7 +16,7 @@ git clone --recursive https://gitlab+deploy-token-71:TWxRfoetzHXxpsLbckbb@gitlab
 ## Develop
 In *develop* mode, all files are "binded" into the container; it is useful to develop code.
 ```
-cd dante
+cd apollo
 # (optional; build image locally) docker compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache --pull --progress=plain
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up --remove-orphans -d
 ```
@@ -37,14 +37,18 @@ echo "----- 3 -----" && \
 docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo chown -R $(id -u):$(id -g) ./storage && \
 echo "----- 4 -----" && \
 docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo chown -R $(id -u):$(id -g) ./bootstrap/cache/ && \ 
-echo "----- 5 -----" && \
-docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo bash -c "if docker image ls | grep -q hyp2000 ; then echo \" nothing to do\"; else cd hyp2000 && docker build --tag hyp2000:ewdevgit -f DockerfileEwDevGit .; fi" && \
-echo "----- 6 -----" && \
-docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo bash -c "if docker image ls | grep -q pyml ; then echo \" nothing to do\"; else cd pyml && docker build --tag pyml .; fi"
 ```
 
 ## Production
 In *production* mode, all files are "copied" into the container (also `.env`) and you do not need "bind" files:
+```
+cd apollo
+# (optional; build image locally) docker compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache --pull --progress=plain
+```
+you can decide to:
+-  *bind*/*mount* the `.env` file and/or the `storage/` directory. 
+
+In this case, update `docker-compose.prod.yml` file.
 
 
 ## --- END - New ---
