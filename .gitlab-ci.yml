@@ -175,7 +175,7 @@ PHPUnit Test:
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} up -d --remove-orphans
 
     # Install 'dev' packages (removing option '--no-dev') to execute tests
-    - > 
+    - | 
       if [[ "${CI_COMMIT_REF_NAME}" != "develop" ]]; then
         docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo composer install;
       fi
@@ -184,7 +184,7 @@ PHPUnit Test:
     #- echo "PIPPO=${?}"
     
     # Check 'docker-in-docker' is started
-    - >
+    - |
       COUNT=1
       COUNT_LIMIT=20
       while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker -v 2>&1 >/dev/null ); do
@@ -199,7 +199,7 @@ PHPUnit Test:
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
 
     # Check 'hyp2000' is started
-    - >
+    - |
       COUNT=1
       COUNT_LIMIT=50
       while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep "hyp2000" 2>&1 >/dev/null ) && [ "${COUNT}" -le "${COUNT_LIMIT}" ]; do
@@ -214,7 +214,7 @@ PHPUnit Test:
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
 
     # Check 'pyml' is started
-    - >
+    - |
       COUNT=1
       COUNT_LIMIT=50
       while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep "pyml" 2>&1 >/dev/null ) && [ "${COUNT}" -le "${COUNT_LIMIT}" ]; do
