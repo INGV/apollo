@@ -179,7 +179,7 @@ PHPUnit Test:
     - |
       COUNT=1
       COUNT_LIMIT=20
-      while ! $( ping -c1 hyp2000 2>&1 >/dev/null ); do
+      while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo ping -c1 hyp2000 2>&1 >/dev/null ); do
         echo " ${COUNT}/${COUNT_LIMIT} - waiting hyp2000 starts...";
         if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
           exit 1
@@ -192,7 +192,7 @@ PHPUnit Test:
     - |
       COUNT=1
       COUNT_LIMIT=20
-      while ! $( ping -c1 pyml 2>&1 >/dev/null ); do
+      while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo ping -c1 pyml 2>&1 >/dev/null ); do
         echo " ${COUNT}/${COUNT_LIMIT} - waiting pyml starts...";
         if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
           exit 1
