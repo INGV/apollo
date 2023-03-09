@@ -3,13 +3,14 @@
 namespace App\Api\v2\Controllers;
 
 use App\Api\v2\Models\PyMLModel;
-use App\Api\v2\Requests\PyMLRequest;
-use App\Api\v2\Traits\FindAndRetrieveStationXMLTrait;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Symfony\Component\Process\Exception\ProcessFailedException;
+use App\Api\v2\Requests\PyMLRequest;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
 use Symfony\Component\Process\Process;
+use Illuminate\Support\Facades\Storage;
+use App\Api\v2\Traits\FindAndRetrieveStationXMLTrait;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class PyMLController extends Controller
 {
@@ -17,8 +18,8 @@ class PyMLController extends Controller
 
     protected $default_pyml_conf = [
         'iofilenames' => [
-            'magnitudes' => '/opt/data/pyml_magnitudes.csv',
-            'log' => '/opt/data/pyml_general.log',
+            'magnitudes' => '/opt/data/---dir_random_name---/pyml_magnitudes.csv',
+            'log' => '/opt/data/---dir_random_name---/pyml_general.log',
         ],
         'preconditions' => [
             'theoretical_p' => false,
@@ -27,6 +28,8 @@ class PyMLController extends Controller
             'max_lowcorner' => 15,
         ],
         'station_magnitude' => [
+            'station_magnitude' => 'meanamp',
+            'amp_mean_type' => 'geo',
             'delta_peaks' => 1,
             'use_stcorr_hb' => true,
             'use_stcorr_db' => true,
@@ -122,12 +125,14 @@ class PyMLController extends Controller
         }
         /****** END - amplitudes ******/
 
+        /* Set variables */
+        $now = \DateTime::createFromFormat('U.u', number_format(microtime(true), 6, '.', ''));
+        $nowFormatted = $now->format('Ymd_His');
+        $dir_random_name = $nowFormatted . '__' . gethostbyaddr(\request()->ip()) . '__' . \Illuminate\Support\Str::random(5);
+        $dir_working = '/pyml/' . $dir_random_name;
+
         /****** START - pyml_conf ******/
-        /*
-        foreach ($input_parameters['data']['pyml_conf'] as $key => $value) {
-            $input_parameters['data']['pyml_conf'][$key] = array_merge($input_parameters['data']['pyml_conf'][$key], $this->default_pyml_conf[$key]);
-        }
-        */
+        /* Set pyml_conf */
         foreach ($this->default_pyml_conf as $key => $value) {
             if (empty($input_parameters['data']['pyml_conf'][$key])) {
                 $input_parameters['data']['pyml_conf'][$key] = $this->default_pyml_conf[$key];
@@ -135,69 +140,57 @@ class PyMLController extends Controller
                 $input_parameters['data']['pyml_conf'][$key] = array_merge($this->default_pyml_conf[$key], $input_parameters['data']['pyml_conf'][$key]);
             }
         }
-        /****** END - pyml_conf ******/
 
-        /* Set variables */
-        $now = \DateTime::createFromFormat('U.u', number_format(microtime(true), 6, '.', ''));
-        $nowFormatted = $now->format('Ymd_His');
-        $random_name = $nowFormatted . '__' . gethostbyaddr(\request()->ip()) . '__' . \Illuminate\Support\Str::random(5);
-        $dir_working = '/pyml/' . $random_name;
-        $dir_data = config('filesystems.disks.data.root');
+        /* Update 'iofilenames' key */
+        $input_parameters['data']['pyml_conf']['iofilenames']['magnitudes'] = str_replace('---dir_random_name---', $dir_random_name, $input_parameters['data']['pyml_conf']['iofilenames']['magnitudes']);
+        $input_parameters['data']['pyml_conf']['iofilenames']['log'] = str_replace('---dir_random_name---', $dir_random_name, $input_parameters['data']['pyml_conf']['iofilenames']['log']);
+        /****** END - pyml_conf ******/
 
         /* Write input.json */
         $file_input_json = 'input.json';
         $file_input_fullpath_arc = $dir_working . '/' . $file_input_json;
         Storage::disk('data')->put($file_input_fullpath_arc, json_encode($input_parameters));
 
-        /* !!!!!!!! START - Get 'id -u' ToDo better */
-        $command =
-            array_merge(
-                [
-                    'id',
-                    '-u',
-                ]
-            );
+        /* !!!!!!!! START - Call pyml */
+        /* Set variables */
+        $url = "http://pyml:8080/get?dir=$dir_random_name";
 
-        /* Run process */
-        Log::debug(' Running command: ', $command);
-        $command_timeout = 120;
-        $command_process = new Process($command);
-        $command_process->setTimeout($command_timeout);
-        $command_process->run();
-        $uid = preg_replace("/\r|\n/", '', $command_process->getOutput());
-        Log::debug(' getOutput:' . $uid);
-        Log::debug(' getErrorOutput:' . $command_process->getErrorOutput());
-        if (!$command_process->isSuccessful()) {
-            throw new ProcessFailedException($command_process);
+        try {
+            Log::debug('   step_1a: ' . $url);
+            /* https://laravel.com/docs/8.x/http-client */
+            $response = Http::timeout(5)->get($url);
+            $responseStatus = $response->status();
+
+            Log::debug('   step_2');
+            $response->throw();
+
+            Log::debug('   step_3');
+            if ($responseStatus == 200) {
+                Log::debug('   step_4a - httpStatusCode=' . $responseStatus);
+                $outputData = $response->body();
+            } else {
+                Log::debug('   step_4b - httpStatusCode=' . $responseStatus);
+            }
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            Log::debug('   step_1b');
+            Log::debug('    getCode:' . $e->getCode());
+            Log::debug('    getMessage:' . $e->getMessage());
+            abort($responseStatus, $e->getMessage());
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            Log::debug('   step_1c');
+            Log::debug('    getCode:' . $e->getCode());
+            Log::debug('    getMessage:' . $e->getMessage());
+            abort($responseStatus, $e->getMessage());
+        } catch (\Exception $e) {
+            Log::debug('   step_1d');
+            Log::debug('    getCode:' . $e->getCode());
+            Log::debug('    getMessage:' . $e->getMessage());
+            abort($responseStatus, $e->getMessage());
         }
-        Log::debug(' Done.');
-        /* !!!!!!!! END - Get 'id -u' ToDo better */
-
-        /* !!!!!!!! START - Get 'id -g' ToDo better */
-        $command =
-            array_merge(
-                [
-                    'id',
-                    '-g',
-                ]
-            );
-
-        /* Run process */
-        Log::debug(' Running command: ', $command);
-        $command_timeout = 120;
-        $command_process = new Process($command);
-        $command_process->setTimeout($command_timeout);
-        $command_process->run();
-        $gid = preg_replace("/\r|\n/", '', $command_process->getOutput());
-        Log::debug(' getOutput:' . $gid);
-        Log::debug(' getErrorOutput:' . $command_process->getErrorOutput());
-        if (!$command_process->isSuccessful()) {
-            throw new ProcessFailedException($command_process);
-        }
-        Log::debug(' Done.');
-        /* !!!!!!!! END - Get 'id -g' ToDo better */
+        /* !!!!!!!! END - Call pyml */
 
         /* !!!!!!!! START - Get 'docker run' ToDo better */
+        /*
         $command =
             array_merge(
                 [
@@ -213,6 +206,7 @@ class PyMLController extends Controller
             );
 
         /* Run process */
+        /*
         Log::info(' Running docker: ', $command);
         $command_timeout = 120;
         $command_process = new Process($command);
@@ -227,18 +221,18 @@ class PyMLController extends Controller
         /* !!!!!!!! END - Get 'docker run' ToDo better */
 
         /* */
-        $file_output_log = 'output.log';
-        $file_output_err = 'output.err';
-        $file_output_fullpath_log = $dir_working . '/' . $file_output_log;
-        $file_output_fullpath_err = $dir_working . '/' . $file_output_err;
+        //$file_output_log = 'output.log';
+        //$file_output_err = 'output.err';
+        //$file_output_fullpath_log = $dir_working . '/' . $file_output_log;
+        //$file_output_fullpath_err = $dir_working . '/' . $file_output_err;
 
         /* Write warnings and errors into log file */
-        Log::debug(" Write warnings and errors into \"$file_output_fullpath_err\"");
-        Storage::disk('data')->put($file_output_fullpath_err, $command_process->getErrorOutput());
+        //Log::debug(" Write warnings and errors into \"$file_output_fullpath_err\"");
+        //Storage::disk('data')->put($file_output_fullpath_err, $command_process->getErrorOutput());
 
         /* Write standard output messages into log file */
-        Log::debug(" Write standard output messages into \"$file_output_fullpath_log\"");
-        Storage::disk('data')->put($file_output_fullpath_log, $command_process->getOutput());
+        //Log::debug(" Write standard output messages into \"$file_output_fullpath_log\"");
+        //Storage::disk('data')->put($file_output_fullpath_log, $command_process->getOutput());
 
         /* Get pyml log file */
         /*
@@ -246,7 +240,7 @@ class PyMLController extends Controller
         $contents = Storage::disk('data')->get($dir_working . "/pyml_general.log");
         $pyml_log = explode("\n", $contents);
         */
-
+        //dd($dir_working, Storage::disk('data'));
         if ($output_format == 'text') {
             $contents = Storage::disk('data')->get($dir_working . '/pyml_magnitudes.csv');
             /* set headers */
@@ -256,7 +250,7 @@ class PyMLController extends Controller
         } else {
             /* Get pyml csv file */
             $csvToArray = [];
-            if (($open = fopen($dir_data . $dir_working . '/pyml_magnitudes.csv', 'r')) !== false) {
+            if (($open = fopen(Storage::disk('data')->path($dir_working . '/pyml_magnitudes.csv'), 'r')) !== false) {
                 while (($data = fgetcsv(
                     $open,
                     1000,
@@ -268,7 +262,7 @@ class PyMLController extends Controller
             }
 
             /* Build output */
-            $output['data']['random_string'] = $random_name;
+            $output['data']['random_string'] = $dir_random_name;
             //$output['data']['eventid']          = $csvToArray[1][0];
 
             /* START - Magnitudes */

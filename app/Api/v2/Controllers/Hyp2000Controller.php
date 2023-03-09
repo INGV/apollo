@@ -2,15 +2,16 @@
 
 namespace App\Api\v2\Controllers;
 
-use App\Api\v2\Requests\Hyp2000Request;
-use App\Api\v2\Requests\StationHinvRequest;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
+use Ingv\Hyp2000Converter\Json2ArcV2;
+use Symfony\Component\Process\Process;
+use App\Api\v2\Requests\Hyp2000Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Ingv\Hyp2000Converter\Json2ArcV2;
+use App\Api\v2\Requests\StationHinvRequest;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\Process;
 
 class Hyp2000Controller extends Controller
 {
@@ -107,9 +108,9 @@ class Hyp2000Controller extends Controller
 
         $now = \DateTime::createFromFormat('U.u', number_format(microtime(true), 6, '.', ''));
         $nowFormatted = $now->format('Ymd_His');
-        $dir_working = '/hyp2000/' . $nowFormatted . '__' . gethostbyaddr(\request()->ip()) . '__' . \Illuminate\Support\Str::random(5);
+        $dir_random_name = $nowFormatted . '__' . gethostbyaddr(\request()->ip()) . '__' . \Illuminate\Support\Str::random(5);
+        $dir_working = '/hyp2000/' . $dir_random_name;
         $dir_input = 'input';
-        $dir_data = config('filesystems.disks.data.root');
 
         /* Write ARC file on disk */
         $file_input_arc = 'input.arc';
@@ -182,77 +183,46 @@ class Hyp2000Controller extends Controller
         /* Copy stations file and create output dir */
         Storage::disk('data')->makeDirectory($dir_working . '/' . $dir_output . '');
 
-        /* !!!!!!!! START - Get 'whoami' ToDo better */
-        $command =
-            array_merge(
-                [
-                    'whoami',
-                ]
-            );
+        /* !!!!!!!! START - Call hyp2000 */
+        /* Set variables */
+        $url = "http://hyp2000:8080/get?dir=$dir_random_name";
 
-        /* Run process */
-        Log::debug(' Running command: ', $command);
-        $command_timeout = 120;
-        $command_process = new Process($command);
-        $command_process->setTimeout($command_timeout);
-        $command_process->run();
-        Log::debug(' getOutput:' . $command_process->getOutput());
-        Log::debug(' getErrorOutput:' . $command_process->getErrorOutput());
-        if (!$command_process->isSuccessful()) {
-            throw new ProcessFailedException($command_process);
+        try {
+            Log::debug('   step_1a: ' . $url);
+            /* https://laravel.com/docs/8.x/http-client */
+            $response = Http::timeout(5)->get($url);
+            $responseStatus = $response->status();
+
+            Log::debug('   step_2');
+            $response->throw();
+
+            Log::debug('   step_3');
+            if ($responseStatus == 200) {
+                Log::debug('   step_4a - httpStatusCode=' . $responseStatus);
+                $outputData = $response->body();
+            } else {
+                Log::debug('   step_4b - httpStatusCode=' . $responseStatus);
+            }
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            Log::debug('   step_1b');
+            Log::debug('    getCode:' . $e->getCode());
+            Log::debug('    getMessage:' . $e->getMessage());
+            abort($responseStatus, $e->getMessage());
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            Log::debug('   step_1c');
+            Log::debug('    getCode:' . $e->getCode());
+            Log::debug('    getMessage:' . $e->getMessage());
+            abort($responseStatus, $e->getMessage());
+        } catch (\Exception $e) {
+            Log::debug('   step_1d');
+            Log::debug('    getCode:' . $e->getCode());
+            Log::debug('    getMessage:' . $e->getMessage());
+            abort($responseStatus, $e->getMessage());
         }
-        Log::debug(' Done.');
-        /* !!!!!!!! END - Get 'whoami' ToDo better */
-
-        /* !!!!!!!! START - Get 'id -u' ToDo better */
-        $command =
-            array_merge(
-                [
-                    'id',
-                    '-u',
-                ]
-            );
-
-        /* Run process */
-        Log::debug(' Running command: ', $command);
-        $command_timeout = 120;
-        $command_process = new Process($command);
-        $command_process->setTimeout($command_timeout);
-        $command_process->run();
-        $uid = preg_replace("/\r|\n/", '', $command_process->getOutput());
-        Log::debug(' getOutput:' . $uid);
-        Log::debug(' getErrorOutput:' . $command_process->getErrorOutput());
-        if (!$command_process->isSuccessful()) {
-            throw new ProcessFailedException($command_process);
-        }
-        Log::debug(' Done.');
-        /* !!!!!!!! END - Get 'id -u' ToDo better */
-
-        /* !!!!!!!! START - Get 'id -g' ToDo better */
-        $command =
-            array_merge(
-                [
-                    'id',
-                    '-g',
-                ]
-            );
-
-        /* Run process */
-        Log::debug(' Running command: ', $command);
-        $command_timeout = 120;
-        $command_process = new Process($command);
-        $command_process->setTimeout($command_timeout);
-        $command_process->run();
-        $gid = preg_replace("/\r|\n/", '', $command_process->getOutput());
-        Log::debug(' getOutput:' . $gid);
-        Log::debug(' getErrorOutput:' . $command_process->getErrorOutput());
-        if (!$command_process->isSuccessful()) {
-            throw new ProcessFailedException($command_process);
-        }
-        Log::debug(' Done.');
-        /* !!!!!!!! END - Get 'id -g' ToDo better */
+        /* !!!!!!!! END - Call hyp2000 */
 
         /* !!!!!!!! START - Get 'docker run' ToDo better */
+        /*
         $command =
             array_merge(
                 [
@@ -268,6 +238,7 @@ class Hyp2000Controller extends Controller
             );
 
         /* Run process */
+        /*
         Log::info(' Running docker: ', $command);
         $command_timeout = 120;
         $command_process = new Process($command);
@@ -281,18 +252,18 @@ class Hyp2000Controller extends Controller
         Log::debug(' Done.');
         /* !!!!!!!! END - Get 'docker run' ToDo better */
 
-        $file_output_log = 'output.log';
-        $file_output_err = 'output.err';
-        $file_output_fullpath_log = $dir_working . '/' . $dir_output . '/' . $file_output_log;
-        $file_output_fullpath_err = $dir_working . '/' . $dir_output . '/' . $file_output_err;
+        //$file_output_log = 'output.log';
+        //$file_output_err = 'output.err';
+        //$file_output_fullpath_log = $dir_working . '/' . $dir_output . '/' . $file_output_log;
+        //$file_output_fullpath_err = $dir_working . '/' . $dir_output . '/' . $file_output_err;
 
         /* Write warnings and errors into log file */
-        Log::debug(" Write warnings and errors into \"$file_output_fullpath_err\"");
-        Storage::disk('data')->put($file_output_fullpath_err, $command_process->getErrorOutput());
+        //Log::debug(" Write warnings and errors into \"$file_output_fullpath_err\"");
+        //Storage::disk('data')->put($file_output_fullpath_err, $command_process->getErrorOutput());
 
         /* Write standard output messages into log file */
-        Log::debug(" Write standard output messages into \"$file_output_fullpath_log\"");
-        Storage::disk('data')->put($file_output_fullpath_log, $command_process->getOutput());
+        //Log::debug(" Write standard output messages into \"$file_output_fullpath_log\"");
+        //Storage::disk('data')->put($file_output_fullpath_log, $command_process->getOutput());
 
         /* Get output to return */
         Log::debug(' Get output to return');

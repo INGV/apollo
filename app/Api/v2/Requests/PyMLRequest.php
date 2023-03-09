@@ -52,6 +52,8 @@ class PyMLRequest extends FormRequest
 
             /* pyml_conf.station_magnitude */
             'data.pyml_conf.station_magnitude'                      => ['required', 'array'],
+            'data.pyml_conf.station_magnitude.mag_mean_type'        => ['required', 'string', 'in:meanmag,meanamp'],
+            'data.pyml_conf.station_magnitude.amp_mean_type'        => ['required', 'string', 'in:ari,geo'],
             'data.pyml_conf.station_magnitude.delta_peaks'          => ['required', 'numeric'],
             'data.pyml_conf.station_magnitude.use_stcorr_hb'        => ['required', 'boolean'],
             'data.pyml_conf.station_magnitude.use_stcorr_db'        => ['required', 'boolean'],

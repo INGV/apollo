@@ -8,7 +8,7 @@ WORKDIR /app
 #RUN if [ ! -d /opt/docker/etc/cron ]; then mkdir -p /opt/docker/etc/cron; fi
 #COPY ./docker/apollo/extra/etc/cron/application /opt/docker/etc/cron/
 COPY ./docker/apollo/extra/apollo01FixPermissions.sh /opt/docker/provision/entrypoint.d/
-COPY ./docker/apollo/extra/apollo02BuildDindImages.sh /opt/docker/provision/entrypoint.d/
+#COPY ./docker/apollo/extra/apollo02BuildDindImages.sh /opt/docker/provision/entrypoint.d/
 
 COPY ./docker/apollo/extra/casa1.sh /opt/docker/provision/bootstrap.d/
 COPY ./docker/apollo/extra/casa2.sh /opt/docker/provision/build.d/
@@ -19,6 +19,10 @@ RUN curl -sS https://download.docker.com/linux/static/stable/x86_64/docker-20.10
     && tar -xzf /tmp/docker.tar.gz -C /tmp/ \
     && cp /tmp/docker/docker* /usr/local/bin \
     && chmod +x /usr/local/bin/docker*
+
+# Install ping
+RUN apt-get update -y \
+    && apt-get install -y iputils-ping
 
 FROM base as apollo-dev
 #RUN chown -R application:application .
