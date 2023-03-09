@@ -20,6 +20,8 @@ class PyMLTest extends TestCase
                         "max_lowcorner": 15
                     },
                     "station_magnitude": {
+                        "mag_mean_type": "meanamp",
+                        "amp_mean_type": "geo",
                         "delta_peaks": 1,
                         "use_stcorr_hb": true,
                         "use_stcorr_db": true,
