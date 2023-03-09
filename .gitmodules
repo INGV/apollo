@@ -1,3 +1,0 @@
-[submodule "laradock-apollo"]
-	path = laradock-apollo
-	url = https://github.com/Laradock/laradock.git
