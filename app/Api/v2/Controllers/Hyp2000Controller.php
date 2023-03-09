@@ -217,7 +217,7 @@ class Hyp2000Controller extends Controller
             Log::debug('   step_1d');
             Log::debug('    getCode:' . $e->getCode());
             Log::debug('    getMessage:' . $e->getMessage());
-            abort($responseStatus, $e->getMessage());
+            abort($e->getCode() ?? 500, $e->getMessage());
         }
         /* !!!!!!!! END - Call hyp2000 */
 

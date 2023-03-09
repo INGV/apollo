@@ -159,7 +159,7 @@ class PyMLController extends Controller
             Log::debug('   step_1a: ' . $url);
             /* https://laravel.com/docs/8.x/http-client */
             $response = Http::timeout(5)->get($url);
-            $responseStatus = $response->status();
+            $responseStatus = $response->status() ?? 500;
 
             Log::debug('   step_2');
             $response->throw();
@@ -175,7 +175,7 @@ class PyMLController extends Controller
             Log::debug('   step_1b');
             Log::debug('    getCode:' . $e->getCode());
             Log::debug('    getMessage:' . $e->getMessage());
-            abort($e->getCode() ?? 500, $e->getMessage());
+            abort($responseStatus, $e->getMessage());
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             Log::debug('   step_1c');
             Log::debug('    getCode:' . $e->getCode());
