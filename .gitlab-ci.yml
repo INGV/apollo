@@ -182,7 +182,7 @@ PHPUnit Test:
     - |
       COUNT=1
       COUNT_LIMIT=20
-      while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo ping -c1 hyp2000 2>&1 >/dev/null ); do
+      while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo curl --output /dev/null --silent --head --fail "http://hyp2000:8080" ); do
         echo " ${COUNT}/${COUNT_LIMIT} - waiting hyp2000 starts...";
         if [ "${COUNT}" -ge "${COUNT_LIMIT}" ]; then
           exit 1
@@ -191,13 +191,13 @@ PHPUnit Test:
         COUNT=$(( ${COUNT} + 1 ));
       done
 
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo ping -c2 hyp2000
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo curl --output /dev/null --head --fail "http://hyp2000:8080"
 
     # Check 'pyml' is started
     - |
       COUNT=1
       COUNT_LIMIT=20
-      while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo ping -c1 pyml 2>&1 >/dev/null ); do
+      while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo curl --output /dev/null --silent --head --fail "http://pyml:8080" ); do
         echo " ${COUNT}/${COUNT_LIMIT} - waiting pyml starts...";
         if [ "${COUNT}" -ge "${COUNT_LIMIT}" ]; then
           exit 1
@@ -206,7 +206,7 @@ PHPUnit Test:
         COUNT=$(( ${COUNT} + 1 ));
       done
 
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo ping -c2 pyml
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo curl --output /dev/null --head --fail "http://pyml:8080"
 
     # START - Tests
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'php artisan route:list'
