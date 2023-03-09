@@ -508,7 +508,7 @@ class Hyp2000Test extends TestCase
 
         /* Start hyp2000 */
         $response = $this->postJson(route('v2.location.hyp2000'), $dataInput__decoded);
-        print_r($response->content());
+        $response->dump();
         $response->assertStatus(200);
 
         /* Check JSON structure */
