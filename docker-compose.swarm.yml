@@ -1,36 +1,47 @@
 version: '3.9'
 services:
   apollo:
-    image: vlauciani/caravel-apollo:${APOLLO_VERSION:-2.77.0}
+    image: vlauciani/caravel-apollo:${APOLLO_VERSION:-2.11.0}
     volumes:
       - v-caravel-apollo-storage:/app/storage
       - /mnt/gfs/apollo/.env:/app/.env
-      - docker-in-docker.data:/certs/client
     ports:
       - "8380:80"
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
       update_config:
         parallelism: 2
         delay: 10s
         order: start-first
-  docker-in-docker:
-    image: docker:20.10-dind
-    environment:
-      DOCKER_TLS_SAN: DNS:docker-in-docker
-    privileged: true
+  hyp2000:
+    image: ingv/hyp2000:ewdevgit
     volumes:
-      - docker-in-docker.data:/certs/client
+      - 'redis.data:/data'
+    entrypoint: bash
+    command: -c "curl -O https://dl.google.com/go/go1.20.1.linux-amd64.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.20.1.linux-amd64.tar.gz && PATH=\"$PATH:/usr/local/go/bin\" && rm go1.20.1.linux-amd64.tar.gz && go install github.com/msoap/shell2http@latest && if [ -f /usr/local/bin/shell2http ]; then rm /usr/local/bin/shell2http; fi && ln -s $(go env GOPATH)/bin/shell2http /usr/local/bin/shell2http && shell2http -port 8080 -form -include-stderr -cgi /get '. /root/.bashrc && export DIR_DATA=/app/storage/app/data/hyp2000/$${v_dir} && /opt/entrypoint.sh italy2000.hyp > /app/storage/app/data/hyp2000/$${v_dir}/output.log 2>/app/storage/app/data/hyp2000/$${v_dir}/output.err && mv /app/storage/app/data/hyp2000/$${v_dir}/output.* /app/storage/app/data/hyp2000/$${v_dir}/output/ || (mv /app/storage/app/data/hyp2000//app/storage/app/data/hyp2000/$${v_dir}/output.* /app/storage/app/data/hyp2000/$${v_dir}/output/ && echo \"Status:503\\n\\n$$(cat /app/storage/app/data/hyp2000//app/storage/app/data/hyp2000//app/storage/app/data/hyp2000//app/storage/app/data/hyp2000/$${v_dir}/output/output.err)\")'"
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+  pyml:
+    image: ingv/pyml:latest
+    volumes:
       - v-caravel-apollo-storage:/app/storage
-    #expose:
-    #  - 2375
+    entrypoint: bash
+    command: -c "curl -O https://dl.google.com/go/go1.20.1.linux-amd64.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.20.1.linux-amd64.tar.gz && PATH=\"$PATH:/usr/local/go/bin\" && rm go1.20.1.linux-amd64.tar.gz && go install github.com/msoap/shell2http@latest && if [ -f /usr/local/bin/shell2http ]; then rm /usr/local/bin/shell2http; fi && ln -s $(go env GOPATH)/bin/shell2http /usr/local/bin/shell2http && shell2http -port 8080 -form -include-stderr -cgi /get '/opt/entrypoint.sh --json /app/storage/app/data/pyml/$${v_dir}/input.json  > /app/storage/app/data/pyml/$${v_dir}/output.log 2>/app/storage/app/data/pyml/$${v_dir}/output.err || (echo \"Status:503\\n\\n$$(cat /app/storage/app/data/pyml/$${v_dir}/output/output.err)\")'"
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
   redis:
     image: redis:7.0.7
     volumes:
-      - v-redis:/data
+      - v-caravel-apollo-storage:/app/storage
     command: --requirepass r3d15
     deploy:
       mode: replicated
