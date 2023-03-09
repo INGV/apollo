@@ -98,14 +98,6 @@ validate_oa3:
 validate_publiccode:
   stage: pre_check
   script:
-    - >
-      COUNT=1;
-      COUNT_LIMIT=20;
-      while [ $( ls /tmpp 2>&1 >/dev/null ) ] && [[ "${COUNT}" -le "${COUNT_LIMIT}" ]]; do 
-        echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts.";
-        COUNT=$(( ${COUNT} + 1 ));
-        sleep 1;
-      done
     - docker run --rm -v $(pwd)/publiccode.yml:/publiccode_folder/publiccode.yml italia/publiccode-parser-go /publiccode_folder/publiccode.yml
 
 validate_version_number_and_date:
@@ -182,51 +174,6 @@ PHPUnit Test:
 
     #- $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker -v 2>&1 >/dev/null )
     #- echo "PIPPO=${?}"
-    
-    # Check 'docker-in-docker' is started
-    - |
-      COUNT=1
-      COUNT_LIMIT=20
-      while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker -v 2>&1 >/dev/null ); do
-        echo " ${COUNT}/${COUNT_LIMIT} - waiting docker-in-docker starts...";
-        if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
-          exit 1
-        fi
-        sleep 1;
-        COUNT=$(( ${COUNT} + 1 ));
-      done
-
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
-
-    # Check 'hyp2000' is started
-    - |
-      COUNT=1
-      COUNT_LIMIT=50
-      while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep "hyp2000" 2>&1 >/dev/null ) && [ "${COUNT}" -le "${COUNT_LIMIT}" ]; do
-        echo " ${COUNT}/${COUNT_LIMIT} - waiting hyp2000 starts...";
-        if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
-          exit 1
-        fi
-        sleep 5;
-        COUNT=$(( ${COUNT} + 1 ));
-      done
-
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
-
-    # Check 'pyml' is started
-    - |
-      COUNT=1
-      COUNT_LIMIT=50
-      while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images | grep "pyml" 2>&1 >/dev/null ) && [ "${COUNT}" -le "${COUNT_LIMIT}" ]; do
-        echo " ${COUNT}/${COUNT_LIMIT} - waiting pyml starts...";
-        if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
-          exit 1
-        fi
-        sleep 5;
-        COUNT=$(( ${COUNT} + 1 ));
-      done
-
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker images
 
     # START - Tests
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'php artisan route:list'
