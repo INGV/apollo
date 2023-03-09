@@ -12,19 +12,8 @@ services:
     volumes:
       - ./:/app:cached
   hyp2000:
-    image: ingv/hyp2000:ewdevgit
     volumes:
-      - ./storage/app/data/hyp2000:/opt/data
-    entrypoint: bash
-    #command: -c "shell2http --form /get '. /root/.bashrc && export DIR_DATA=/opt/data/$v_dir && /opt/entrypoint.sh italy2002.hyp'"
-    command: -c "curl -O https://dl.google.com/go/go1.20.1.linux-amd64.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.20.1.linux-amd64.tar.gz && PATH=\"$PATH:/usr/local/go/bin\" && rm go1.20.1.linux-amd64.tar.gz && go install github.com/msoap/shell2http@latest && if [ -f /usr/local/bin/shell2http ]; then rm /usr/local/bin/shell2http; fi && ln -s $(go env GOPATH)/bin/shell2http /usr/local/bin/shell2http && shell2http -port 8080 -form -include-stderr -cgi /get '. /root/.bashrc && export DIR_DATA=/opt/data/$${v_dir} && /opt/entrypoint.sh italy2000.hyp > /opt/data/$${v_dir}/output.log 2>/opt/data/$${v_dir}/output.err && mv /opt/data/$${v_dir}/output.* /opt/data/$${v_dir}/output/ || (mv /opt/data/$${v_dir}/output.* /opt/data/$${v_dir}/output/ && echo \"Status:503\\n\\n$$(cat /opt/data/$${v_dir}/output/output.err)\")'"
-    networks:
-      - network-caravel-apollo
+      - ./storage:/app/storage:cached
   pyml:
-    image: ingv/pyml:latest
     volumes:
-      - ./storage/app/data/pyml:/opt/data
-    entrypoint: bash
-    command: -c "curl -O https://dl.google.com/go/go1.20.1.linux-amd64.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.20.1.linux-amd64.tar.gz && PATH=\"$PATH:/usr/local/go/bin\" && rm go1.20.1.linux-amd64.tar.gz && go install github.com/msoap/shell2http@latest && if [ -f /usr/local/bin/shell2http ]; then rm /usr/local/bin/shell2http; fi && ln -s $(go env GOPATH)/bin/shell2http /usr/local/bin/shell2http && shell2http -port 8080 -form -include-stderr -cgi /get '/opt/entrypoint.sh --json /opt/data/$${v_dir}/input.json  > /opt/data/$${v_dir}/output.log 2>/opt/data/$${v_dir}/output.err || (echo \"Status:503\\n\\n$$(cat /opt/data/$${v_dir}/output/output.err)\")'"
-    networks:
-      - network-caravel-apollo
+      - ./storage:/app/storage:cached

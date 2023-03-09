@@ -11,9 +11,12 @@ services:
       - 8086:80
     volumes:
       - apollo.storage:/app/storage:cached
-  docker-in-docker:
+  hyp2000:
     volumes:
-      - apollo.storage:/app/storage:cached
+      - apollo.storage/:/app/storage:cached
+  pyml:
+    volumes:
+      - apollo.storage/:/app/storage:cached
 volumes:
   apollo.storage:
     driver: local

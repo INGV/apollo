@@ -18,8 +18,8 @@ class PyMLController extends Controller
 
     protected $default_pyml_conf = [
         'iofilenames' => [
-            'magnitudes' => '/opt/data/---dir_random_name---/pyml_magnitudes.csv',
-            'log' => '/opt/data/---dir_random_name---/pyml_general.log',
+            'magnitudes' => '/app/storage/app/data/pyml/---dir_random_name---/pyml_magnitudes.csv', // deve essere lo stesso 'path' inserito nello yml 'docker-compose', nella direttiva 'command:'
+            'log' => '/app/storage/app/data/pyml/---dir_random_name---/pyml_general.log', // deve essere lo stesso 'path' inserito nello yml 'docker-compose', nella direttiva 'command:'
         ],
         'preconditions' => [
             'theoretical_p' => false,

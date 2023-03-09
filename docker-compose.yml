@@ -9,6 +9,18 @@ services:
       - DOCKER_CERT_PATH=/certs/client
     networks:
       - network-caravel-apollo
+  hyp2000:
+    image: ingv/hyp2000:ewdevgit
+    entrypoint: bash
+    command: -c "curl -O https://dl.google.com/go/go1.20.1.linux-amd64.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.20.1.linux-amd64.tar.gz && PATH=\"$PATH:/usr/local/go/bin\" && rm go1.20.1.linux-amd64.tar.gz && go install github.com/msoap/shell2http@latest && if [ -f /usr/local/bin/shell2http ]; then rm /usr/local/bin/shell2http; fi && ln -s $(go env GOPATH)/bin/shell2http /usr/local/bin/shell2http && shell2http -port 8080 -form -include-stderr -cgi /get '. /root/.bashrc && export DIR_DATA=/app/storage/app/data/hyp2000/$${v_dir} && /opt/entrypoint.sh italy2000.hyp > /app/storage/app/data/hyp2000/$${v_dir}/output.log 2>/app/storage/app/data/hyp2000/$${v_dir}/output.err && mv /app/storage/app/data/hyp2000/$${v_dir}/output.* /app/storage/app/data/hyp2000/$${v_dir}/output/ || (mv /app/storage/app/data/hyp2000//app/storage/app/data/hyp2000/$${v_dir}/output.* /app/storage/app/data/hyp2000/$${v_dir}/output/ && echo \"Status:503\\n\\n$$(cat /app/storage/app/data/hyp2000//app/storage/app/data/hyp2000//app/storage/app/data/hyp2000//app/storage/app/data/hyp2000/$${v_dir}/output/output.err)\")'"
+    networks:
+      - network-caravel-apollo
+  pyml:
+    image: ingv/pyml:latest
+    entrypoint: bash
+    command: -c "curl -O https://dl.google.com/go/go1.20.1.linux-amd64.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.20.1.linux-amd64.tar.gz && PATH=\"$PATH:/usr/local/go/bin\" && rm go1.20.1.linux-amd64.tar.gz && go install github.com/msoap/shell2http@latest && if [ -f /usr/local/bin/shell2http ]; then rm /usr/local/bin/shell2http; fi && ln -s $(go env GOPATH)/bin/shell2http /usr/local/bin/shell2http && shell2http -port 8080 -form -include-stderr -cgi /get '/opt/entrypoint.sh --json /app/storage/app/data/pyml/$${v_dir}/input.json  > /app/storage/app/data/pyml/$${v_dir}/output.log 2>/app/storage/app/data/pyml/$${v_dir}/output.err || (echo \"Status:503\\n\\n$$(cat /app/storage/app/data/pyml/$${v_dir}/output/output.err)\")'"
+    networks:
+      - network-caravel-apollo
   redis:
     image: redis:7.0.7
     volumes:
