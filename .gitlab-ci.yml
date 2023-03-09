@@ -165,6 +165,7 @@ PHPUnit Test:
     - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP}
     - echo APOLLO_VERSION=${APOLLO_VERSION}
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} up -d --remove-orphans
+    - docker images
 
     # Install 'dev' packages (removing option '--no-dev') to execute tests
     - | 
