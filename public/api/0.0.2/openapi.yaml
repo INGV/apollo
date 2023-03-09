@@ -378,7 +378,7 @@ components:
               example: 15.0
         station_magnitude:
           properties:
-            station_magnitude:
+            mag_mean_type:
               type: string
               example: meanamp
               default: meanamp
