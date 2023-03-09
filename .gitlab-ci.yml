@@ -175,6 +175,32 @@ PHPUnit Test:
     #- $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo docker -v 2>&1 >/dev/null )
     #- echo "PIPPO=${?}"
 
+    # Check 'hyp2000' is started
+    - |
+      COUNT=1
+      COUNT_LIMIT=20
+      while ! $( ping -c1 hyp2000 2>&1 >/dev/null ); do
+        echo " ${COUNT}/${COUNT_LIMIT} - waiting hyp2000 starts...";
+        if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
+          exit 1
+        fi
+        sleep 1;
+        COUNT=$(( ${COUNT} + 1 ));
+      done
+
+    # Check 'pyml' is started
+    - |
+      COUNT=1
+      COUNT_LIMIT=20
+      while ! $( ping -c1 pyml 2>&1 >/dev/null ); do
+        echo " ${COUNT}/${COUNT_LIMIT} - waiting pyml starts...";
+        if [ "${COUNT}" -gt "${COUNT_LIMIT}" ]; then
+          exit 1
+        fi
+        sleep 1;
+        COUNT=$(( ${COUNT} + 1 ));
+      done
+
     # START - Tests
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'php artisan route:list'
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo php artisan test --stop-on-failure
