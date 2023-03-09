@@ -25,9 +25,9 @@ services:
     image: redis:7.0.7
     volumes:
       - 'redis.data:/data'
+    command: --requirepass r3d15
     networks:
       - network-caravel-apollo
-    command: --requirepass r3d15
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
 volumes:
