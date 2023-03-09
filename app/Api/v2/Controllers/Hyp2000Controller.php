@@ -191,8 +191,7 @@ class Hyp2000Controller extends Controller
             Log::debug('   step_1a: ' . $url);
             /* https://laravel.com/docs/8.x/http-client */
             $response = Http::timeout(5)->get($url);
-            $responseStatus = $response->status();
-            Log::debug('    responseStatus: ' . $responseStatus);
+            $responseStatus = $response->status() ?? 500;
 
             Log::debug('   step_2');
             $response->throw();
@@ -208,17 +207,17 @@ class Hyp2000Controller extends Controller
             Log::debug('   step_1b');
             Log::debug('    getCode:' . $e->getCode());
             Log::debug('    getMessage:' . $e->getMessage());
-            abort($responseStatus, $e->getMessage());
+            abort($e->getCode() ?? 500, $e->getMessage());
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             Log::debug('   step_1c');
             Log::debug('    getCode:' . $e->getCode());
             Log::debug('    getMessage:' . $e->getMessage());
-            abort($responseStatus, $e->getMessage());
+            abort(500, $e->getMessage());
         } catch (\Exception $e) {
             Log::debug('   step_1d');
             Log::debug('    getCode:' . $e->getCode());
             Log::debug('    getMessage:' . $e->getMessage());
-            abort($responseStatus, $e->getMessage());
+            abort($e->getCode() ?? 500, $e->getMessage());
         }
         /* !!!!!!!! END - Call hyp2000 */
 
