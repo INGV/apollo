@@ -17,9 +17,10 @@ class StatusController extends Controller
         }
 
         return response([
-            'status' => $status,
-            'title' => $statusMessage,
-            'detail' => $message,
+            'status'    => $status,
+            'title'     => $statusMessage,
+            'detail'    => $message,
+            'version'   => config('apollo.version'),
         ])->header('Content-Type', 'application/problem+json');
     }
 }
