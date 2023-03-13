@@ -34,9 +34,9 @@ servers:
   variables:
     hostname:
       enum:
-        - 'localhost:8780'
+        - 'localhost:8586'
         - 'caravel.int.ingv.it:8780'
-      default: 'localhost:8780'
+      default: 'localhost:8586'
       
 paths:
   /status:
