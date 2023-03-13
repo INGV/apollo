@@ -2,7 +2,11 @@
 apollo Release History
 #########################
 
-* Release 2.11.0 (2023-03-09)
+* Release 2.12.0 (2023-03-13)
+  - Remove docker client
+  - Update CI
+
+* Release 2.11.0 (2023-03-13)
   - Remove submodule 'laradock'
   - Remove submodule 'hyp2000' and 'pyml'
   - Add 'hyp2000' and 'pyml' as a micro-services (docker services)
