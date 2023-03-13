@@ -143,7 +143,6 @@ Build:
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} push
     # Clean all
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} down -v
-    - ls -l
     - docker images
 
 PHPUnit Test:
@@ -214,7 +213,7 @@ PHPUnit Test:
           - storage
       expire_in: 1 day
 
-# Push only 'develop' and 'tags' image. For 'tags', a 'latest' tag will be created
+# Push only 'develop' and 'tag' image. For 'tag', a 'latest' tag will be created
 Push final image to DockerHub:
   stage: push
   script:
