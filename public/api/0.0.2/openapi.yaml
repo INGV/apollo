@@ -71,11 +71,7 @@ paths:
           content:
             application/problem+json:
               schema:
-                $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/Problem'
-              example: 
-                status: 200
-                title: OK
-                detail: "The service is working properly"
+                $ref: '#/components/schemas/ObjectStatus'
       tags:
       - status
 
@@ -348,6 +344,23 @@ components:
     default:
       $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/responses/default'
   schemas:
+    ObjectStatus:
+      type: object
+      properties:
+        detail:
+          $ref: 'https://teamdigitale.github.io/openapi/v0.1.0/definitions.yaml#/components/schemas/Problem/properties/detail'
+        instance:
+          $ref: 'https://teamdigitale.github.io/openapi/v0.1.0/definitions.yaml#/components/schemas/Problem/properties/instance'
+        status:
+          $ref: 'https://teamdigitale.github.io/openapi/v0.1.0/definitions.yaml#/components/schemas/Problem/properties/status'
+        title:
+          $ref: 'https://teamdigitale.github.io/openapi/v0.1.0/definitions.yaml#/components/schemas/Problem/properties/title'
+        type:
+          $ref: 'https://teamdigitale.github.io/openapi/v0.1.0/definitions.yaml#/components/schemas/Problem/properties/type'
+        version:
+          description: Webservice version
+          type: string
+          example: 2.13.0
     ObjectOrigin:
       properties:
         lat:
