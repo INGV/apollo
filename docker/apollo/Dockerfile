@@ -29,7 +29,6 @@ FROM base as apollo-dev
 #USER application
 
 FROM base as apollo-prod
-
 COPY --chown=1000:1000 . .
 COPY .env.example .env
 RUN rm -fr ./storage/app/data/hyp2000/*
