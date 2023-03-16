@@ -108,69 +108,57 @@ validate_version_number_and_date:
 
 Build:
   stage: build
-  tags:
+  #tags:
     # Runners:
     # 1) 'laradock' runner is working on 'albus.int.ingv.it' valentino's MAC.
     # 2) 'test' runner is working on 'docker.int.ingv.it' server.
     # 3) 'hgp5_runner' runner is working on 'hgp5.int.ingv.it' server.
     # 4) 'sqlx2-srvr_runner' runner is working on 'sqlx2-srvr.int.ingv.it' server.
-    - sqlx2-srvr_runner
+    #- sqlx2-srvr_runner
   # !!! Attenzione !!!, per sfruttare la cache il runner deve essere lo stessi in quanto la cache e' 'local' e quindi e' sull'host.  
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}-composer
-    paths:
-      - vendor/
-      - .env
+  #cache:
+  #  key: ${CI_COMMIT_REF_SLUG}-composer
+  #  paths:
+  #    - vendor/
+  #    - .env
   script:
-    # Configure Laravel ENV
-    - cp ./.env.example ./.env
-    - cat ./.env
-
     # Set version
     - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP}
     - echo APOLLO_VERSION=${APOLLO_VERSION}
+
     # Build and up
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} build --no-cache --pull --progress=plain
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} up -d --remove-orphans
-    # Configure
-    #- docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'ls -la'
-    #- docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'chown -R application:application /app'
-    #- docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'ls -la'
-    #- docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'id -u; id -g'        
-    #- docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo composer install
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo php artisan key:generate
-    # Push to DockerHub
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} push
-    # Clean all
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} down -v
     - docker images
 
 PHPUnit Test:
   stage: test
-  tags: 
+  #tags: 
     # Runners:
     # 1) 'laradock' runner is working on 'albus.int.ingv.it' valentino's MAC.
     # 2) 'test' runner is working on 'docker.int.ingv.it' server.
     # 3) 'hgp5_runner' runner is working on 'hgp5.int.ingv.it' server.
     # 4) 'sqlx2-srvr_runner' runner is working on 'sqlx2-srvr.int.ingv.it' server.
-    - sqlx2-srvr_runner
+    #- sqlx2-srvr_runner
   # !!! Attenzione !!!, per sfruttare la cache il runner deve essere lo stessi in quanto la cache e' 'local' e quindi e' sull'host.  
-  cache: 
-    key: ${CI_COMMIT_REF_SLUG}-composer
-    paths:
-      - vendor/
-      - .env
+  #cache: 
+  #  key: ${CI_COMMIT_REF_SLUG}-composer
+  #  paths:
+  #    - vendor/
+  #    - .env
   script:
+    # Set version
     - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP}
     - echo APOLLO_VERSION=${APOLLO_VERSION}
     - echo FILE_DOCKER_COMPOSE=${FILE_DOCKER_COMPOSE}
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} up -d --remove-orphans
 
-    # Install 'dev' packages (removing option '--no-dev') to execute tests
-    - | 
-      if [[ "${CI_COMMIT_REF_NAME}" != "develop" ]]; then
-        docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo composer install;
-      fi
+    # Configure Laravel ENV
+    - cp ./.env.example ./.env
+    - cat ./.env
+
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} up -d --remove-orphans
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo composer install
 
     # Check 'hyp2000' is started
     - |
@@ -202,11 +190,10 @@ PHPUnit Test:
 
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo curl --output /dev/null --head --fail "http://pyml:8080"
 
-    # START - Tests
-    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo bash -c 'php artisan route:list'
+    # Run Tests
+    - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo php artisan route:list
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo php artisan test --stop-on-failure
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo vendor/bin/phpstan
-    # END - Tests 
   artifacts:
       when: always
       paths:
