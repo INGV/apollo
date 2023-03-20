@@ -67,12 +67,12 @@ before_script:
       fi
     - echo FILE_DOCKER_COMPOSE=${FILE_DOCKER_COMPOSE}
     #
+    - echo CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}
+    - CI_COMMIT_REF_NAME_WITHOUT_V=$( echo ${CI_COMMIT_REF_NAME} | sed "s/^v//" )
+    #
     - echo DOCKER_IMAGE_TAG_TMP=${DOCKER_IMAGE_TAG_TMP}
     - DOCKER_IMAGE_TAG_TMP_WITHOUT_V=$( echo ${DOCKER_IMAGE_TAG_TMP} | sed "s/-v/-/" )
     - echo DOCKER_IMAGE_TAG_TMP_WITHOUT_V=${DOCKER_IMAGE_TAG_TMP_WITHOUT_V}
-    #
-    - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP_WITHOUT_V}
-    - echo APOLLO_VERSION=${APOLLO_VERSION}
 
 # From: https://www.docker.com/blog/checking-your-current-docker-pull-rate-limits-and-status/
 dockerhub-rate-limit:
@@ -126,6 +126,9 @@ Build:
   #    - vendor/
   #    - .env
   script:
+    # Set variables
+    - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP_WITHOUT_V}
+    - echo APOLLO_VERSION=${APOLLO_VERSION}
     # Build and up
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} build --no-cache --pull --progress=plain
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} push
@@ -148,6 +151,9 @@ PHPUnit Test:
   #    - vendor/
   #    - .env
   script:
+    # Set variables
+    - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP_WITHOUT_V}
+    - echo APOLLO_VERSION=${APOLLO_VERSION}
     # Configure Laravel ENV
     - cp ./.env.example ./.env
     - cat ./.env
@@ -199,11 +205,14 @@ PHPUnit Test:
 Push final image to DockerHub:
   stage: push
   script:
+    #
     - docker images
     - docker compose pull
     - > 
       if [[ "${CI_COMMIT_REF_NAME}" == "develop" ]]; then
         APOLLO_VERSION=${CI_COMMIT_REF_NAME};
+      else 
+        APOLLO_VERSION=${CI_COMMIT_REF_NAME_WITHOUT_V};
       fi
     - echo APOLLO_VERSION=${APOLLO_VERSION}
     - docker images
