@@ -203,26 +203,29 @@ PHPUnit Test:
 Push final image to DockerHub:
   stage: push
   script:
-    #
-    - > 
-      if [[ "${CI_COMMIT_REF_NAME}" == "develop" ]]; then
-        export APOLLO_VERSION=${CI_COMMIT_REF_NAME};
-      else 
-        export APOLLO_VERSION=${CI_COMMIT_REF_NAME_WITHOUT_V};
-      fi
+    # Set variables
+    - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP}
     - echo APOLLO_VERSION=${APOLLO_VERSION}
+    #
     - docker compose pull
     - docker images
+    - > 
+      if [[ "${CI_COMMIT_REF_NAME}" == "develop" ]]; then
+        export APOLLO_VERSION_FOR_PUSH=${CI_COMMIT_REF_NAME};
+      else 
+        export APOLLO_VERSION_FOR_PUSH=${CI_COMMIT_REF_NAME_WITHOUT_V};
+      fi
+    - echo APOLLO_VERSION_FOR_PUSH=${APOLLO_VERSION_FOR_PUSH}
     #
-    - docker tag vlauciani/caravel-apollo:${DOCKER_IMAGE_TAG_TMP} vlauciani/caravel-apollo:${APOLLO_VERSION}
+    - docker tag vlauciani/caravel-apollo:${APOLLO_VERSION} vlauciani/caravel-apollo:${APOLLO_VERSION_FOR_PUSH}
     - > 
       if [[ "${CI_COMMIT_REF_NAME}" != "develop" ]]; then
-        docker tag vlauciani/caravel-apollo:${DOCKER_IMAGE_TAG_TMP} vlauciani/caravel-apollo:latest;
+        docker tag vlauciani/caravel-apollo:${APOLLO_VERSION} vlauciani/caravel-apollo:latest;
       fi
     #
     - docker images
     #
-    - docker push vlauciani/caravel-apollo:${APOLLO_VERSION}
+    - docker push vlauciani/caravel-apollo:${APOLLO_VERSION_FOR_PUSH}
     - > 
       if [[ "${CI_COMMIT_REF_NAME}" != "develop" ]]; then
         docker push vlauciani/caravel-apollo:latest
