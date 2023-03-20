@@ -158,7 +158,7 @@ PHPUnit Test:
     # Check 'hyp2000' is started
     - |
       COUNT=1
-      COUNT_LIMIT=20
+      COUNT_LIMIT=30
       while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo curl --output /dev/null --silent --head --fail "http://hyp2000:8080" ); do
         echo " ${COUNT}/${COUNT_LIMIT} - waiting hyp2000 starts...";
         if [ "${COUNT}" -ge "${COUNT_LIMIT}" ]; then
@@ -173,7 +173,7 @@ PHPUnit Test:
     # Check 'pyml' is started
     - |
       COUNT=1
-      COUNT_LIMIT=20
+      COUNT_LIMIT=30
       while ! $( docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo curl --output /dev/null --silent --head --fail "http://pyml:8080" ); do
         echo " ${COUNT}/${COUNT_LIMIT} - waiting pyml starts...";
         if [ "${COUNT}" -ge "${COUNT_LIMIT}" ]; then
