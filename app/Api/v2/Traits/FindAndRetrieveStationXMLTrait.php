@@ -40,9 +40,9 @@ trait FindAndRetrieveStationXMLTrait
         }
 
         $func_execute_request_url = function () use ($fdsnws_nodes, $urlParams) {
-            /* If 'net=IT' set directly 'authoritative=any' to avoid timeout */
+            /* If 'net=IT' set directly internal FDSNWS-StationXML node */
             if (str_contains($urlParams, 'net=IT')) {
-                $urlParams .= '&authoritative=any';
+                array_unshift($fdsnws_nodes, 'exist-dev.int.ingv.it:8083');
             }
 
             foreach ($fdsnws_nodes as $fdsnws_node) {
@@ -61,6 +61,7 @@ trait FindAndRetrieveStationXMLTrait
             }
 
             // START - Retry INGV StationXML with extra param(s)
+            /*
             $url = 'http://webservices.ingv.it/fdsnws/station/1/query?' . $urlParams . '&authoritative=any';
             $urlOutput = self::retrieveUrl($url);
             $urlOutputData = $urlOutput['data'];
@@ -69,6 +70,7 @@ trait FindAndRetrieveStationXMLTrait
             if ($urlOutputHttpStatusCode == 200) {
                 return $urlOutputData;
             }
+            */
             // END - Retry INGV StationXML with extra param(s)
 
             return '--';

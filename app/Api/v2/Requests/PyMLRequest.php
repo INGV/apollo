@@ -31,7 +31,7 @@ class PyMLRequest extends FormRequest
             'data'                                                  => ['required', 'array'],
 
             /* output format */
-            'data.output'                                           => ['required', 'string', 'in:text,json'],
+            'data.output'                                           => ['required', 'string', 'in:text,csv2json,json'],
 
             /* pyml_conf */
             'data.pyml_conf'                                        => ['required', 'array'],
