@@ -71,8 +71,6 @@ before_script:
     - CI_COMMIT_REF_NAME_WITHOUT_V=$( echo ${CI_COMMIT_REF_NAME} | sed "s/^v//" )
     #
     - echo DOCKER_IMAGE_TAG_TMP=${DOCKER_IMAGE_TAG_TMP}
-    - DOCKER_IMAGE_TAG_TMP_WITHOUT_V=$( echo ${DOCKER_IMAGE_TAG_TMP} | sed "s/-v/-/" )
-    - echo DOCKER_IMAGE_TAG_TMP_WITHOUT_V=${DOCKER_IMAGE_TAG_TMP_WITHOUT_V}
 
 # From: https://www.docker.com/blog/checking-your-current-docker-pull-rate-limits-and-status/
 dockerhub-rate-limit:
@@ -127,7 +125,7 @@ Build:
   #    - .env
   script:
     # Set variables
-    - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP_WITHOUT_V}
+    - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP}
     - echo APOLLO_VERSION=${APOLLO_VERSION}
     # Build and up
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} build --no-cache --pull --progress=plain
@@ -152,7 +150,7 @@ PHPUnit Test:
   #    - .env
   script:
     # Set variables
-    - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP_WITHOUT_V}
+    - export APOLLO_VERSION=${DOCKER_IMAGE_TAG_TMP}
     - echo APOLLO_VERSION=${APOLLO_VERSION}
     # Configure Laravel ENV
     - cp ./.env.example ./.env
@@ -206,21 +204,20 @@ Push final image to DockerHub:
   stage: push
   script:
     #
-    - docker images
-    - docker compose pull
     - > 
       if [[ "${CI_COMMIT_REF_NAME}" == "develop" ]]; then
-        APOLLO_VERSION=${CI_COMMIT_REF_NAME};
+        export APOLLO_VERSION=${CI_COMMIT_REF_NAME};
       else 
-        APOLLO_VERSION=${CI_COMMIT_REF_NAME_WITHOUT_V};
+        export APOLLO_VERSION=${CI_COMMIT_REF_NAME_WITHOUT_V};
       fi
     - echo APOLLO_VERSION=${APOLLO_VERSION}
+    - docker compose pull
     - docker images
     #
-    - docker tag vlauciani/caravel-apollo:${DOCKER_IMAGE_TAG_TMP_WITHOUT_V} vlauciani/caravel-apollo:${APOLLO_VERSION}
+    - docker tag vlauciani/caravel-apollo:${DOCKER_IMAGE_TAG_TMP} vlauciani/caravel-apollo:${APOLLO_VERSION}
     - > 
       if [[ "${CI_COMMIT_REF_NAME}" != "develop" ]]; then
-        docker tag vlauciani/caravel-apollo:${DOCKER_IMAGE_TAG_TMP_WITHOUT_V} vlauciani/caravel-apollo:latest;
+        docker tag vlauciani/caravel-apollo:${DOCKER_IMAGE_TAG_TMP} vlauciani/caravel-apollo:latest;
       fi
     #
     - docker images
@@ -241,7 +238,7 @@ Clean DockerHub:
   script:
     - docker images
     - sleep 2
-    - docker run --rm lumir/remove-dockerhub-tag --user ${CI_DOCKERHUB_REGISTRY_USER}  --password ${CI_DOCKERHUB_REGISTRY_TOKEN} vlauciani/caravel-apollo:${DOCKER_IMAGE_TAG_TMP_WITHOUT_V}
+    - docker run --rm lumir/remove-dockerhub-tag --user ${CI_DOCKERHUB_REGISTRY_USER}  --password ${CI_DOCKERHUB_REGISTRY_TOKEN} vlauciani/caravel-apollo:${DOCKER_IMAGE_TAG_TMP}
 
 pages:
   stage: pages
