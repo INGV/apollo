@@ -251,7 +251,8 @@ class PyMLController extends Controller
             $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
             Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
             return response()->make($contents, 200, $headers);
-        } else if ($output_format == 'csv2json') {
+            //} else if ($output_format == 'csv2json') {
+        } else if ($output_format == 'json') {
             /* Get pyml csv file */
             $csvToArray = [];
             if (($open = fopen(Storage::disk('data')->path($dir_working . '/pyml_magnitudes.csv'), 'r')) !== false) {

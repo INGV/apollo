@@ -2,13 +2,14 @@
 Apollo Release History
 #########################
 
-* Release 2.14.0-dev (2023-03-20)
+* Release 2.14.0-dev (2023-03-21)
   - . . .
 
-* Release 2.13.0 (2023-03-20)
+* Release 2.13.1 (2023-03-20)
   - Update 'output=json' to use directly PyML json output; and add 'output=csv2json' to use old method that parse the csv and return json.
   - Remove the use of "authoritative" into 'FindAndRetrieveStationXMLTrait' Class
   - Add 'version' to '/status' route
+  - Hotfix: 2.13.1: workaround 'output=json' to return old format
 
 * Release 2.12.0 (2023-03-13)
   - Remove docker client
