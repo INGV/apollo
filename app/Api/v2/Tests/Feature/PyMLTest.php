@@ -241,16 +241,6 @@ class PyMLTest extends TestCase
                     },
                     {
                         "net": "IV",
-                        "sta": "TST01",
-                        "cha": "HHN",
-                        "loc": null,
-                        "amp1": -1.63781,
-                        "time1": "2021-10-28T10:44:03.408+00:00",
-                        "amp2": 2.447,
-                        "time2": "2021-10-28T10:44:03.158+00:00"
-                    },
-                    {
-                        "net": "IV",
                         "sta": "PIGN",
                         "cha": "HNN",
                         "loc": null,
@@ -1213,36 +1203,6 @@ class PyMLTest extends TestCase
                     },
                     {
                         "net": "IV",
-                        "sta": "TST01",
-                        "cha": "HHE",
-                        "loc": null,
-                        "amp1": -1.36063,
-                        "time1": "2021-10-28T10:44:10.969+00:00",
-                        "amp2": 1.11003,
-                        "time2": "2021-10-28T10:44:11.299+00:00"
-                    },
-                    {
-                        "net": "IV",
-                        "sta": "TST02",
-                        "cha": "HHN",
-                        "loc": null,
-                        "amp1": -2.86724,
-                        "time1": "2021-10-28T10:44:12.457+00:00",
-                        "amp2": 2.78233,
-                        "time2": "2021-10-28T10:44:12.678+00:00"
-                    },
-                    {
-                        "net": "IV",
-                        "sta": "TST02",
-                        "cha": "HHE",
-                        "loc": null,
-                        "amp1": -2.77532,
-                        "time1": "2021-10-28T10:44:10.768+00:00",
-                        "amp2": 3.17035,
-                        "time2": "2021-10-28T10:44:10.998+00:00"
-                    },
-                    {
-                        "net": "IV",
                         "sta": "BSSO",
                         "cha": "HNN",
                         "loc": null,
@@ -1566,6 +1526,16 @@ class PyMLTest extends TestCase
                         'db' => [
                             'ml',
                             'w'
+                        ]
+                    ]
+                ],
+                'log' => [
+                    '*' => [
+                        "level",
+                        "status",
+                        "info" => [
+                            "summary",
+                            "extended"
                         ]
                     ]
                 ]

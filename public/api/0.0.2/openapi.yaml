@@ -307,6 +307,28 @@ paths:
                                   type: number
                                   format: double
                                   example: 0.27839883752733147
+                      log:
+                        items:
+                          properties:
+                            level:
+                              type: string
+                              description: Log level
+                              example: channel
+                            status:
+                              type: string
+                              description: Log info status
+                              example: ok
+                            info:
+                              items:
+                                properties:
+                                  summary:
+                                    type: string
+                                    description: Summary description
+                                    example: IV SSFR -- HHE--
+                                  extended:
+                                    type: string
+                                    description: Extendend description
+                                    example: ""
                         type: array
       tags:
       - location
@@ -485,7 +507,7 @@ components:
       type: string
       description: Output format
       default: 'json'
-      enum: [json, text]
+      enum: [json, csv2json, text]
     ObjectHyp2000Conf:
       type: array
       items:
