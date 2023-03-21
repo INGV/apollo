@@ -3,7 +3,7 @@ Apollo Release History
 #########################
 
 * Release 2.14.0-dev (2023-03-21)
-  - . . .
+  - Handle 'ABANDON EVENT WITH' hyp2000 output.
 
 * Release 2.13.1 (2023-03-20)
   - Update 'output=json' to use directly PyML json output; and add 'output=csv2json' to use old method that parse the csv and return json.

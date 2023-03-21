@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Api\v2\Requests\StationHinvRequest;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Termwind\Components\Li;
 
 class Hyp2000Controller extends Controller
 {
@@ -268,6 +269,24 @@ class Hyp2000Controller extends Controller
         /* Get output to return */
         Log::debug(' Get output to return');
         $contents = Storage::disk('data')->get($dir_working . '/' . $dir_output . '/' . ${'file_output_' . $output_format});
+        if (empty($contents)) {
+            $error = false;
+            $contentsPrt = file(Storage::disk('data')->path($dir_working . '/' . $dir_output . '/' . $file_output_prt));
+            foreach ($contentsPrt as $line) {
+                if (str_contains($line, 'ABANDON EVENT WITH')) {
+                    $error = str_replace("\n", '', $line);
+                }
+            }
+            if ($error) {
+                $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
+                Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
+                abort(422, $error);
+            } else {
+                $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
+                Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
+                abort(500);
+            }
+        }
 
         $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
         Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
