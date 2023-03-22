@@ -23,11 +23,11 @@ tags:
   - name: location
     description: "location api"
 servers:
-- url: http://caravel.int.ingv.it:8780/api/location
+- url: http://caravel.int.ingv.it:8780/api
   description: production
   # 'x-sandbox' is needed to use 'http' instead of 'https'
   x-sandbox: true 
-- url: http://{hostname}/api/location
+- url: http://{hostname}/api
   description: development
   # 'x-sandbox' is needed to use 'http' instead of 'https'
   x-sandbox: true 
@@ -75,7 +75,7 @@ paths:
       tags:
       - status
 
-  /v2/station-hinv:
+  /location/v2/station-hinv:
     get:
       description: Get "station file" line for hyp2000
       summary: Get "station file" line for hyp2000
@@ -105,7 +105,7 @@ paths:
       tags:
       - location
 
-  /v2/hyp2000:
+  /location/v2/hyp2000:
     post:
       description: "\n# Introduction\nHypoinverse is software used to Locate earthquakes\
         \ and determine magnitudes in a local or regional seismic network.\n\nMore info,\
@@ -170,7 +170,7 @@ paths:
       tags:
       - location
 
-  /v2/pyml:
+  /location/v2/pyml:
     post:
       description: "To Do"
       summary: Hypoinverse 2000 API
