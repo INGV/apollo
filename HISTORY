@@ -2,6 +2,10 @@
 Apollo Release History
 #########################
 
+* Release 2.15.0-dev (2023-03-22)
+  - Update PHPUnit tests to use Swagger json output example.
+  - Remove 'instance' from PyML->log object
+
 * Release 2.14.1 (2023-03-22)
   - Use last PyML version; it implement 'log' into the json output.
   - Handle 'ABANDON EVENT WITH' hyp2000 output.
