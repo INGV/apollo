@@ -191,58 +191,6 @@ class PyMLController extends Controller
         Log::debug(' Done');
         /* !!!!!!!! END - Call pyml */
 
-        /* !!!!!!!! START - Get 'docker run' ToDo better */
-        /*
-        $command =
-            array_merge(
-                [
-                    'docker',
-                    'run',
-                    '--rm',
-                    '--user',
-                    $uid . ':' . $gid,
-                    '-v', $dir_data . $dir_working . ':/opt/data',
-                    config('apollo.docker_pyml'),
-                    '--json', '/opt/data/input.json',
-                ]
-            );
-
-        /* Run process */
-        /*
-        Log::info(' Running docker: ', $command);
-        $command_timeout = 120;
-        $command_process = new Process($command);
-        $command_process->setTimeout($command_timeout);
-        $command_process->run();
-        Log::debug(' getOutput:' . $command_process->getOutput());
-        Log::debug(' getErrorOutput:' . $command_process->getErrorOutput());
-        if (!$command_process->isSuccessful()) {
-            throw new ProcessFailedException($command_process);
-        }
-        Log::debug(' Done.');
-        /* !!!!!!!! END - Get 'docker run' ToDo better */
-
-        /* */
-        //$file_output_log = 'output.log';
-        //$file_output_err = 'output.err';
-        //$file_output_fullpath_log = $dir_working . '/' . $file_output_log;
-        //$file_output_fullpath_err = $dir_working . '/' . $file_output_err;
-
-        /* Write warnings and errors into log file */
-        //Log::debug(" Write warnings and errors into \"$file_output_fullpath_err\"");
-        //Storage::disk('data')->put($file_output_fullpath_err, $command_process->getErrorOutput());
-
-        /* Write standard output messages into log file */
-        //Log::debug(" Write standard output messages into \"$file_output_fullpath_log\"");
-        //Storage::disk('data')->put($file_output_fullpath_log, $command_process->getOutput());
-
-        /* Get pyml log file */
-        /*
-        Log::debug(" Get output to return");
-        $contents = Storage::disk('data')->get($dir_working . "/pyml_general.log");
-        $pyml_log = explode("\n", $contents);
-        */
-        //dd($dir_working, Storage::disk('data'));
         if ($output_format == 'text') {
             $contents = Storage::disk('data')->get($dir_working . '/pyml_magnitudes.csv');
             /* set headers */
@@ -349,57 +297,5 @@ class PyMLController extends Controller
             Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
             return response()->json($output, 200, [], JSON_PRETTY_PRINT);
         }
-
-        /*
-        $amplitude = [];
-        unset($input_parameters['data']['origin']);
-        unset($input_parameters['data']['amplitudes']);
-        $url = 'http://caravel.int.ingv.it/api/quakedb/v1/event?eventid=28745631';
-        $json = json_decode(file_get_contents($url), true);
-
-        $input_parameters['data']['origin']['lat'] = $json['data']['event']['origins'][4]['lat'];
-        $input_parameters['data']['origin']['lon'] = $json['data']['event']['origins'][4]['lon'];
-        $input_parameters['data']['origin']['depth'] = $json['data']['event']['origins'][4]['depth'];
-
-        foreach ($json['data']['event']['origins'][4]['magnitudes'][0]['stationmagnitudes'] as $stationmagnitude) {
-            $net = $stationmagnitude['net'];
-            $sta = $stationmagnitude['sta'];
-            $cha = $stationmagnitude['cha'];
-            if ($stationmagnitude['loc'] == '--') {
-                $loc = null;
-            } else {
-                $loc = $stationmagnitude['loc'];
-            }
-            $amp1 = $stationmagnitude['amp1'];
-            $time1 = $stationmagnitude['time1'];
-            $amp2 = $stationmagnitude['amp2'];
-            $time2 = $stationmagnitude['time2'];
-
-            $amplitude = [
-                'net' => $net,
-                'sta' => $sta,
-                'cha' => $cha,
-                'loc' => $loc,
-                'amp1' => $amp1,
-                'time1' => $time1,
-                'amp2' => $amp2,
-                'time2' => $time2,
-            ];
-            $pyMLCoordArray = PyMLModel::getCoord($amplitude);
-
-            if (empty($pyMLCoordArray)) {
-                Log::debug(" No, coordinates");
-            } else {
-                $amplitude['lat'] = $pyMLCoordArray['lat'];
-                $amplitude['lon'] = $pyMLCoordArray['lon'];
-                $amplitude['elev'] = $pyMLCoordArray['elev'];
-            }
-
-            $input_parameters['data']['amplitudes'][] = $amplitude;
-        }
-        $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
-        Log::info("END - " . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
-        return response()->json($input_parameters, 200, [], JSON_PRETTY_PRINT);
-        */
     }
 }
