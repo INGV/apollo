@@ -2,6 +2,9 @@
 Apollo Release History
 #########################
 
+* Release 2.16.0-dev (2023-03-22)
+  - . . .
+
 * Release 2.15.0 (2023-03-22)
   - Add 'instance' into '/status' route
   - Update PHPUnit tests to use Swagger json output example.
