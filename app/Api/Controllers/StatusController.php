@@ -18,6 +18,7 @@ class StatusController extends Controller
 
         return response([
             'status'    => $status,
+            'instance'  => url()->full(),
             'title'     => $statusMessage,
             'detail'    => $message,
             'version'   => config('apollo.version'),
