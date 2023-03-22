@@ -12,7 +12,7 @@ info:
     name: Creative Commons Attribution 4.0 International
     url: http://creativecommons.org/licenses/by/4.0/
   title: Apollo Web Services
-  version: 2.14.0
+  version: 2.14.1
   x-api-id: fa78e2be-826e-4451-8979-0a0dfd598dff
   x-logo: http://webservices.ingv.it/ingv_logo_text_two_lines.png
   x-summary: The hyp2000 web service bla bla bla
@@ -307,28 +307,32 @@ paths:
                                   type: number
                                   format: double
                                   example: 0.27839883752733147
+                        type: array
                       log:
                         items:
                           properties:
                             level:
                               type: string
-                              description: Log level
+                              description: Log level description
                               example: channel
                             status:
                               type: string
-                              description: Log info status
+                              description: Log status description
                               example: ok
+                            instance:
+                              type: string
+                              description: Log instance description
+                              example: function create_sets
                             info:
-                              items:
-                                properties:
-                                  summary:
-                                    type: string
-                                    description: Summary description
-                                    example: IV SSFR -- HHE--
-                                  extended:
-                                    type: string
-                                    description: Extendend description
-                                    example: ""
+                              properties:
+                                summary:
+                                  type: string
+                                  description: Summary description
+                                  example: IV SSFR -- HHE--
+                                extended:
+                                  type: string
+                                  description: Extendend description
+                                  example: ""
                         type: array
       tags:
       - location

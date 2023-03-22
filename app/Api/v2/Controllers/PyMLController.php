@@ -267,7 +267,6 @@ class PyMLController extends Controller
 
             /* Build output */
             $output['data']['random_string'] = $dir_random_name;
-            //$output['data']['eventid']          = $csvToArray[1][0];
 
             /* START - Magnitudes */
             $output['data']['magnitudes'] = [
@@ -344,6 +343,7 @@ class PyMLController extends Controller
             Log::debug(' Get: ' . $dir_working . '/output.log');
             $pymlOutput = Storage::disk('data')->get($dir_working . '/output.log');
             $output['data'] = json_decode($pymlOutput, true);
+            $output['data']['random_string'] = $dir_random_name;
 
             $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
             Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');

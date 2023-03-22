@@ -2,9 +2,10 @@
 Apollo Release History
 #########################
 
-* Release 2.14.0 (2023-03-21)
+* Release 2.14.1 (2023-03-22)
   - Use last PyML version; it implement 'log' into the json output.
   - Handle 'ABANDON EVENT WITH' hyp2000 output.
+  - Hotfix: 2.14.1: 1)Fix openapi spec for 'log' object 2)Add 'random_string' to the output.
 
 * Release 2.13.1 (2023-03-20)
   - Update 'output=json' to use directly PyML json output; and add 'output=csv2json' to use old method that parse the csv and return json.
