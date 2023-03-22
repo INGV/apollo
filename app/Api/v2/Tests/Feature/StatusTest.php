@@ -15,8 +15,10 @@ class StatusTest extends TestCase
 
         $jsonStructure = [
             'status',
+            'instance',
             'title',
             'detail',
+            'version'
         ];
 
         /* Check JSON structure */
