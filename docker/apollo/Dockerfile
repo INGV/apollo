@@ -2,6 +2,12 @@ FROM webdevops/php-nginx:8.1 as base
 
 ENV WEB_DOCUMENT_ROOT=/app/public
 #ENV PHP_DISMOD=bz2,calendar,exiif,ffi,intl,gettext,ldap,mysqli,imap,pdo_pgsql,pgsql,soap,sockets,sysvmsg,sysvsm,sysvshm,shmop,xsl,zip,gd,apcu,vips,yaml,imagick,mongodb,amqp
+
+RUN apt-get update \
+    && apt-get install -y \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
 #USER application
 WORKDIR /app
 
