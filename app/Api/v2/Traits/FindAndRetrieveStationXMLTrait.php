@@ -115,11 +115,17 @@ trait FindAndRetrieveStationXMLTrait
         }
 
         if ($stationXML == '--') {
-            $textMessage = '!ATTENTION! - Not found: "' . $redisCacheKey . '"';
+            $textMessage = '!ATTENTION! - StationXML data not found: "' . $redisCacheKey . '"';
             if (config('apollo.cacheEnabled')) {
                 if (Cache::has($redisCacheKey)) {
-                    $textMessage .= ' change cache timeout to 86400sec (24h).';
-                    Cache::put($redisCacheKey, $stationXML, 86400);
+                    $redisCacheKeyForNotFounded = 'notFounded__' . $redisCacheKey;
+                    if (Cache::has($redisCacheKeyForNotFounded)) {
+                        $textMessage .= ' cache key timeout was already set to 86400sec (24h) instead of ' . config('apollo.cacheTimeout') . 'sec.';
+                    } else {
+                        $textMessage .= ' cache key timeout will be changed to 86400sec (24h) instead of ' . config('apollo.cacheTimeout') . 'sec.';
+                        Cache::put($redisCacheKey, $stationXML, 86400);
+                        Cache::add($redisCacheKeyForNotFounded, '', 86401);
+                    }
                 }
             }
             Log::debug('   ' . $textMessage);

@@ -293,6 +293,7 @@ class PyMLController extends Controller
             $output['data'] = json_decode($pymlOutput, true);
             $output['data']['random_string'] = $dir_random_name;
 
+            Log::debug(' STA_NOT_FOUNDED:' . config('apollo.stations_not_founded'));
             $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
             Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
             return response()->json($output, 200, [], JSON_PRETTY_PRINT);

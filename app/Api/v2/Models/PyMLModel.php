@@ -103,14 +103,22 @@ class PyMLModel extends Model
             $pyMLCoordArray = $func_execute_request_url();
         }
         if (empty($pyMLCoordArray)) {
-            $textMessage = '!ATTENTION! - Not found: "' . $redisCacheKey . '"';
+            $textMessage = '!ATTENTION! - Station data not found: "' . $redisCacheKey . '"';
             if (config('apollo.cacheEnabled')) {
                 if (Cache::has($redisCacheKey)) {
-                    $textMessage .= ' change cache timeout to 86400sec (24h).';
-                    Cache::put($redisCacheKey, $pyMLCoordArray, 86400);
+                    //$textMessage .= ' change cache timeout to 86400sec (24h) instead of ' . config('apollo.cacheTimeout') . 'sec.';
+                    $textMessage .= ' cache key will be deleted.';
+                    //Cache::put($redisCacheKey, $pyMLCoordArray, 86400);
+                    Cache::forget($redisCacheKey);
                 }
             }
             Log::debug('  ' . $textMessage);
+            $nsc = $input_parameters['net'] . '.' . $input_parameters['sta'] . '.' . $input_parameters['cha'];
+            if (config('apollo.stations_not_founded')) {
+                config(['apollo.stations_not_founded' => config('apollo.stations_not_founded') . ',' . $nsc]);
+            } else {
+                config(['apollo.stations_not_founded' => $nsc]);
+            }
         }
 
         Log::debug(' Output: pyMLCoordArray="', $pyMLCoordArray);

@@ -186,6 +186,7 @@ class Hyp2000Controller extends Controller
 
         /* !!!!!!!! START - Call hyp2000 */
         /* Set variables */
+        $requestException = 0;
         $url = "http://hyp2000:8080/get?dir=$dir_random_name";
 
         try {
@@ -208,7 +209,7 @@ class Hyp2000Controller extends Controller
             Log::debug('   step_1b');
             Log::debug('    getCode:' . $e->getCode());
             Log::debug('    getMessage:' . $e->getMessage());
-            abort($responseStatus, $e->getMessage());
+            $requestException = 1;
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             Log::debug('   step_1c');
             Log::debug('    getCode:' . $e->getCode());
@@ -282,12 +283,17 @@ class Hyp2000Controller extends Controller
                 Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
                 abort(422, $error);
             } else {
-                $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
-                Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
-                abort(500);
+                if ($requestException == 1) {
+                    abort($responseStatus, $e->getMessage());
+                } else {
+                    $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
+                    Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
+                    abort(500);
+                }
             }
         }
 
+        Log::debug(' STA_NOT_FOUNDED:' . config('apollo.stations_not_founded'));
         $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
         Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
         if ($output_format == 'json') {
