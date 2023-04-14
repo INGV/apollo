@@ -17,3 +17,6 @@ services:
   pyml:
     volumes:
       - ./storage:/app/storage:cached
+  redis:
+    ports:
+      - 6386:6379
