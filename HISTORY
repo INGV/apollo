@@ -2,8 +2,9 @@
 Apollo Release History
 #########################
 
-* Release 2.16.0-dev (2023-03-22)
-  - . . .
+* Release 2.16.0-dev (2023-04-14)
+  - Update cache
+  - Update hyp2000 docker image to use ew-sandbox
 
 * Release 2.15.0 (2023-03-22)
   - Add 'instance' into '/status' route
