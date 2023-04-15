@@ -58,6 +58,8 @@ return [
         'data' => [
             'driver' => 'local',
             'root' => storage_path('app') . "/" . env('DATA_DIR'),
+            //'visibility' => 'public',
+            //'directory_visibility' => 'public',
         ]
     ],
 
