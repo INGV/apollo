@@ -2,6 +2,9 @@
 Apollo Release History
 #########################
 
+* Release 2.17.0-dev (2023-04-18)
+  - . . .
+
 * Release 2.16.0 (2023-04-18)
   - Update PHP-Packages (composer update)
   - Remove default value: 'ZTR 10 F'. Issue: https://gitlab.rm.ingv.it/caravel/apollo/-/issues/8
