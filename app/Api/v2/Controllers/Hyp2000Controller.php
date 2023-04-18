@@ -42,7 +42,7 @@ class Hyp2000Controller extends Controller
         'JUN T',
         'MIN 4',
         'NET 4',
-        'ZTR 5 T',
+        //'ZTR 10 F',
         'DIS 6 100 1. 7.',
         'DAM 7 30 0.5 0.9 0.005 0.02 0.6 100 500',
         'WET 1. .75 .5 .25',
