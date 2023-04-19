@@ -4,11 +4,11 @@
 
 publiccodeYmlVersion: '0.2'
 name: 'INGV - apollo' 
-releaseDate: 2023-04-18
+releaseDate: 2023-04-19
 url: 'https://github.com/INGV/hyp2000-ws'
 logo: public/images/ingv_logo_text_two_lines.png 
 landingURL: 'https://github.com/INGV/hyp2000-ws'
-softwareVersion: 2.17.0-dev
+softwareVersion: 2.16.0
 developmentStatus: stable
 softwareType: standalone/other
 platforms:

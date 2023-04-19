@@ -2,6 +2,8 @@ version: '3.9'
 services:
   apollo:
     image: vlauciani/caravel-apollo:${APOLLO_VERSION:-2.11.0}
+    environment:
+      - PHP_MEMORY_LIMIT=2048M
     volumes:
       - v-caravel-apollo-storage:/app/storage
       - /mnt/gfs/apollo/.env:/app/.env
@@ -17,11 +19,11 @@ services:
         delay: 10s
         order: start-first
   hyp2000:
-    image: ingv/hyp2000:ewdevgit
+    image: ingv/hyp2000:latest
     volumes:
       - v-caravel-apollo-storage:/app/storage
     entrypoint: bash
-    command: -c "curl -O https://dl.google.com/go/go1.20.1.linux-amd64.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.20.1.linux-amd64.tar.gz && PATH=\"$PATH:/usr/local/go/bin\" && rm go1.20.1.linux-amd64.tar.gz && go install github.com/msoap/shell2http@latest && if [ -f /usr/local/bin/shell2http ]; then rm /usr/local/bin/shell2http; fi && ln -s $$(go env GOPATH)/bin/shell2http /usr/local/bin/shell2http && shell2http -port 8080 -form -include-stderr -cgi /get '. /root/.bashrc && export DIR_DATA=/app/storage/app/data/hyp2000/$${v_dir} && /opt/entrypoint.sh italy2000.hyp > /app/storage/app/data/hyp2000/$${v_dir}/output.log 2>/app/storage/app/data/hyp2000/$${v_dir}/output.err && mv /app/storage/app/data/hyp2000/$${v_dir}/output.* /app/storage/app/data/hyp2000/$${v_dir}/output/ || (mv /app/storage/app/data/hyp2000//app/storage/app/data/hyp2000/$${v_dir}/output.* /app/storage/app/data/hyp2000/$${v_dir}/output/ && echo \"Status:503\\n\\n$$(cat /app/storage/app/data/hyp2000//app/storage/app/data/hyp2000//app/storage/app/data/hyp2000//app/storage/app/data/hyp2000/$${v_dir}/output/output.err)\")'"
+    command: -c "curl https://dl.google.com/go/go1.20.1.linux-amd64.tar.gz --output /tmp/go.tar.gz && tar -C /opt/ew_env -xzf /tmp/go.tar.gz && rm /tmp/go.tar.gz && PATH=\"$PATH:/opt/ew_env/go/bin\" && go install github.com/msoap/shell2http@latest && PATH=\"$PATH:$$(go env GOPATH)/bin\" && shell2http -port 8080 -form -include-stderr --shell=\"bash\" -cgi /get '. /home/ew/.bashrc && cd /app/storage/app/data/hyp2000/$${v_dir}/input && cat italy2000.hyp | hyp2000 > ../output/output.log 2> ../output/output.err && cd ../output && cat hypo.arc | tr \"\\0\" \" \" | ew2openapi TYPE_HYP2000ARC - hypo.json || (echo \"Status:503\\n\\n$$(cat /app/storage/app/data/hyp2000/$${v_dir}/output/output.err)\")'"
     deploy:
       mode: replicated
       replicas: 1
@@ -32,7 +34,7 @@ services:
     volumes:
       - v-caravel-apollo-storage:/app/storage
     entrypoint: bash
-    command: -c "curl -O https://dl.google.com/go/go1.20.1.linux-amd64.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf go1.20.1.linux-amd64.tar.gz && PATH=\"$PATH:/usr/local/go/bin\" && rm go1.20.1.linux-amd64.tar.gz && go install github.com/msoap/shell2http@latest && if [ -f /usr/local/bin/shell2http ]; then rm /usr/local/bin/shell2http; fi && ln -s $$(go env GOPATH)/bin/shell2http /usr/local/bin/shell2http && shell2http -port 8080 -form -include-stderr -cgi /get '/opt/entrypoint.sh --json /app/storage/app/data/pyml/$${v_dir}/input.json  > /app/storage/app/data/pyml/$${v_dir}/output.log 2>/app/storage/app/data/pyml/$${v_dir}/output.err || (echo \"Status:503\\n\\n$$(cat /app/storage/app/data/pyml/$${v_dir}/output/output.err)\")'"
+    command: -c "curl https://dl.google.com/go/go1.20.1.linux-amd64.tar.gz --output /tmp/go.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf /tmp/go.tar.gz && rm /tmp/go.tar.gz && PATH=\"$PATH:/usr/local/go/bin\" && go install github.com/msoap/shell2http@latest && PATH=\"$PATH:$$(go env GOPATH)/bin\" && shell2http -port 8080 -form -include-stderr -cgi /get '/opt/entrypoint.sh --json /app/storage/app/data/pyml/$${v_dir}/input.json  > /app/storage/app/data/pyml/$${v_dir}/output.log 2>/app/storage/app/data/pyml/$${v_dir}/output.err || (echo \"Status:503\\n\\n$$(cat /app/storage/app/data/pyml/$${v_dir}/output/output.err)\")'"
     deploy:
       mode: replicated
       replicas: 1
