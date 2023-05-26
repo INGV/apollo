@@ -12,6 +12,15 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Enable or disable 'gethostbyaddr()' php function to get DNS name from client IP.
+    | ATTENTION: in case of high traffic, enabling this option can reduce the performance!
+    |--------------------------------------------------------------------------
+    |
+    */
+    'resolve_dns_name' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | Log Channels
     |--------------------------------------------------------------------------
     |
