@@ -120,7 +120,7 @@ trait FindAndRetrieveStationXMLTrait
                 if (Cache::has($redisCacheKey)) {
                     $redisCacheKeyForNotFounded = 'notFounded__' . $redisCacheKey;
                     if (Cache::has($redisCacheKeyForNotFounded)) {
-                        $textMessage .= ' cache key timeout was already set to 86400sec (24h) instead of ' . config('apollo.cacheTimeout') . 'sec.';
+                        $textMessage .= ' cache key timeout was already set to 86400sec (24h) instead of ' . config('apollo.cacheTimeout') . 'sec. Nothing to do...';
                     } else {
                         $textMessage .= ' cache key timeout will be changed to 86400sec (24h) instead of ' . config('apollo.cacheTimeout') . 'sec.';
                         Cache::put($redisCacheKey, $stationXML, 86400);
