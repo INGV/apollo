@@ -216,7 +216,7 @@ class StationHinvModel extends Model
                 }
             }
             Log::debug('  ' . $textMessage);
-            $nsc = $input_parameters['net'] . '.' . $input_parameters['sta'] . '.' . $input_parameters['cha'];
+            $nsc = $input_parameters['net'] . '.' . $input_parameters['sta'] . '.' . ($input_parameters['loc'] ?? '--') . '.' . $input_parameters['cha'];
             if (config('apollo.stations_not_founded')) {
                 config(['apollo.stations_not_founded' => config('apollo.stations_not_founded') . ',' . $nsc]);
             } else {
