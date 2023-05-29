@@ -259,12 +259,12 @@ pages:
           echo "****** FILE_NAME=${FILE_NAME} ******" ;
 
           echo "openapi-generator-cli version:" ;
-          docker run --rm openapitools/openapi-generator-cli:v6.4.0 version ;
+          docker run --rm openapitools/openapi-generator-cli:v6.6.0 version ;
           echo "" ;
           echo "" ;
 
           echo "openapi-generator-cli validate openapi.yaml:" ;
-          docker run --rm -v $(pwd)/public/api/0.0.2:/input openapitools/openapi-generator-cli:v6.4.0 validate -i /input/openapi.yaml ;
+          docker run --rm -v $(pwd)/public/api/0.0.2:/input openapitools/openapi-generator-cli:v6.6.0 validate -i /input/openapi.yaml ;
           echo "" ;
           echo "" ;
 
