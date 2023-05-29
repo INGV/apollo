@@ -294,19 +294,37 @@ paths:
                             hb:
                               properties:
                                 ml:
-                                  $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/magnitude__mag'
+                                  oneOf:
+                                    - type: number
+                                      description: Magnitude value | double
+                                      format: double
+                                      example: 3.01
+                                    - type: boolean
+                                      example: false
                                 w:  
-                                  type: number
-                                  format: double
-                                  example: 0.27839883752733147
+                                  oneOf:
+                                    - type: number
+                                      format: double
+                                      example: 0.27839883752733147
+                                    - type: boolean
+                                      example: false
                             db:
                               properties:
                                 ml:
-                                  $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/magnitude__mag'
-                                w:  
-                                  type: number
-                                  format: double
-                                  example: 0.27839883752733147
+                                  oneOf:
+                                    - type: boolean
+                                      example: false
+                                    - type: number
+                                      description: Magnitude value | double
+                                      format: double
+                                      example: 3.01
+                                w:
+                                  oneOf:
+                                    - type: boolean
+                                      example: false
+                                    - type: number
+                                      format: double
+                                      example: 0.27839883752733147
                         type: array
                       log:
                         items:
