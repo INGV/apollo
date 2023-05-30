@@ -90,7 +90,7 @@ class PyMLController extends Controller
     public function location(PyMLRequest $request)
     {
         Log::info('START - ' . __CLASS__ . ' -> ' . __FUNCTION__);
-        $locationTimeStart = microtime(true);
+        $pymlTimeStart = microtime(true);
 
         /* Get validated input */
         $input_parameters = $request->validated();
@@ -196,8 +196,8 @@ class PyMLController extends Controller
             /* set headers */
             $headers['Content-type'] = 'text/plain';
 
-            $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
-            Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
+            $pymlExecutionTime = number_format((microtime(true) - $pymlTimeStart) * 1000, 2);
+            Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | pymlExecutionTime=' . $pymlExecutionTime . ' Milliseconds');
             return response()->make($contents, 200, $headers);
         } else if ($output_format == 'csv2json') {
             /* Get pyml csv file */
@@ -284,8 +284,8 @@ class PyMLController extends Controller
             }
             /* END - Stationmagnitude */
 
-            $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
-            Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
+            $pymlExecutionTime = number_format((microtime(true) - $pymlTimeStart) * 1000, 2);
+            Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | pymlExecutionTime=' . $pymlExecutionTime . ' Milliseconds');
             return response()->json($output, 200, [], JSON_PRETTY_PRINT);
         } else {
             Log::debug(' Get: ' . $dir_working . '/output.log');
@@ -294,8 +294,8 @@ class PyMLController extends Controller
             $output['data']['random_string'] = $dir_random_name;
 
             Log::debug(' STA_NOT_FOUNDED:' . config('apollo.stations_not_founded'));
-            $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
-            Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
+            $pymlExecutionTime = number_format((microtime(true) - $pymlTimeStart) * 1000, 2);
+            Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | pymlExecutionTime=' . $pymlExecutionTime . ' Milliseconds');
             return response()->json($output, 200, [], JSON_PRETTY_PRINT);
         }
     }

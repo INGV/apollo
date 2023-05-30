@@ -69,7 +69,7 @@ class Hyp2000Controller extends Controller
     {
 
         Log::info("START - " . __CLASS__ . ' -> ' . __FUNCTION__);
-        $locationTimeStart = microtime(true);
+        $locationHyp2000TimeStart = microtime(true);
 
         $input_parameters = $request->validated();
 
@@ -279,23 +279,23 @@ class Hyp2000Controller extends Controller
                 }
             }
             if ($error) {
-                $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
-                Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
+                $locationHyp2000ExecutionTime = number_format((microtime(true) - $locationHyp2000TimeStart) * 1000, 2);
+                Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationHyp2000ExecutionTime=' . $locationHyp2000ExecutionTime . ' Milliseconds');
                 abort(422, $error);
             } else {
                 if ($requestException == 1) {
                     abort($responseStatus, $e->getMessage());
                 } else {
-                    $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
-                    Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
+                    $locationHyp2000ExecutionTime = number_format((microtime(true) - $locationHyp2000TimeStart) * 1000, 2);
+                    Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationHyp2000ExecutionTime=' . $locationHyp2000ExecutionTime . ' Milliseconds');
                     abort(500);
                 }
             }
         }
 
         Log::debug(' STA_NOT_FOUNDED:' . config('apollo.stations_not_founded'));
-        $locationExecutionTime = number_format((microtime(true) - $locationTimeStart) * 1000, 2);
-        Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationExecutionTime=' . $locationExecutionTime . ' Milliseconds');
+        $locationHyp2000ExecutionTime = number_format((microtime(true) - $locationHyp2000TimeStart) * 1000, 2);
+        Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | locationHyp2000ExecutionTime=' . $locationHyp2000ExecutionTime . ' Milliseconds');
         if ($output_format == 'json') {
             //$contents = date_format(date_create($arcMessage['originTime']), 'Y-m-d');
             //$contents .= "\n\n";

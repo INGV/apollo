@@ -2,6 +2,9 @@
 Apollo Release History
 #########################
 
+* Release 2.19.0 (2023-05-30)
+  - Update "ExecutionTime" Log label
+
 * Release 2.18.0 (2023-05-30)
   - Update 'openapitools/openapi-generator-cli:v6.4.0' to 'openapitools/openapi-generator-cli:v6.6.0'
   - Update PHP-Packages ('composer update')
