@@ -2,7 +2,10 @@
 Apollo Release History
 #########################
 
-* Release 2.17.0 (2023-05-29)
+* Release 2.18.0 (2023-05-30)
+  - Update PHP-Packages ('composer update')
+
+* Release 2.17.0 (2023-05-30)
   - Update output type of PyML 'hb' and 'db', from olny "number" to "number o boolean"
   - Update STA_NOT_FOUNDED variable with 'location'
   - Update 'config/ingv-logging.php' to set hostname by-name (instead of IP) on log files
