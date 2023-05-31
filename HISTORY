@@ -2,6 +2,9 @@
 Apollo Release History
 #########################
 
+* Release 2.19.1 (2023-05-31)
+  - Update output type of PyML 'hb' and 'db', from "number and "boolean" to "number"
+
 * Release 2.19.0 (2023-05-30)
   - Update "ExecutionTime" Log label
 
@@ -10,7 +13,7 @@ Apollo Release History
   - Update PHP-Packages ('composer update')
 
 * Release 2.17.0 (2023-05-30)
-  - Update output type of PyML 'hb' and 'db', from olny "number" to "number o boolean"
+  - Update output type of PyML 'hb' and 'db', from only "number" to "number" or "boolean"
   - Update STA_NOT_FOUNDED variable with 'location'
   - Update 'config/ingv-logging.php' to set hostname by-name (instead of IP) on log files
   - Add 'STA_NOT_FOUNDED' variable to reports stations not founded on FDSNWS-Station(s)
