@@ -12,7 +12,7 @@ info:
     name: Creative Commons Attribution 4.0 International
     url: http://creativecommons.org/licenses/by/4.0/
   title: Apollo Web Services
-  version: 2.19.2
+  version: 2.19.3
   x-api-id: fa78e2be-826e-4451-8979-0a0dfd598dff
   x-logo: http://webservices.ingv.it/ingv_logo_text_two_lines.png
   x-summary: The hyp2000 web service bla bla bla
@@ -303,7 +303,7 @@ paths:
                                   #    example: false
                                   type: string
                                   description: Magnitude value or boolean
-                                  example: 3.01
+                                  example: "3.01"
                                 w:
                                   #oneOf:
                                   #  - type: number
@@ -314,7 +314,7 @@ paths:
                                   #    example: false
                                   type: string
                                   description: Weight value or boolean
-                                  example: false
+                                  example: "false"
                             db:
                               properties:
                                 ml:
