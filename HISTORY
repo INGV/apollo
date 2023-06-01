@@ -2,6 +2,9 @@
 Apollo Release History
 #########################
 
+* Release 2.19.2 (2023-06-01)
+  - Update output type of PyML 'hb' and 'db', from "number and "boolean" to "string"
+
 * Release 2.19.1 (2023-05-31)
   - Update output type of PyML 'hb' and 'db', from "number and "boolean" to "number"
 

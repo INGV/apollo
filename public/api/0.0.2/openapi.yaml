@@ -12,7 +12,7 @@ info:
     name: Creative Commons Attribution 4.0 International
     url: http://creativecommons.org/licenses/by/4.0/
   title: Apollo Web Services
-  version: 2.19.1
+  version: 2.19.2
   x-api-id: fa78e2be-826e-4451-8979-0a0dfd598dff
   x-logo: http://webservices.ingv.it/ingv_logo_text_two_lines.png
   x-summary: The hyp2000 web service bla bla bla
@@ -294,25 +294,60 @@ paths:
                             hb:
                               properties:
                                 ml:
-                                  type: number
-                                  description: Magnitude value | double
-                                  format: double
+                                  #oneOf:
+                                  #  - type: number
+                                  #    description: Magnitude value | double
+                                  #    format: double
+                                  #    example: 3.01
+                                  #  - type: boolean
+                                  #    example: false
+                                  type: string
+                                  description: Magnitude value or boolean
                                   example: 3.01
-                                w:  
-                                  type: number
-                                  format: double
-                                  example: 0.27839883752733147
+                                w:
+                                  #oneOf:
+                                  #  - type: number
+                                  #    description: Magnitude value | double
+                                  #    format: double
+                                  #    example: 3.01
+                                  #  - type: boolean
+                                  #    example: false
+                                  type: string
+                                  description: Weight value or boolean
+                                  example: false
                             db:
                               properties:
                                 ml:
-                                  type: number
-                                  description: Magnitude value | double
-                                  format: double
+                                  #oneOf:
+                                  #  - type: number
+                                  #    description: Magnitude value | double
+                                  #    format: double
+                                  #    example: 3.01
+                                  #  - type: boolean
+                                  #    example: false
+                                  type: string
+                                  description: Magnitude value or boolean
                                   example: 3.01
                                 w:
-                                  type: number
-                                  format: double
-                                  example: 0.27839883752733147
+                                  #oneOf:
+                                  #  - type: number
+                                  #    description: Magnitude value | double
+                                  #    format: double
+                                  #    example: 3.01
+                                  #  - type: boolean
+                                  #    example: false
+                                  type: string
+                                  description: Weight value or boolean
+                                  example: false
+                                #ml:
+                                #  type: number
+                                #  description: Magnitude value | double
+                                #  format: double
+                                #  example: 3.01
+                                #w:
+                                #  type: number
+                                #  format: double
+                                #  example: 0.27839883752733147
                         type: array
                       log:
                         items:
