@@ -327,7 +327,7 @@ paths:
                                   #    example: false
                                   type: string
                                   description: Magnitude value or boolean
-                                  example: 3.01
+                                  example: "3.01"
                                 w:
                                   #oneOf:
                                   #  - type: number
@@ -338,7 +338,7 @@ paths:
                                   #    example: false
                                   type: string
                                   description: Weight value or boolean
-                                  example: false
+                                  example: "false"
                                 #ml:
                                 #  type: number
                                 #  description: Magnitude value | double
