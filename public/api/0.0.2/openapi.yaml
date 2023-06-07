@@ -299,9 +299,10 @@ paths:
                                   #    example: 3.01
                                   #  - type: boolean
                                   #    example: false
-                                  type: string
-                                  description: Magnitude value or boolean
-                                  example: "3.01"
+                                  type: number
+                                  description: Magnitude value
+                                  format: double
+                                  example: 3.01
                                 w:
                                   #oneOf:
                                   #  - type: number
@@ -310,9 +311,10 @@ paths:
                                   #    example: 3.01
                                   #  - type: boolean
                                   #    example: false
-                                  type: string
-                                  description: Weight value or boolean
-                                  example: "false"
+                                  type: number
+                                  description: Weight value
+                                  format: double
+                                  example: 0.7781721366856867
                             db:
                               properties:
                                 ml:
@@ -323,9 +325,10 @@ paths:
                                   #    example: 3.01
                                   #  - type: boolean
                                   #    example: false
-                                  type: string
-                                  description: Magnitude value or boolean
-                                  example: "3.01"
+                                  type: number
+                                  description: Magnitude value
+                                  format: double
+                                  example: 3.01
                                 w:
                                   #oneOf:
                                   #  - type: number
@@ -334,18 +337,10 @@ paths:
                                   #    example: 3.01
                                   #  - type: boolean
                                   #    example: false
-                                  type: string
-                                  description: Weight value or boolean
-                                  example: "false"
-                                #ml:
-                                #  type: number
-                                #  description: Magnitude value | double
-                                #  format: double
-                                #  example: 3.01
-                                #w:
-                                #  type: number
-                                #  format: double
-                                #  example: 0.27839883752733147
+                                  type: number
+                                  description: Weight value
+                                  format: double
+                                  example: 0.7781721366856867
                         type: array
                       log:
                         items:
