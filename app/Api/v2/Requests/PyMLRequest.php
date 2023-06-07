@@ -30,9 +30,6 @@ class PyMLRequest extends FormRequest
         $validationRules = [
             'data'                                                  => ['required', 'array'],
 
-            /* output format */
-            'data.output'                                           => ['required', 'string', 'in:text,csv2json,json'],
-
             /* pyml_conf */
             'data.pyml_conf'                                        => ['required', 'array'],
 

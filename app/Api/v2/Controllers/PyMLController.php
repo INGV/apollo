@@ -95,10 +95,6 @@ class PyMLController extends Controller
         /* Get validated input */
         $input_parameters = $request->validated();
 
-        /****** START - output ******/
-        $output_format = $input_parameters['data']['output'];
-        /****** END - output ******/
-
         /****** START - amplitudes ******/
         $n = 1;
         $tmpAmplitudeChaComponents = [];
@@ -168,7 +164,6 @@ class PyMLController extends Controller
             Log::debug('   step_3');
             if ($responseStatus == 200) {
                 Log::debug('   step_4a - httpStatusCode=' . $responseStatus);
-                $outputData = $response->body();
             } else {
                 Log::debug('   step_4b - httpStatusCode=' . $responseStatus);
             }
@@ -191,112 +186,15 @@ class PyMLController extends Controller
         Log::debug(' Done');
         /* !!!!!!!! END - Call pyml */
 
-        if ($output_format == 'text') {
-            $contents = Storage::disk('data')->get($dir_working . '/pyml_magnitudes.csv');
-            /* set headers */
-            $headers['Content-type'] = 'text/plain';
+        /* Return results */
+        Log::debug(' Get: ' . $dir_working . '/output.log');
+        $pymlOutput = Storage::disk('data')->get($dir_working . '/output.log');
+        $output['data'] = json_decode($pymlOutput, true);
+        $output['data']['random_string'] = $dir_random_name;
 
-            $pymlExecutionTime = number_format((microtime(true) - $pymlTimeStart) * 1000, 2);
-            Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | pymlExecutionTime=' . $pymlExecutionTime . ' Milliseconds');
-            return response()->make($contents, 200, $headers);
-        } else if ($output_format == 'csv2json') {
-            /* Get pyml csv file */
-            $csvToArray = [];
-            if (($open = fopen(Storage::disk('data')->path($dir_working . '/pyml_magnitudes.csv'), 'r')) !== false) {
-                while (($data = fgetcsv(
-                    $open,
-                    1000,
-                    ';'
-                )) !== false) {
-                    $csvToArray[] = $data;
-                }
-                fclose($open);
-            }
-
-            /* Build output */
-            $output['data']['random_string'] = $dir_random_name;
-
-            /* START - Magnitudes */
-            $output['data']['magnitudes'] = [
-                'hb' => [
-                    'ml' => $csvToArray[1][1],
-                    'std' => $csvToArray[1][2],
-                    'totsta' => $csvToArray[1][3],
-                    'usedsta' => (string) intval($csvToArray[1][4]),
-                ],
-                'db' => [
-                    'ml' => $csvToArray[1][5],
-                    'std' => $csvToArray[1][6],
-                    'totsta' => $csvToArray[1][7],
-                    'usedsta' => (string) intval($csvToArray[1][8]),
-                ],
-                'ampmethod' => $csvToArray[1][9],
-                'magmethod' => $csvToArray[1][10],
-                'loopexitcondition' => $csvToArray[1][11],
-            ];
-            /* END - Magnitudes */
-
-            /* START - Stationmagnitude */
-            unset($csvToArray[0]);  // Remove header
-            unset($csvToArray[1]);  // Remove origin magnitude
-            foreach ($csvToArray as $csvToArrayLine) {
-                Log::debug(' ==== csvToArrayLine ====:', $csvToArrayLine);
-                [$mlcha, $scnl, $ml_hb, $ml_hb_weight, $e, $ml_db, $ml_db_weight] = explode(' ', $csvToArrayLine[0]) + ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']; // the second array (['a', 'b', ecc..]) is used to set 'default' value.
-
-                if (strtoupper($mlcha) == 'MLCHA') {
-                    /* Get SCNL line */
-                    $search_items = [];
-                    $scnl_exploded = explode('_', $scnl);
-                    $net = $scnl_exploded[0];
-                    $sta = $scnl_exploded[1];
-                    if (strtolower($scnl_exploded[2]) == 'none') {
-                        $loc = null;
-                    } else {
-                        $loc = $scnl_exploded[2];
-                        $search_items['loc'] = $loc;
-                    }
-                    $cha = $scnl_exploded[3];
-                    $search_items['net'] = $net;
-                    $search_items['sta'] = $sta;
-                    $search_items['cha'] = $cha;
-
-                    /** Search items, into:
-                     *   '$input_parameters['data']['amplitudes']'
-                     *  with:
-                     *   'net=$net', 'sta=$sta', 'cha=$cha', (optional 'loc=$loc').
-                     */
-                    $inputAmplitude = self::array_keys_exist($input_parameters['data']['amplitudes'], $search_items);
-
-                    /* build final array */
-                    $stationmagnitude = $inputAmplitude[0];
-                    $stationmagnitude['hb'] = [
-                        'ml' => $ml_hb,
-                        'w' => $ml_hb_weight,
-                    ];
-                    $stationmagnitude['db'] = [
-                        'ml' => $ml_db,
-                        'w' => $ml_db_weight,
-                    ];
-                    $output['data']['stationmagnitudes'][] = $stationmagnitude;
-                } else {
-                    Log::debug('  the line doesn\'t start with "MLCHA"; skip...');
-                }
-            }
-            /* END - Stationmagnitude */
-
-            $pymlExecutionTime = number_format((microtime(true) - $pymlTimeStart) * 1000, 2);
-            Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | pymlExecutionTime=' . $pymlExecutionTime . ' Milliseconds');
-            return response()->json($output, 200, [], JSON_PRETTY_PRINT);
-        } else {
-            Log::debug(' Get: ' . $dir_working . '/output.log');
-            $pymlOutput = Storage::disk('data')->get($dir_working . '/output.log');
-            $output['data'] = json_decode($pymlOutput, true);
-            $output['data']['random_string'] = $dir_random_name;
-
-            Log::debug(' STA_NOT_FOUNDED:' . config('apollo.stations_not_founded'));
-            $pymlExecutionTime = number_format((microtime(true) - $pymlTimeStart) * 1000, 2);
-            Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | pymlExecutionTime=' . $pymlExecutionTime . ' Milliseconds');
-            return response()->json($output, 200, [], JSON_PRETTY_PRINT);
-        }
+        Log::debug(' STA_NOT_FOUNDED:' . config('apollo.stations_not_founded'));
+        $pymlExecutionTime = number_format((microtime(true) - $pymlTimeStart) * 1000, 2);
+        Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | pymlExecutionTime=' . $pymlExecutionTime . ' Milliseconds');
+        return response()->json($output, 200, [], JSON_PRETTY_PRINT);
     }
 }

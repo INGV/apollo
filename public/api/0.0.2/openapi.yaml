@@ -12,7 +12,7 @@ info:
     name: Creative Commons Attribution 4.0 International
     url: http://creativecommons.org/licenses/by/4.0/
   title: Apollo Web Services
-  version: 2.19.3
+  version: 2.20.0
   x-api-id: fa78e2be-826e-4451-8979-0a0dfd598dff
   x-logo: http://webservices.ingv.it/ingv_logo_text_two_lines.png
   x-summary: The hyp2000 web service bla bla bla
@@ -173,7 +173,7 @@ paths:
   /location/v2/pyml:
     post:
       description: "To Do"
-      summary: Hypoinverse 2000 API
+      summary: PyML
       operationId: v2_postPyML
       requestBody:
         description: JSON to post
@@ -184,8 +184,6 @@ paths:
               properties:
                 data:
                   properties:
-                    output:
-                      $ref: '#/components/schemas/ObjectPyMLOutput'
                     pyml_conf:
                       $ref: '#/components/schemas/ObjectPyMLConf'
                     origin:
@@ -544,11 +542,6 @@ components:
           $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__amp2'
         time2:
           $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/amplitude__time2'
-    ObjectPyMLOutput:
-      type: string
-      description: Output format
-      default: 'json'
-      enum: [json, csv2json, text]
     ObjectHyp2000Conf:
       type: array
       items:

@@ -2,6 +2,10 @@
 Apollo Release History
 #########################
 
+* Release 2.20.0 (2023-06-07)
+  - Update PyML docker image
+  - Remove 'output' option; only json output available
+
 * Release 2.19.3 (2023-06-01)
   - minor fix
 
