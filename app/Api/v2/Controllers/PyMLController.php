@@ -189,8 +189,8 @@ class PyMLController extends Controller
         /* Return results */
         Log::debug(' Get: ' . $dir_working . '/output.log');
         $pymlOutput = Storage::disk('data')->get($dir_working . '/output.log');
-        $output['data'] = json_decode($pymlOutput, true);
-        $output['data']['random_string'] = $dir_random_name;
+        $output['data'] = json_decode($pymlOutput);
+        $output['data']->random_string = $dir_random_name;
 
         Log::debug(' STA_NOT_FOUNDED:' . config('apollo.stations_not_founded'));
         $pymlExecutionTime = number_format((microtime(true) - $pymlTimeStart) * 1000, 2);
