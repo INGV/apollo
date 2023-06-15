@@ -19,7 +19,7 @@ services:
         delay: 10s
         order: start-first
   hyp2000:
-    image: ingv/hyp2000:latest
+    image: ingv/hyp2000:${HYP2000_DOCKERIMAGE_TAG:-latest}
     volumes:
       - v-caravel-apollo-storage:/app/storage
     entrypoint: bash
@@ -31,7 +31,7 @@ services:
       restart_policy:
         condition: on-failure
   pyml:
-    image: ingv/pyml:latest
+    image: ingv/pyml:${PYML_DOCKERIMAGE_TAG:-latest}
     volumes:
       - v-caravel-apollo-storage:/app/storage
     entrypoint: bash
