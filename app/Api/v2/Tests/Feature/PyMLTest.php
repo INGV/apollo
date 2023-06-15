@@ -2,19 +2,19 @@
 
 namespace App\Api\v2\Tests\Feature;
 
-use Tests\TestCase;
 use App\Apollo\Traits\UtilsTrait;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Tests\TestCase;
 
 class PyMLTest extends TestCase
 {
     use UtilsTrait;
 
-    protected $output_array_from_swagger, $structure__output_array_from_swagger;
+    protected $output_array_from_swagger;
+
+    protected $structure__output_array_from_swagger;
 
     protected $input_json = '{
         "data": {
-            "output": "json",
             "pyml_conf": {
                 "preconditions": {
                     "theoretical_p": true,
@@ -1500,13 +1500,15 @@ class PyMLTest extends TestCase
                     "ml": 3.01,
                     "std": 0.27839883752733147,
                     "totsta": 0,
-                    "usedsta": 9
+                    "usedsta": 9,
+                    "quality": "BB"
                 },
                 "db": {
                     "ml": 3.01,
                     "std": 0.27839883752733147,
                     "totsta": 0,
-                    "usedsta": 9
+                    "usedsta": 9,
+                    "quality": "BB"
                 },
                 "ampmethod": "ingv",
                 "magmethod": "meanamp",
@@ -1527,24 +1529,47 @@ class PyMLTest extends TestCase
                     "elev": 19.1,
                     "hb": {
                         "ml": 3.01,
-                        "w": 0.27839883752733147
+                        "w": 0.7781721366856867
                     },
                     "db": {
                         "ml": 3.01,
-                        "w": 0.27839883752733147
+                        "w": 0.7781721366856867
                     }
                 }
             ],
-            "log": [
-                {
-                    "level": "channel",
-                    "status": "ok",
-                    "info": {
-                        "summary": "IV SSFR -- HHE--",
+            "log": {
+                "magnitude": {
+                    "hb": {
+                        "status": "ok",
+                        "summary": "Station skipped due to stations coordinates missing",
+                        "extended": "HuttonBoore"
+                    },
+                    "db": {
+                        "status": "critical",
+                        "summary": "Di Bona: Both Weighted Huber Mean and Outliers Removal failed",
                         "extended": ""
                     }
-                }
-            ]
+                },
+                "stationmagnitudes": [
+                    {
+                        "net": "IV",
+                        "sta": "ACER",
+                        "loc": "00",
+                        "band_inst": "HH",
+                        "status": "ok",
+                        "summary": "Station skipped due to stations coordinates missing",
+                        "extended": "HuttonBoore",
+                        "channels": [
+                            {
+                                "orientation": "HH",
+                                "status": "critical",
+                                "summary": "missing",
+                                "extended": ""
+                            }
+                        ]
+                    }
+                ]
+            }
         }
     }';
 
