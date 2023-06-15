@@ -2,6 +2,9 @@
 Apollo Release History
 #########################
 
+* Release 2.20.1 (2023-06-15)
+  -  Update PyML 'command' into docker-compose.swarm.yml
+
 * Release 2.20.0 (2023-06-15)
   - Update Openapi-Spec to include: PyML magnitude quality and PyML log
   - PyML - Update 'hb' and 'db' properties
