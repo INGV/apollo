@@ -241,6 +241,8 @@ paths:
                                 $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/magnitude__nsta'
                               usedsta:
                                 $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/magnitude__nsta_used'
+                              quality:
+                                $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/magnitude__mag_quality'
                           db:
                             properties:
                               ml:
@@ -253,6 +255,8 @@ paths:
                                 $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/magnitude__nsta'
                               usedsta:
                                 $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/magnitude__nsta_used'
+                              quality:
+                                $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/magnitude__mag_quality'
                           ampmethod:
                             type: string
                             description: Amp method
@@ -343,27 +347,83 @@ paths:
                                   example: 0.7781721366856867
                         type: array
                       log:
-                        items:
-                          properties:
-                            level:
-                              type: string
-                              description: Log level description
-                              example: channel
-                            status:
-                              type: string
-                              description: Log status description
-                              example: ok
-                            info:
+                        properties:
+                          magnitude:
+                            properties:
+                              hb:
+                                properties:
+                                  status:
+                                    type: string
+                                    description: Log status description
+                                    example: ok
+                                  summary:
+                                    type: string
+                                    description: Summary description
+                                    example: Station skipped due to stations coordinates missing
+                                  extended:
+                                    type: string
+                                    description: Extendend description
+                                    example: HuttonBoore
+                              db:
+                                properties:
+                                  status:
+                                    type: string
+                                    description: Log status description
+                                    example: critical
+                                  summary:
+                                    type: string
+                                    description: Summary description
+                                    example: "Di Bona: Both Weighted Huber Mean and Outliers Removal failed"
+                                  extended:
+                                    type: string
+                                    description: Extendend description
+                                    example: ""
+                          stationmagnitudes:
+                            items:
                               properties:
+                                net:
+                                  $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__net'
+                                sta:
+                                  $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__sta'
+                                loc:
+                                  $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__loc'
+                                band_inst:
+                                  type: string
+                                  description: band_inst
+                                  example: HH
+                                status:
+                                  type: string
+                                  description: Log status description
+                                  example: ok
                                 summary:
                                   type: string
                                   description: Summary description
-                                  example: IV SSFR -- HHE--
+                                  example: Station skipped due to stations coordinates missing
                                 extended:
                                   type: string
                                   description: Extendend description
-                                  example: ""
-                        type: array
+                                  example: HuttonBoore
+                                channels:
+                                  items:
+                                    properties:
+                                      orientation:
+                                        type: string
+                                        description: band_inst
+                                        example: HH
+                                      status:
+                                        type: string
+                                        description: Log status description
+                                        example: critical
+                                      summary:
+                                        type: string
+                                        description: Summary description
+                                        example: missing
+                                      extended:
+                                        type: string
+                                        description: Extendend description
+                                        example: ""
+                                  type: array
+                            type: array
       tags:
       - location
       
