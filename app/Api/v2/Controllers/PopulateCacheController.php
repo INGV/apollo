@@ -83,10 +83,10 @@ class PopulateCacheController extends Controller
                 Log::info(' then');
             })->catch(function (Batch $batch, Throwable $e) {
                 // First batch job failure detected...
-                \Log::info(' catch:'.$e->getMessage());
+                Log::info(' catch:'.$e->getMessage());
             })->finally(function (Batch $batch) {
                 // The batch has finished executing...
-                \Log::info(' finally');
+                Log::info(' finally');
             })->dispatch();
 
         foreach ($arrayScnls as $arrayScnl) {
