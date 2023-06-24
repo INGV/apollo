@@ -17,6 +17,15 @@ services:
   pyml:
     volumes:
       - ./storage:/app/storage:cached
+  horizon:
+    build:
+      context: ./
+      dockerfile: ./docker/horizon/Dockerfile
+      target: apollo-dev
+      #cache_from:
+      #  - "vlauciani/caravel-apollo-horizon:latest"
+    volumes:
+      - ./:/app:cached
   redis:
     ports:
       - 6386:6379

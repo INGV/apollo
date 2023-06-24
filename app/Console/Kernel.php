@@ -2,22 +2,38 @@
 
 namespace App\Console;
 
+use App\Api\v2\Controllers\PopulateCacheController;
+use App\Api\v2\Requests\PopulateCacheRequest;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Validator;
 
 class Kernel extends ConsoleKernel
 {
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
         /* Remove old logs(s) */
         $schedule->command('ingv-logging:clear --keep_last=files 31')->daily();
+
+        /* Laravel-Horizon Metrics */
+        $schedule->command('horizon:snapshot')->everyFiveMinutes();
+
+        /* Populare Cache */
+        $schedule->call(function () {
+            $insertRequest = new PopulateCacheRequest();
+            $insertRequest->setValidator(Validator::make([
+                //'net' => 'NI',
+                //'sta' => 'ACER',
+                //'cha' => 'HHZ',
+                //'cache' => 'true',
+            ], $insertRequest->rules()));
+            (new PopulateCacheController())->query($insertRequest);
+        })->daily();
     }
 
     /**

@@ -1,4 +1,4 @@
-FROM webdevops/php-nginx:8.1 as base
+FROM webdevops/php:8.1 as base
 
 ENV WEB_DOCUMENT_ROOT=/app/public
 #ENV PHP_DISMOD=bz2,calendar,exiif,ffi,intl,gettext,ldap,mysqli,imap,pdo_pgsql,pgsql,soap,sockets,sysvmsg,sysvsm,sysvshm,shmop,xsl,zip,gd,apcu,vips,yaml,imagick,mongodb,amqp
@@ -9,13 +9,9 @@ RUN apt-get update \
     iputils-ping \
     && rm -rf /var/lib/apt/lists/*
 
-#USER application
 WORKDIR /app
+COPY ./docker/horizon/extra /opt/docker
 
-RUN if [ ! -d /opt/docker/etc/cron ]; then mkdir -p /opt/docker/etc/cron; fi
-COPY ./docker/apollo/extra/etc/cron/application /opt/docker/etc/cron/
-COPY ./docker/apollo/extra/apollo01FixPermissions.sh /opt/docker/provision/entrypoint.d/
-COPY ./docker/apollo/extra/apollo02PhpArtisanMigrate.sh /opt/docker/provision/entrypoint.d/
 
 FROM base as apollo-dev
 #RUN chown -R application:application .
@@ -24,10 +20,15 @@ FROM base as apollo-dev
 FROM base as apollo-prod
 COPY --chown=1000:1000 . .
 COPY .env.example .env
-RUN rm -fr ./storage/app/data/hyp2000/*
-RUN rm -fr ./storage/app/data/pyml/*
-RUN rm -fr ./storage/logs/*
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 RUN php artisan key:generate
-#RUN chown -R application:application .
+#RUN rm -v database/migrations/*_create_failed_jobs_table.php
+#RUN php artisan queue:failed-table
+#RUN php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider" --tag="sanctum-migrations"
+#RUN php artisan migrate:fresh --database=pgsql_dante
+#RUN php artisan db:seed --database=pgsql_dante -vvv
+#RUN chown -R $(id -u):$(id -g) ./storage
+#RUN chown -R $(id -u):$(id -g) ./bootstrap/cache/
+RUN php artisan vendor:publish --tag=horizon-assets --force
+RUN chown -R application:application .
 #USER application

@@ -2,7 +2,13 @@
 Apollo Release History
 #########################
 
-* Release 2.21.0 (2023-06-15)
+* Release 2.21.0 (2023-06-24)
+  - Major update:
+    - Update PopulateCacheController Class to use Queue
+    - Add PyMLJob and StationHinvJob for Queue
+    - Add Horizon and MySQL containers for Queue 
+    - Update FindAndRetrieveStationXMLTrait Trait to use Http::pool() to submit parallel GET requests on fdsnws_nodes
+    - Update Console\Kernel.php Class to run PopulateCacheController Class daily
   - Update PyMLTest
 
 * Release 2.20.1 (2023-06-15)

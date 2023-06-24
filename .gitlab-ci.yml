@@ -132,7 +132,7 @@ Build:
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} down -v
     - docker images
 
-PHPUnit Test:
+phpunit-test:
   stage: test
   #tags: 
     # Runners:
@@ -196,7 +196,7 @@ PHPUnit Test:
       expire_in: 1 day
 
 # Push only 'develop' and 'tag' image. For 'tag', a 'latest' tag will be created
-Push final image to DockerHub:
+push final image to DockerHub:
   stage: push
   script:
     - docker compose pull
@@ -210,17 +210,21 @@ Push final image to DockerHub:
     - echo APOLLO_VERSION_FOR_PUSH=${APOLLO_VERSION_FOR_PUSH}
     #
     - docker tag vlauciani/caravel-apollo:${APOLLO_VERSION} vlauciani/caravel-apollo:${APOLLO_VERSION_FOR_PUSH}
+    - docker tag vlauciani/caravel-apollo-horizon:${APOLLO_VERSION} vlauciani/caravel-apollo-horizon:${APOLLO_VERSION_FOR_PUSH}
     - > 
       if [[ "${CI_COMMIT_REF_NAME}" != "develop" ]]; then
         docker tag vlauciani/caravel-apollo:${APOLLO_VERSION} vlauciani/caravel-apollo:latest;
+        docker tag vlauciani/caravel-apollo-horizon:${APOLLO_VERSION} vlauciani/caravel-apollo-horizon:latest;
       fi
     #
     - docker images
     #
     - docker push vlauciani/caravel-apollo:${APOLLO_VERSION_FOR_PUSH}
+    - docker push vlauciani/caravel-apollo-horizon:${APOLLO_VERSION_FOR_PUSH}
     - > 
       if [[ "${CI_COMMIT_REF_NAME}" != "develop" ]]; then
         docker push vlauciani/caravel-apollo:latest
+        docker push vlauciani/caravel-apollo-horizon:latest
       fi
   except:
     - schedule
@@ -228,12 +232,13 @@ Push final image to DockerHub:
     - develop
     - tags
 
-Clean DockerHub:
+clean DockerHub:
   stage: clean_dockerhub
   script:
     - docker images
-    - sleep 2
     - docker run --rm lumir/remove-dockerhub-tag --user ${CI_DOCKERHUB_REGISTRY_USER}  --password ${CI_DOCKERHUB_REGISTRY_TOKEN} vlauciani/caravel-apollo:${DOCKER_IMAGE_TAG_TMP}
+    - sleep 2
+    - docker run --rm lumir/remove-dockerhub-tag --user ${CI_DOCKERHUB_REGISTRY_USER}  --password ${CI_DOCKERHUB_REGISTRY_TOKEN} vlauciani/caravel-apollo-horizon:${DOCKER_IMAGE_TAG_TMP}
 
 pages:
   stage: pages
