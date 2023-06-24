@@ -26,7 +26,7 @@ services:
     networks:
       - network-caravel-apollo
   horizon:
-    image: "vlauciani/caravel-apollo-horizon:${DANTE_VERSION:-latest}"
+    image: "vlauciani/caravel-apollo-horizon:${APOLLO_VERSION:-latest}"
     networks:
       - network-caravel-apollo
     restart: unless-stopped
