@@ -192,7 +192,7 @@ phpunit-test:
   artifacts:
       when: always
       paths:
-          - storage
+        - storage
       expire_in: 1 day
 
 # Push only 'develop' and 'tag' image. For 'tag', a 'latest' tag will be created
