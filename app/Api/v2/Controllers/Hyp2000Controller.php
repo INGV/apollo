@@ -367,6 +367,7 @@ class Hyp2000Controller extends Controller
         /* Number of stations */
         $n_hyp2000Sation = count($phases);
         $count = 1;
+        $o = [];
         foreach ($phases as $phase) {
             // cerca su 'arrival_time' altrimenti 'now'
             if (isset($phase['arrival_time']) && ! empty($phase['arrival_time'])) {
