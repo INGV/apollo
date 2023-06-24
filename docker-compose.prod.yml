@@ -17,6 +17,15 @@ services:
   pyml:
     volumes:
       - apollo.storage:/app/storage:cached
+  horizon:
+    build:
+      context: ./
+      dockerfile: ./docker/horizon/Dockerfile
+      target: apollo-prod
+      cache_from:
+        - "vlauciani/caravel-horizon:latest"
+    volumes:
+      - apollo.storage:/app:cached
 volumes:
   apollo.storage:
     driver: local

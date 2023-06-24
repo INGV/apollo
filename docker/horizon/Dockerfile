@@ -29,6 +29,6 @@ RUN php artisan key:generate
 #RUN php artisan db:seed --database=pgsql_dante -vvv
 #RUN chown -R $(id -u):$(id -g) ./storage
 #RUN chown -R $(id -u):$(id -g) ./bootstrap/cache/
-RUN php artisan vendor:publish --tag=horizon-assets --force
+#RUN php artisan vendor:publish --tag=horizon-assets --force
 RUN chown -R application:application .
 #USER application
