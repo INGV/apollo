@@ -41,6 +41,53 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+  horizon:
+    image: vlauciani/caravel-apollo-horizon:${APOLLO_VERSION:-latest}
+    volumes:
+      - v-caravel-apollo-storage:/app/storage
+      - /mnt/gfs/apollo/.env:/app/.env
+    deploy:
+      mode: replicated
+      replicas: 1
+      #restart_policy:
+      #  condition: on-failure
+      #  delay: 5s
+      #  max_attempts: 5
+      #  window: 60s
+    healthcheck:
+      test: [ "CMD", "php", "artisan", "horizon:status" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 0s
+  mysql:
+    image: 'mysql/mysql-server:8.0'
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+      - 'mysql.data:/var/lib/mysql'
+      #- './docker/mysql/extra/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+    networks:
+      - network-caravel-apollo
+    deploy:
+      mode: replicated
+      replicas: 1
+      #restart_policy:
+      #  condition: on-failure
+      #  delay: 5s
+      #  max_attempts: 5
+      #  window: 60s
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}" ]
+      retries: 3
+      timeout: 5s
   redis:
     image: redis:7.0.7
     volumes:
