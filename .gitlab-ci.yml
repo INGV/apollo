@@ -126,8 +126,9 @@ Build:
   #    - vendor/
   #    - .env
   script:
-    - ls -l 
-    - cat .env
+    # Configure Laravel ENV
+    - cp ./.env.example ./.env
+    - cat ./.env
     # Build and up
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} build --no-cache --pull --progress=plain
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} push
