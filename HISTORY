@@ -2,7 +2,10 @@
 Apollo Release History
 #########################
 
-* Release 2.21.0 (2023-06-24)
+* Release 2.22.0 (2023-06-25)
+  - . . .
+
+* Release 2.21.0 (2023-06-25)
   - Major update:
     - Update PopulateCacheController Class to use Queue
     - Add PyMLJob and StationHinvJob for Queue
