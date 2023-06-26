@@ -8,7 +8,7 @@ services:
       - v-caravel-apollo2-storage:/app/storage
       - /mnt/gfs/apollo2/.env:/app/.env
     ports:
-      - "8385:80"
+      - "8380:80"
     deploy:
       mode: replicated
       replicas: 1
