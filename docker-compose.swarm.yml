@@ -49,11 +49,8 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      #restart_policy:
-      #  condition: on-failure
-      #  delay: 5s
-      #  max_attempts: 5
-      #  window: 60s
+      restart_policy:
+        condition: on-failure
     healthcheck:
       test: [ "CMD", "php", "artisan", "horizon:status" ]
       interval: 30s
@@ -77,11 +74,8 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      #restart_policy:
-      #  condition: on-failure
-      #  delay: 5s
-      #  max_attempts: 5
-      #  window: 60s
+      restart_policy:
+        condition: on-failure
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}" ]
       retries: 3
