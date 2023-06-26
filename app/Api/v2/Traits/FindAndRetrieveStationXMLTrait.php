@@ -6,6 +6,7 @@ use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 trait FindAndRetrieveStationXMLTrait
 {
@@ -107,8 +108,13 @@ trait FindAndRetrieveStationXMLTrait
             $c = 1;
             if (! empty($responses)) {
                 foreach ($responses as $response) {
-                    Log::debug(' ### '.$c.'/'.count($responses));
+                    Log::debug(' ### Processing Http:pool() response: '.$c.'/'.count($responses));
                     try {
+                        Log::debug('   step_0');
+                        if ($response instanceof Throwable) {
+                            Log::debug('   step_exception');
+                            throw $response;
+                        }
                         Log::debug('   step_1a: '.$response->effectiveUri()->__toString());
                         /* https://laravel.com/docs/8.x/http-client */
                         //$response = Http::timeout(5)->get($url);
