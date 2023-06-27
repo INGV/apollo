@@ -51,6 +51,9 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     healthcheck:
       test: [ "CMD", "php", "artisan", "horizon:status" ]
       interval: 30s
