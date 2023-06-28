@@ -3,6 +3,7 @@ Apollo Release History
 #########################
 
 * Release 2.22.0 (2023-06-28)
+  - Fix CI
   - Remove Horizon single container "service" and install It into "apollo" container
   - Update scheduled commands
 

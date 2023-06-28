@@ -213,21 +213,17 @@ push final image to DockerHub:
     - echo APOLLO_VERSION_FOR_PUSH=${APOLLO_VERSION_FOR_PUSH}
     #
     - docker tag vlauciani/caravel-apollo:${APOLLO_VERSION} vlauciani/caravel-apollo:${APOLLO_VERSION_FOR_PUSH}
-    - docker tag vlauciani/caravel-apollo-horizon:${APOLLO_VERSION} vlauciani/caravel-apollo-horizon:${APOLLO_VERSION_FOR_PUSH}
     - > 
       if [[ "${CI_COMMIT_REF_NAME}" != "develop" ]]; then
         docker tag vlauciani/caravel-apollo:${APOLLO_VERSION} vlauciani/caravel-apollo:latest;
-        docker tag vlauciani/caravel-apollo-horizon:${APOLLO_VERSION} vlauciani/caravel-apollo-horizon:latest;
       fi
     #
     - docker images
     #
     - docker push vlauciani/caravel-apollo:${APOLLO_VERSION_FOR_PUSH}
-    - docker push vlauciani/caravel-apollo-horizon:${APOLLO_VERSION_FOR_PUSH}
     - > 
       if [[ "${CI_COMMIT_REF_NAME}" != "develop" ]]; then
         docker push vlauciani/caravel-apollo:latest
-        docker push vlauciani/caravel-apollo-horizon:latest
       fi
   except:
     - schedule
@@ -240,8 +236,6 @@ clean DockerHub:
   script:
     - docker images
     - docker run --rm lumir/remove-dockerhub-tag --user ${CI_DOCKERHUB_REGISTRY_USER}  --password ${CI_DOCKERHUB_REGISTRY_TOKEN} vlauciani/caravel-apollo:${DOCKER_IMAGE_TAG_TMP}
-    - sleep 2
-    - docker run --rm lumir/remove-dockerhub-tag --user ${CI_DOCKERHUB_REGISTRY_USER}  --password ${CI_DOCKERHUB_REGISTRY_TOKEN} vlauciani/caravel-apollo-horizon:${DOCKER_IMAGE_TAG_TMP}
 
 pages:
   stage: pages
