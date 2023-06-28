@@ -18,22 +18,32 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         /* Remove old logs(s) */
-        $schedule->command('ingv-logging:clear --keep_last=files 31')->daily();
+        $schedule->command('ingv-logging:clear --keep_last=files 31')
+            ->name('schedule__ingv-logging')
+            ->withoutOverlapping()
+            ->daily();
 
         /* Laravel-Horizon Metrics */
-        $schedule->command('horizon:snapshot')->everyFiveMinutes();
+        $schedule->command('horizon:snapshot')
+            ->name('schedule__horizon-snapshot')
+            ->withoutOverlapping()
+            ->everyFiveMinutes();
 
         /* Populare Cache */
         $schedule->call(function () {
             $insertRequest = new PopulateCacheRequest();
             $insertRequest->setValidator(Validator::make([
-                //'net' => 'NI',
+                'net' => 'NI',
                 //'sta' => 'ACER',
                 //'cha' => 'HHZ',
                 //'cache' => 'true',
             ], $insertRequest->rules()));
             (new PopulateCacheController())->query($insertRequest);
-        })->daily();
+        })
+            ->cron('00 10 * * *')
+            ->name('schedule__populate-cache')
+            ->withoutOverlapping()
+            ->onOneServer();
     }
 
     /**

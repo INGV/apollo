@@ -4,6 +4,7 @@ Apollo Release History
 
 * Release 2.22.0 (2023-06-28)
   - Remove Horizon single container "service" and install It into "apollo" container
+  - Update scheduled commands
 
 * Release 2.21.0 (2023-06-25)
   - Major update:
