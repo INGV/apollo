@@ -14,8 +14,13 @@ WORKDIR /app
 
 RUN if [ ! -d /opt/docker/etc/cron ]; then mkdir -p /opt/docker/etc/cron; fi
 COPY ./docker/apollo/extra/etc/cron/application /opt/docker/etc/cron/
+COPY ./docker/apollo/extra/etc/supervisor.d/laravel-horizon.conf /opt/docker/etc/supervisor.d/
 COPY ./docker/apollo/extra/apollo01FixPermissions.sh /opt/docker/provision/entrypoint.d/
 COPY ./docker/apollo/extra/apollo02PhpArtisanMigrate.sh /opt/docker/provision/entrypoint.d/
+
+
+# Set bashrc
+RUN echo "alias ll='ls -l'" >> ~/.bashrc
 
 FROM base as apollo-dev
 #RUN chown -R application:application .

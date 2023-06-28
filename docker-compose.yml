@@ -25,13 +25,13 @@ services:
     command: -c "curl https://dl.google.com/go/go1.20.1.linux-amd64.tar.gz --output /tmp/go.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf /tmp/go.tar.gz && rm /tmp/go.tar.gz && PATH=\"$PATH:/usr/local/go/bin\" && go install github.com/msoap/shell2http@latest && PATH=\"$PATH:$$(go env GOPATH)/bin\" && shell2http -port 8080 -form -include-stderr -cgi /get '/opt/entrypoint.sh --in_file_name /app/storage/app/data/pyml/$${v_dir}/input.json --in_file_format json --out_format json  > /app/storage/app/data/pyml/$${v_dir}/output.log 2>/app/storage/app/data/pyml/$${v_dir}/output.err || (echo \"Status:503\\n\\n$$(cat /app/storage/app/data/pyml/$${v_dir}/output/output.err)\")'"
     networks:
       - network-caravel-apollo
-  horizon:
-    image: "vlauciani/caravel-apollo-horizon:${APOLLO_VERSION:-latest}"
-    networks:
-      - network-caravel-apollo
-    restart: unless-stopped
-    depends_on:
-      - redis
+  #horizon:
+  #  image: "vlauciani/caravel-apollo-horizon:${APOLLO_VERSION:-latest}"
+  #  networks:
+  #    - network-caravel-apollo
+  #  restart: unless-stopped
+  #  depends_on:
+  #    - redis
   mysql:
     image: 'mysql/mysql-server:8.0'
     ports:

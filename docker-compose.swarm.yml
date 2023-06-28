@@ -41,25 +41,25 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-  horizon:
-    image: vlauciani/caravel-apollo-horizon:${APOLLO_VERSION:-latest}
-    volumes:
-      - v-caravel-apollo-storage:/app/storage
-      - /mnt/gfs/apollo/.env:/app/.env
-    deploy:
-      mode: replicated
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
-    healthcheck:
-      test: [ "CMD", "php", "artisan", "horizon:status" ]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 0s
+  #horizon:
+  #  image: vlauciani/caravel-apollo-horizon:${APOLLO_VERSION:-latest}
+  #  volumes:
+  #    - v-caravel-apollo-storage:/app/storage
+  #    - /mnt/gfs/apollo/.env:/app/.env
+  #  deploy:
+  #    mode: replicated
+  #    replicas: 1
+  #    restart_policy:
+  #      condition: on-failure
+  #      delay: 5s
+  #      max_attempts: 3
+  #      window: 120s
+  #  healthcheck:
+  #    test: [ "CMD", "php", "artisan", "horizon:status" ]
+  #    interval: 30s
+  #    timeout: 5s
+  #    retries: 3
+  #    start_period: 0s
   mysql:
     image: mysql/mysql-server:8.0
     #ports:
