@@ -230,7 +230,7 @@ trait FindAndRetrieveStationXMLTrait
         try {
             Log::debug('   step_1a: '.$url);
             /* https://laravel.com/docs/8.x/http-client */
-            $response = Http::timeout(5)->get($url);
+            $response = Http::timeout(10)->get($url);
             //dd($response->effectiveUri()->__toString());
             $responseStatus = $response->status();
 

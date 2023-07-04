@@ -196,7 +196,7 @@ class Hyp2000Controller extends Controller
         try {
             Log::debug('   step_1a: '.$url);
             /* https://laravel.com/docs/8.x/http-client */
-            $response = Http::timeout(5)->get($url);
+            $response = Http::timeout(10)->get($url);
             $responseStatus = $response->status() ?? 500;
 
             Log::debug('   step_2');
