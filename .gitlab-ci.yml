@@ -193,8 +193,6 @@ phpunit-test:
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo php artisan test --stop-on-failure
     - docker compose -f docker-compose.yml -f ${FILE_DOCKER_COMPOSE} exec -T apollo vendor/bin/phpstan
   after_script:
-    #- docker cp apollo-apollo-1:/app/storage/logs/. /builds/caravel/apollo/storage/logs/
-    #- docker cp apollo-apollo-1:/app/storage/app/data/. /builds/caravel/apollo/storage/app/data/
     - docker cp apollo-apollo-1:/app/storage/. /builds/caravel/apollo/storage/
   artifacts:
       when: always
