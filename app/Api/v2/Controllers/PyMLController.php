@@ -3,14 +3,12 @@
 namespace App\Api\v2\Controllers;
 
 use App\Api\v2\Models\PyMLModel;
-use Illuminate\Support\Facades\Log;
 use App\Api\v2\Requests\PyMLRequest;
+use App\Api\v2\Traits\FindAndRetrieveStationXMLTrait;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
-use Symfony\Component\Process\Process;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use App\Api\v2\Traits\FindAndRetrieveStationXMLTrait;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class PyMLController extends Controller
 {
@@ -70,7 +68,7 @@ class PyMLController extends Controller
                 // If the array element does not meet
                 // the search condition then continue
                 // to the next element
-                if (!isset($value[$k]) || $value[$k] != $v) {
+                if (! isset($value[$k]) || $value[$k] != $v) {
                     // Skip two loops
                     continue 2;
                 }
@@ -89,7 +87,7 @@ class PyMLController extends Controller
      */
     public function location(PyMLRequest $request)
     {
-        Log::info('START - ' . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::info('START - '.__CLASS__.' -> '.__FUNCTION__);
         $pymlTimeStart = microtime(true);
 
         /* Get validated input */
@@ -100,7 +98,7 @@ class PyMLController extends Controller
         $tmpAmplitudeChaComponents = [];
         $nAmplitudes = count($input_parameters['data']['amplitudes']);
         foreach ($input_parameters['data']['amplitudes'] as &$amplitude) {
-            $pyMLCoordArray = PyMLModel::getCoord($amplitude, config('apollo.cacheTimeout'), $n . '/' . $nAmplitudes . ' - ');
+            $pyMLCoordArray = PyMLModel::getCoord($amplitude, config('apollo.cacheTimeout'), $n.'/'.$nAmplitudes.' - ');
 
             if (empty($pyMLCoordArray)) {
                 Log::debug(' No, coordinates');
@@ -115,7 +113,7 @@ class PyMLController extends Controller
                 $sta = $amplitude['sta'];
                 $cha = $amplitude['cha'];
                 $loc = $amplitude['loc'] ?? '--';
-                $tmpAmplitudeChaComponents[$net . '.' . $sta . '.' . $loc . '.' . substr($cha, 0, 2)][] = substr($cha, 2, 1); // $tmpAmplitudeChaComponents['IV.ACER.--.HH'] => ['N', 'E']
+                $tmpAmplitudeChaComponents[$net.'.'.$sta.'.'.$loc.'.'.substr($cha, 0, 2)][] = substr($cha, 2, 1); // $tmpAmplitudeChaComponents['IV.ACER.--.HH'] => ['N', 'E']
             }
             $n++;
         }
@@ -124,8 +122,8 @@ class PyMLController extends Controller
         /* Set variables */
         $now = \DateTime::createFromFormat('U.u', number_format(microtime(true), 6, '.', ''));
         $nowFormatted = $now->format('Ymd_His');
-        $dir_random_name = $nowFormatted . '__' . gethostbyaddr(\request()->ip()) . '__' . \Illuminate\Support\Str::random(5);
-        $dir_working = '/pyml/' . $dir_random_name;
+        $dir_random_name = $nowFormatted.'__'.gethostbyaddr(\request()->ip()).'__'.\Illuminate\Support\Str::random(5);
+        $dir_working = '/pyml/'.$dir_random_name;
 
         /****** START - pyml_conf ******/
         /* Set pyml_conf */
@@ -144,7 +142,7 @@ class PyMLController extends Controller
 
         /* Write input.json */
         $file_input_json = 'input.json';
-        $file_input_fullpath_arc = $dir_working . '/' . $file_input_json;
+        $file_input_fullpath_arc = $dir_working.'/'.$file_input_json;
         Storage::disk('data')->put($file_input_fullpath_arc, json_encode($input_parameters));
 
         /* !!!!!!!! START - Call pyml */
@@ -153,9 +151,9 @@ class PyMLController extends Controller
         $url = "http://pyml:8080/get?dir=$dir_random_name";
 
         try {
-            Log::debug('   step_1a: ' . $url);
+            Log::debug('   step_1a: '.$url);
             /* https://laravel.com/docs/8.x/http-client */
-            $response = Http::timeout(5)->get($url);
+            $response = Http::timeout(10)->get($url);
             $responseStatus = $response->status() ?? 500;
 
             Log::debug('   step_2');
@@ -163,38 +161,39 @@ class PyMLController extends Controller
 
             Log::debug('   step_3');
             if ($responseStatus == 200) {
-                Log::debug('   step_4a - httpStatusCode=' . $responseStatus);
+                Log::debug('   step_4a - httpStatusCode='.$responseStatus);
             } else {
-                Log::debug('   step_4b - httpStatusCode=' . $responseStatus);
+                Log::debug('   step_4b - httpStatusCode='.$responseStatus);
             }
         } catch (\Illuminate\Http\Client\RequestException $e) {
             Log::debug('   step_1b');
-            Log::debug('    getCode:' . $e->getCode());
-            Log::debug('    getMessage:' . $e->getMessage());
+            Log::debug('    getCode:'.$e->getCode());
+            Log::debug('    getMessage:'.$e->getMessage());
             abort($responseStatus, $e->getMessage());
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             Log::debug('   step_1c');
-            Log::debug('    getCode:' . $e->getCode());
-            Log::debug('    getMessage:' . $e->getMessage());
+            Log::debug('    getCode:'.$e->getCode());
+            Log::debug('    getMessage:'.$e->getMessage());
             abort(500, $e->getMessage());
         } catch (\Exception $e) {
             Log::debug('   step_1d');
-            Log::debug('    getCode:' . $e->getCode());
-            Log::debug('    getMessage:' . $e->getMessage());
+            Log::debug('    getCode:'.$e->getCode());
+            Log::debug('    getMessage:'.$e->getMessage());
             abort($e->getCode() ?? 500, $e->getMessage());
         }
         Log::debug(' Done');
         /* !!!!!!!! END - Call pyml */
 
         /* Return results */
-        Log::debug(' Get: ' . $dir_working . '/output.log');
-        $pymlOutput = Storage::disk('data')->get($dir_working . '/output.log');
+        Log::debug(' Get: '.$dir_working.'/output.log');
+        $pymlOutput = Storage::disk('data')->get($dir_working.'/output.log');
         $output['data'] = json_decode($pymlOutput);
         $output['data']->random_string = $dir_random_name;
 
-        Log::debug(' STA_NOT_FOUNDED:' . config('apollo.stations_not_founded'));
+        Log::debug(' STA_NOT_FOUNDED:'.config('apollo.stations_not_founded'));
         $pymlExecutionTime = number_format((microtime(true) - $pymlTimeStart) * 1000, 2);
-        Log::info('END - ' . __CLASS__ . ' -> ' . __FUNCTION__ . ' | pymlExecutionTime=' . $pymlExecutionTime . ' Milliseconds');
+        Log::info('END - '.__CLASS__.' -> '.__FUNCTION__.' | pymlExecutionTime='.$pymlExecutionTime.' Milliseconds');
+
         return response()->json($output, 200, [], JSON_PRETTY_PRINT);
     }
 }
