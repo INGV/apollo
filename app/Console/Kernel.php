@@ -33,7 +33,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $insertRequest = new PopulateCacheRequest();
             $insertRequest->setValidator(Validator::make([
-                'net' => 'NI',
+                //'net' => 'NI',
                 //'sta' => 'ACER',
                 //'cha' => 'HHZ',
                 //'cache' => 'true',
@@ -53,7 +53,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }
