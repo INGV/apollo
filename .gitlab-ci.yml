@@ -88,16 +88,21 @@ api-oas-checker:
       INCLUDE_OAS_FILENAME: ${OAS_FILENAME}
 
 validate_oa3:
-    stage: pre_check
-    script:
-        - ls -l $(pwd)/public/api/0.0.2 # to be removed when https://github.com/italia/api-oas-checker/issues/60 is solved
-        
-        # This command should work, but the command 'spectral lint --version' doesn't work: https://github.com/stoplightio/spectral/issues/1483
-        #  then I wrote a workaround 
-        #- docker run --rm -v $(pwd)/public/api/0.0.3:/tmp stoplight/spectral lint -r https://italia.github.io/api-oas-checker/spectral.yml "/tmp/openapi.yaml"
-        
-        # This is the workaround 
-        - docker run --rm --entrypoint=sh -v $(pwd)/public/api/0.0.2:/tmp stoplight/spectral:5.9.1 -c "spectral lint -r https://italia.github.io/api-oas-checker/spectral.yml /tmp/openapi.yaml"
+  stage: pre_check
+  script:
+      - ls -l $(pwd)/public/api/0.0.2 # to be removed when https://github.com/italia/api-oas-checker/issues/60 is solved
+      
+      # This command should work, but the command 'spectral lint --version' doesn't work: https://github.com/stoplightio/spectral/issues/1483
+      #  then I wrote a workaround 
+      #- docker run --rm -v $(pwd)/public/api/0.0.3:/tmp stoplight/spectral lint -r https://italia.github.io/api-oas-checker/spectral.yml "/tmp/openapi.yaml"
+      
+      # This is the workaround 
+      - docker run --rm --entrypoint=sh -v $(pwd)/public/api/0.0.2:/tmp stoplight/spectral:5.9.1 -c "spectral lint -r https://italia.github.io/api-oas-checker/spectral.yml /tmp/openapi.yaml"
+  except:
+    refs:
+      - develop
+    changes:
+      - HISTORY
 
 validate_publiccode:
   stage: pre_check
@@ -105,10 +110,10 @@ validate_publiccode:
     - docker run --rm -v $(pwd)/publiccode.yml:/publiccode_folder/publiccode.yml italia/publiccode-parser-go /publiccode_folder/publiccode.yml
 
 validate_version_number_and_date:
-    stage: pre_check
-    script:
-      - apk add --no-cache bash git
-      - ./${CI_PROJECT_NAME}/scripts/validate_version_number_and_date.sh
+  stage: pre_check
+  script:
+    - apk add --no-cache bash git
+    - ./${CI_PROJECT_NAME}/scripts/validate_version_number_and_date.sh
 
 Build:
   stage: build
