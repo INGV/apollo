@@ -5,7 +5,7 @@ Apollo Release History
 * Release 2.23.0 (2023-07-13)
   - Add 'schedule__migrate' into 'app/Console/Kernel.php' to 'migrate' each time the MySQL container restart.
 
-* Release 2.22.0 (2023-07-13)
+* Release 2.22.0 (2023-06-28)
   - Fix CI
   - Remove Horizon single container "service" and install It into "apollo" container
   - Update scheduled commands
