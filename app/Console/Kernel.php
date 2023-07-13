@@ -44,6 +44,11 @@ class Kernel extends ConsoleKernel
             ->name('schedule__populate-cache')
             ->withoutOverlapping()
             ->onOneServer();
+
+        $schedule->command('migrate')
+            ->name('schedule__migrate')
+            ->withoutOverlapping()
+            ->everyMinute();
     }
 
     /**
@@ -53,7 +58,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__ . '/Commands');
+        $this->load(__DIR__.'/Commands');
 
         require base_path('routes/console.php');
     }
