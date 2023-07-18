@@ -17,17 +17,22 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        /* Set log file: It must be the same set into 'docker/apollo/extra/etc/cron/application' */
+        $log_file = storage_path('logs/' . date('Ymd') . '__laravelSchedulerFromCrontab.log');
+
         /* Remove old logs(s) */
         $schedule->command('ingv-logging:clear --keep_last=files 31')
             ->name('schedule__ingv-logging')
             ->withoutOverlapping()
-            ->daily();
+            ->daily()
+            ->appendOutputTo($log_file);
 
         /* Laravel-Horizon Metrics */
         $schedule->command('horizon:snapshot')
             ->name('schedule__horizon-snapshot')
             ->withoutOverlapping()
-            ->everyFiveMinutes();
+            ->everyFiveMinutes()
+            ->appendOutputTo($log_file);
 
         /* Populare Cache */
         $schedule->call(function () {
@@ -43,12 +48,14 @@ class Kernel extends ConsoleKernel
             ->cron('00 10 * * *')
             ->name('schedule__populate-cache')
             ->withoutOverlapping()
-            ->onOneServer();
+            ->onOneServer()
+            ->appendOutputTo($log_file);
 
-        $schedule->command('migrate')
+        $schedule->command('migrate --isolated=true -vvv')
             ->name('schedule__migrate')
             ->withoutOverlapping()
-            ->everyMinute();
+            ->everyMinute()
+            ->appendOutputTo($log_file);
     }
 
     /**
@@ -58,7 +65,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

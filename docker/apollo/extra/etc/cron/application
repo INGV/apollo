@@ -1,2 +1,3 @@
+# The output log file must be the same specified in: 'app/Cosole/Kernel.php'
 * * * * * application /usr/local/bin/php /app/artisan schedule:run >> /app/storage/logs/$( /bin/date +\%Y\%m\%d )__laravelSchedulerFromCrontab.log 2>&1
-#* * * * * application /usr/local/bin/php /app/artisan schedule:run >> /var/www/storage/logs/$( /bin/date +\%Y\%m\%d )__laravelSchedulerFromCrontab.log 2>&1
+
