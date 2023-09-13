@@ -11,7 +11,7 @@ class StationHinvController extends Controller
 {
     public function query(StationHinvRequest $request)
     {
-        Log::debug('START - ' . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug('START - '.__CLASS__.' -> '.__FUNCTION__);
 
         /* From GET, process only '$parameters_permitted' */
         $requestOnly = $request->validated();
@@ -22,7 +22,7 @@ class StationHinvController extends Controller
         /* set headers */
         $headers['Content-type'] = 'text/plain';
 
-        Log::debug('END - ' . __CLASS__ . ' -> ' . __FUNCTION__);
+        Log::debug('END - '.__CLASS__.' -> '.__FUNCTION__);
 
         return response()->make($data, 200, $headers);
     }
