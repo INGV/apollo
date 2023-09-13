@@ -32,7 +32,7 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml up --remove-orpha
 otherwise, build locally docker images adn run:
 ```
 cd apollo
-docker compose -f compose.yaml -f compose.dev.yaml build --build-arg ENV_UID=$( id -u ) --build-arg ENV_GID=$( id -g ) --no-cache --pull --progress=plain
+docker compose --progress=plain -f compose.yaml -f compose.dev.yaml build --build-arg ENV_UID=$( id -u ) --build-arg ENV_GID=$( id -g ) --no-cache --pull
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up --remove-orphans -d
 ```
 
