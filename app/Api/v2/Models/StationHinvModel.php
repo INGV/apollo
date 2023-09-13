@@ -100,6 +100,9 @@ class StationHinvModel extends Model
                 $lat = (float) $stationXMLTextExploded[4];
                 $lon = (float) $stationXMLTextExploded[5];
                 $elev = (float) $stationXMLTextExploded[6];
+                if (empty($loc)) {
+                    $loc = '--';
+                }
 
                 /* Convert 'lat' and 'lon' */
                 $arrayDmsLatLon = self::DECtoDMS($lat, $lon);
@@ -109,6 +112,7 @@ class StationHinvModel extends Model
                 $netFormatted = self::fromFortranFormatToString('A2', $net, $str_pad_string);
                 $chaCompFormatted = self::fromFortranFormatToString('A1', substr($cha, 2, 1), $str_pad_string);
                 $chaFormatted = self::fromFortranFormatToString('A3', $cha, $str_pad_string);
+                $locFormatted = self::fromFortranFormatToString('A2', $loc, $str_pad_string);
                 $blank = self::fromFortranFormatToString('1X', null, $str_pad_string);
                 $latDegFormatted = self::fromFortranFormatToString('I2', $arrayDmsLatLon['lat']['degrees'], $str_pad_string);
                 $latMinFormatted = self::fromFortranFormatToString('F7.4', $arrayDmsLatLon['lat']['minutes'], $str_pad_string);
@@ -158,7 +162,8 @@ class StationHinvModel extends Model
                     '0' .
                     $blank .
                     $blank .
-                    '1.00--' .
+                    '1.00' .
+                    $locFormatted .
                     "\n";
             }
 

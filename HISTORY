@@ -2,6 +2,9 @@
 Apollo Release History
 #########################
 
+* Release 2.24.0 (2023-09-13)
+  - Fix bug into 'StationHinvModel' for location code
+
 * Release 2.23.0 (2023-07-13)
   - Add 'schedule__migrate' into 'app/Console/Kernel.php' to 'migrate' each time the MySQL container restart.
 
