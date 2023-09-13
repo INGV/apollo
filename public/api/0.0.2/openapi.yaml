@@ -12,7 +12,7 @@ info:
     name: Creative Commons Attribution 4.0 International
     url: http://creativecommons.org/licenses/by/4.0/
   title: Apollo Web Services
-  version: 2.23.0
+  version: 2.24.0
   x-api-id: fa78e2be-826e-4451-8979-0a0dfd598dff
   x-logo: http://webservices.ingv.it/ingv_logo_text_two_lines.png
   x-summary: The hyp2000 web service bla bla bla
