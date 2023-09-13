@@ -324,32 +324,37 @@ class Hyp2000Controller extends Controller
         /* Number of stations */
         $n_hyp2000Sation = count($phases);
         $count = 1;
+        $tmp_array = [];
         foreach ($phases as $phase) {
-            // cerca su 'arrival_time' altrimenti 'now'
-            if (isset($phase['arrival_time']) && ! empty($phase['arrival_time'])) {
-                $starttime = substr($phase['arrival_time'], 0, 10).'T00:00:00.000Z';
-                $endtime = substr($phase['arrival_time'], 0, 10).'T23:59:59.999Z';
+            if (in_array($phase['net'].'.'.$phase['sta'].'.'.$phase['loc'].'.'.$phase['cha'], $tmp_array)) {
+                Log::debug(' nothing to do, already processed:'.$phase['net'].'.'.$phase['sta'].'.'.$phase['loc'].'.'.$phase['cha']);
             } else {
-                $starttime = now()->format('Y-m-d').'T00:00:00.000Z';
-                $endtime = now()->format('Y-m-d').'T23:59:59.999Z';
+                // cerca su 'arrival_time' altrimenti 'now'
+                if (isset($phase['arrival_time']) && ! empty($phase['arrival_time'])) {
+                    $starttime = substr($phase['arrival_time'], 0, 10).'T00:00:00.000Z';
+                    $endtime = substr($phase['arrival_time'], 0, 10).'T23:59:59.999Z';
+                } else {
+                    $starttime = now()->format('Y-m-d').'T00:00:00.000Z';
+                    $endtime = now()->format('Y-m-d').'T23:59:59.999Z';
+                }
+
+                Log::debug($count.'/'.$n_hyp2000Sation.' - Searching: '.$phase['net'].'.'.$phase['sta'].'.'.$phase['loc'].'.'.$phase['cha']);
+                $insertRequest = new StationHinvRequest();
+                $insertRequest->setValidator(Validator::make([
+                    'net' => $phase['net'],
+                    'sta' => $phase['sta'],
+                    'cha' => $phase['cha'],
+                    'loc' => $phase['loc'],
+                    'starttime' => $starttime,
+                    'endtime' => $endtime,
+                    'cache' => 'true',
+                ], $insertRequest->rules()));
+                $stationLine = $StationHinvController->query($insertRequest);
+                $textHyp2000Stations .= $stationLine->content();
+                $tmp_array[] = $phase['net'].'.'.$phase['sta'].'.'.$phase['loc'].'.'.$phase['cha'];
+                $count++;
             }
-
-            Log::debug($count.'/'.$n_hyp2000Sation.' - Searching: '.$phase['net'].'.'.$phase['sta'].'.'.$phase['loc'].'.'.$phase['cha']);
-            $insertRequest = new StationHinvRequest();
-            $insertRequest->setValidator(Validator::make([
-                'net' => $phase['net'],
-                'sta' => $phase['sta'],
-                'cha' => $phase['cha'],
-                'loc' => $phase['loc'],
-                'starttime' => $starttime,
-                'endtime' => $endtime,
-                'cache' => 'true',
-            ], $insertRequest->rules()));
-            $stationLine = $StationHinvController->query($insertRequest);
-            $textHyp2000Stations .= $stationLine->content();
-            $count++;
         }
-
         $getStationInvExecutionTime = number_format((microtime(true) - $getStationInvTimeStart) * 1000, 2);
         Log::debug('END - '.__CLASS__.' -> '.__FUNCTION__.' | getStationInvExecutionTime='.$getStationInvExecutionTime.' Milliseconds');
 

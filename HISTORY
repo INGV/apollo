@@ -2,6 +2,9 @@
 Apollo Release History
 #########################
 
+* Release 2.25.0 (2023-09-13)
+  - Fix bug: duplicate lines into station_hinv file
+
 * Release 2.24.0 (2023-09-13)
   - Fix bug into 'StationHinvModel' for location code
 
