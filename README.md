@@ -15,16 +15,25 @@ git clone --recursive https://gitlab+deploy-token-71:TWxRfoetzHXxpsLbckbb@gitlab
 ```
 ## Develop
 In *develop* mode, all files are "binded" into the container; it is useful to develop code.
-```
-cd apollo
-# (optional; build image locally) docker compose -f docker-compose.yml -f docker-compose.dev.yml build --no-cache --pull --progress=plain
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up --remove-orphans -d
-```
-
-## Configure Laravel - 1st step
+### Configure Laravel
 Copy laravel environment file and set it:
 ```
 $ cp ./.env.example ./.env
+```
+### Start containers
+
+First of all, check you `UID` and `GID` with command: `id -u` and `id -g`.
+If you have `UID=1000` and `UID=1000` run:
+```
+cd apollo
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --remove-orphans -d
+```
+
+otherwise, build locally docker images adn run:
+```
+cd apollo
+docker compose -f compose.yaml -f compose.dev.yaml build --build-arg ENV_UID=$( id -u ) --build-arg ENV_GID=$( id -g ) --no-cache --pull --progress=plain
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --remove-orphans -d
 ```
 
 install dependencies:
