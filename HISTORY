@@ -2,7 +2,7 @@
 Apollo Release History
 #########################
 
-* Release 2.25.0 (2023-09-19)
+* Release 2.26.0 (2023-09-19)
   - PyML: Add 'ep_distance_km', 'ep_distance_delta' and 'orig_distance' into the output. Issue: #10
 
 * Release 2.25.0 (2023-09-19)
