@@ -293,6 +293,12 @@ paths:
                               $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/longitude'
                             elev:
                               $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/scnl__elev'
+                            ep_distance_km:
+                                $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/ep_distance_km'
+                            ep_distance_delta:
+                                $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/ep_distance_delta'
+                            orig_distance:
+                                $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/arrival-stationmagnitude-st_dur_mag__orig_distance'
                             hb:
                               properties:
                                 ml:

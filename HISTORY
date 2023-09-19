@@ -2,7 +2,10 @@
 Apollo Release History
 #########################
 
-* Release 2.25.0 (2023-09-13)
+* Release 2.25.0 (2023-09-19)
+  - PyML: Add 'ep_distance_km', 'ep_distance_delta' and 'orig_distance' into the output. Issue: #10
+
+* Release 2.25.0 (2023-09-19)
   - Fix bug: duplicate lines into station_hinv file
 
 * Release 2.24.0 (2023-09-13)
