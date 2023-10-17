@@ -298,7 +298,7 @@ paths:
                             ep_distance_delta:
                                 $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/ep_distance_delta'
                             orig_distance:
-                                $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/arrival-stationmagnitude-st_dur_mag__orig_distance'
+                                $ref: 'https://ingv.github.io/openapi/definitions.yaml#/components/schemas/arrival-stationmagnitude-st_dur_mag__orig_distance_km'
                             hb:
                               properties:
                                 ml:
