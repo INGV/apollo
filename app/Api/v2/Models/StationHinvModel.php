@@ -159,10 +159,10 @@ class StationHinvModel extends Model
                     $blank.
                     '0.00'.
                     $blank.
-                    '0'.
+                    '1'.
                     $blank.
                     $blank.
-                    '1.00'.
+                    '0.00'.
                     $locFormatted.
                     "\n";
             }
