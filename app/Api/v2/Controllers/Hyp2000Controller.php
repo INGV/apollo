@@ -374,7 +374,9 @@ class Hyp2000Controller extends Controller
         $count = 1;
         $o = [];
         foreach ($phases as $phase) {
+            $starttime = '1970-01-01T00:00:00';
             // cerca su 'arrival_time' altrimenti 'now'
+            /*
             if (isset($phase['arrival_time']) && ! empty($phase['arrival_time'])) {
                 $starttime = substr($phase['arrival_time'], 0, 10).'T00:00:00.000Z';
                 $endtime = substr($phase['arrival_time'], 0, 10).'T23:59:59.999Z';
@@ -382,13 +384,14 @@ class Hyp2000Controller extends Controller
                 $starttime = now()->format('Y-m-d').'T00:00:00.000Z';
                 $endtime = now()->format('Y-m-d').'T23:59:59.999Z';
             }
+            */
 
             Log::debug($count.'/'.$n_hyp2000Sation.' - Searching: '.$phase['net'].'.'.$phase['sta'].'.'.$phase['loc'].'.'.$phase['cha']);
             $o[] = new StationHinvJob([
                 'count' => $count,
                 'total' => $n_hyp2000Sation,
                 'starttime' => $starttime,
-                'endtime' => $endtime,
+                //'endtime' => $endtime,
                 'net' => $phase['net'],
                 'sta' => $phase['sta'],
                 'cha' => $phase['cha'],

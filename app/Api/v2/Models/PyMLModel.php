@@ -31,6 +31,7 @@ class PyMLModel extends Model
             $input_parameters['endtime'] = now()->format('Y-m-d').'T23:59:59';
         }
         */
+        $input_parameters['starttime'] = '1970-01-01T00:00:00';
 
         // Closure for executing a request url
         $func_execute_request_url = function () use ($input_parameters, $timeoutSeconds) {

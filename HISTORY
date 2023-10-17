@@ -2,6 +2,9 @@
 Apollo Release History
 #########################
 
+* Release 2.27.0 (2023-10-17)
+  - Fix coordinates search. Issue: https://gitlab.rm.ingv.it/caravel/apollo/-/issues/12
+
 * Release 2.26.0 (2023-09-19)
   - PyML: Add 'ep_distance_km', 'ep_distance_delta' and 'orig_distance' into the output. Issue: #10
 
