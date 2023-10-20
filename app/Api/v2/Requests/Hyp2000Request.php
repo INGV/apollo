@@ -38,21 +38,22 @@ class Hyp2000Request extends FormRequest
     public function rules()
     {
         $validationRules = [
-            'data'                              => ['required', 'array'],
-            'data.hyp2000_conf'                 => ['required', 'array'],
-            'data.model'                        => ['required', 'array'],
-            'data.output'                       => ['nullable', 'string', 'in:prt,sum,arc,json'],
-            'data.phases.*.sta'                 => ['required', 'string'],
-            'data.phases.*.net'                 => ['string', 'between:1,2'],
-            'data.phases.*.cha'                 => ['string', 'size:3'],
-            'data.phases.*.loc'                 => ['nullable', 'string'],
+            'data' => ['required', 'array'],
+            'data.hyp2000_conf' => ['required', 'array'],
+            'data.model' => ['required', 'array'],
+            'data.output' => ['nullable', 'string', 'in:prt,sum,arc,json'],
+            'data.phases' => ['required', 'array'],
+            'data.phases.*.sta' => ['required', 'string'],
+            'data.phases.*.net' => ['string', 'between:1,2'],
+            'data.phases.*.cha' => ['string', 'size:3'],
+            'data.phases.*.loc' => ['nullable', 'string'],
             //'data.phases.*.arrival_time'        => ['required_with:isc_code', 'date_format:Y-m-d\TH:i:s.vP'],
-            'data.phases.*.isc_code'            => ['nullable', 'string', 'not_in:"0"', 'min:1', 'max:8'],
-            'data.phases.*.firstmotion'         => ['nullable', 'string', 'size:1', 'in:U,D'],
-            'data.phases.*.emersio'             => ['nullable', 'string', 'size:1', 'in:E,I'],
-            'data.phases.*.weight'              => ['nullable', 'integer', 'digits:1', 'in:0,1,2,3,4'],
-            'data.phases.*.amplitude'           => ['nullable', 'numeric'],
-            'data.phases.*.ampType'             => ['nullable', 'integer'],
+            'data.phases.*.isc_code' => ['nullable', 'string', 'not_in:"0"', 'min:1', 'max:8'],
+            'data.phases.*.firstmotion' => ['nullable', 'string', 'size:1', 'in:U,D'],
+            'data.phases.*.emersio' => ['nullable', 'string', 'size:1', 'in:E,I'],
+            'data.phases.*.weight' => ['nullable', 'integer', 'digits:1', 'in:0,1,2,3,4'],
+            'data.phases.*.amplitude' => ['nullable', 'numeric'],
+            'data.phases.*.ampType' => ['nullable', 'integer'],
         ];
 
         return $validationRules;
