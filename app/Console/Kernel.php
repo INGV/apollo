@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         /* Set log file: It must be the same set into 'docker/apollo/extra/etc/cron/application' */
-        $log_file = storage_path('logs/' . date('Ymd') . '__laravelSchedulerFromCrontab.log');
+        $log_file = storage_path('logs/'.date('Ymd').'__laravelSchedulerFromCrontab.log');
 
         /* Remove old logs(s) */
         $schedule->command('ingv-logging:clear --keep_last=files 31')
@@ -34,7 +34,7 @@ class Kernel extends ConsoleKernel
             ->everyFiveMinutes()
             ->appendOutputTo($log_file);
 
-        /* Populare Cache */
+        /* Populate Cache */
         $schedule->call(function () {
             $insertRequest = new PopulateCacheRequest();
             $insertRequest->setValidator(Validator::make([
@@ -65,7 +65,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__ . '/Commands');
+        $this->load(__DIR__.'/Commands');
 
         require base_path('routes/console.php');
     }
