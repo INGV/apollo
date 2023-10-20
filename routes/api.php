@@ -24,15 +24,15 @@ Route::group([
     'as' => 'v2.',
     'middleware' => [
         'App\Api\Middleware\JsonApiMiddleware',
-        //'throttle:68,1'
+        'throttle:500,1',
     ],
 ], function () {
     Route::group([
         'prefix' => 'location/v2',
         'namespace' => 'App\Api\v2\Controllers',
-        'middleware' => [
-            'throttle:100,1',
-        ],
+        //'middleware' => [
+        //    'throttle:500,1',
+        //],
     ], function () {
         Route::post('/pyml', 'PyMLController@location')->name('location.pyml');
         Route::post('/hyp2000', 'Hyp2000Controller@location')->name('location.hyp2000');
