@@ -2,6 +2,9 @@
 Apollo Release History
 #########################
 
+* Release 2.29.0 (2023-10-20)
+  - Add package 'spatie/laravel-directory-cleanup' to daily remove 'storage/app/data/hyp2000' and 'storage/app/data/pyml' old dirs; conf. file 'config/laravel-directory-cleanup.php'.
+
 * Release 2.28.0 (2023-10-17)
   - Fix file StationHinv. Issue: https://gitlab.rm.ingv.it/caravel/apollo/-/issues/11
 

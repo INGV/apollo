@@ -16,6 +16,7 @@
         "laravel/horizon": "^5.17",
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
+        "spatie/laravel-directory-cleanup": "^1.9",
         "vlauciani/laravel-validation-rules": "^1.0.0"
     },
     "require-dev": {

@@ -27,6 +27,17 @@ class Kernel extends ConsoleKernel
             ->daily()
             ->appendOutputTo($log_file);
 
+        /**
+         * Remove old PyML and Hyp2000 directories.
+         *  pkg: spatie/laravel-directory-cleanup
+         *  conf: config/laravel-directory-cleanup.php
+         */
+        $schedule->command('clean:directories')
+            ->name('schedule__clean-directories')
+            ->withoutOverlapping()
+            ->daily()
+            ->appendOutputTo($log_file);
+
         /* Laravel-Horizon Metrics */
         $schedule->command('horizon:snapshot')
             ->name('schedule__horizon-snapshot')
