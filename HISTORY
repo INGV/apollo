@@ -3,6 +3,7 @@ Apollo Release History
 #########################
 
 * Release 2.29.0 (2023-10-20)
+  - PyML: fix validation and PHPUnit Test when 'amplitude' array is missing
   - Set 'throttle:500,1'.
   - Update PHP-Packages ('composer update')
   - Add package 'spatie/laravel-directory-cleanup' to daily remove 'storage/app/data/hyp2000' and 'storage/app/data/pyml' old dirs; conf. file 'config/laravel-directory-cleanup.php'.

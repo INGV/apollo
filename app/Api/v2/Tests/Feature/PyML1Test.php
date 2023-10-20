@@ -5,7 +5,7 @@ namespace App\Api\v2\Tests\Feature;
 use App\Apollo\Traits\UtilsTrait;
 use Tests\TestCase;
 
-class PyMLTest extends TestCase
+class PyML1Test extends TestCase
 {
     use UtilsTrait;
 
