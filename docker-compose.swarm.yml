@@ -34,6 +34,11 @@ services:
         parallelism: 2
         delay: 60s
         order: start-first
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   pyml:
     image: ingv/pyml:${PYML_DOCKERIMAGE_TAG:-latest}
     volumes:
@@ -51,7 +56,7 @@ services:
         order: start-first
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/" ]
-      interval: 1m30s
+      interval: 30s
       timeout: 10s
       retries: 3
   #horizon:
