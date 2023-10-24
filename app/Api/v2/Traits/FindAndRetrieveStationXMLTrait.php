@@ -69,6 +69,7 @@ trait FindAndRetrieveStationXMLTrait
             /* If 'net=IT' set directly internal FDSNWS-StationXML node */
             if (str_contains($urlParams, 'net=IT')) {
                 array_unshift($fdsnws_nodes, 'exist-dev.int.ingv.it:8083');
+                array_unshift($fdsnws_nodes, 'exist-dev.int.ingv.it:8081');
             }
 
             /* === START - First, run sync request on fdsnws_nodes that contains 'ingv.it' === */

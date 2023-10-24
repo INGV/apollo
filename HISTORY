@@ -2,6 +2,9 @@
 Apollo Release History
 #########################
 
+* Release 2.30.0 (2023-10-24)
+  - Add new host 'exist-dev.int.ingv.it:8081' into 'FindAndRetrieveStationXMLTrait' for RAN stations
+
 * Release 2.29.0 (2023-10-20)
   - Hyp2000: fix validation when 'phases' array is missing
   - PyML: fix validation and PHPUnit Test when 'amplitudes' array is missing
