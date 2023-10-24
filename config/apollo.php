@@ -97,7 +97,7 @@ return [
         'net' => ['string', 'between:1,2'],
         'sta' => ['string'],
         'cha' => ['string', 'size:3'],
-        'loc' => ['nullable', 'string'],
+        'loc' => ['nullable', 'string', 'size:2'],
         'lat' => ['numeric', 'min:-90', 'max:90'],
         'lon' => ['numeric', 'min:-180', 'max:180'],
         'depth' => ['numeric', 'min:-10', 'max:10000'],
