@@ -9,6 +9,11 @@ services:
       - DOCKER_CERT_PATH=/certs/client
     networks:
       - network-caravel-apollo
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/" ]
+      interval: 30s
+      timeout: 15s
+      retries: 3
   hyp2000:
     image: ingv/hyp2000:${HYP2000_DOCKERIMAGE_TAG:-latest}
     entrypoint: bash
@@ -19,12 +24,22 @@ services:
       - network-caravel-apollo
     environment:
       - EW_HOSTNAME=hew
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   pyml:
     image: ingv/pyml:${PYML_DOCKERIMAGE_TAG:-latest}
     entrypoint: bash
     command: -c "curl https://dl.google.com/go/go1.20.1.linux-amd64.tar.gz --output /tmp/go.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf /tmp/go.tar.gz && rm /tmp/go.tar.gz && PATH=\"$PATH:/usr/local/go/bin\" && go install github.com/msoap/shell2http@latest && PATH=\"$PATH:$$(go env GOPATH)/bin\" && shell2http -port 8080 -form -include-stderr -cgi /get '/opt/entrypoint.sh --in_file_name /app/storage/app/data/pyml/$${v_dir}/input.json --in_file_format json --out_format json  > /app/storage/app/data/pyml/$${v_dir}/output.log 2>/app/storage/app/data/pyml/$${v_dir}/output.err || (echo \"Status:503\\n\\n$$(cat /app/storage/app/data/pyml/$${v_dir}/output/output.err)\")'"
     networks:
       - network-caravel-apollo
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
   #horizon:
   #  image: "vlauciani/caravel-apollo-horizon:${APOLLO_VERSION:-latest}"
   #  networks:

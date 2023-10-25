@@ -9,6 +9,11 @@ services:
       - /mnt/gfs/apollo/.env:/app/.env
     ports:
       - "8380:80"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/" ]
+      interval: 30s
+      timeout: 15s
+      retries: 3
     deploy:
       mode: replicated
       replicas: 1
@@ -18,11 +23,6 @@ services:
         parallelism: 2
         delay: 10s
         order: start-first
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:80/" ]
-      interval: 30s
-      timeout: 15s
-      retries: 3
   hyp2000:
     image: ingv/hyp2000:${HYP2000_DOCKERIMAGE_TAG:-latest}
     volumes:
@@ -30,6 +30,11 @@ services:
     entrypoint: bash
     command: -c "curl https://dl.google.com/go/go1.20.1.linux-amd64.tar.gz --output /tmp/go.tar.gz && tar -C /opt/ew_env -xzf /tmp/go.tar.gz && rm /tmp/go.tar.gz && PATH=\"$PATH:/opt/ew_env/go/bin\" && go install github.com/msoap/shell2http@latest && PATH=\"$PATH:$$(go env GOPATH)/bin\" && shell2http -port 8080 -form -include-stderr --shell=\"bash\" -cgi /get '. /home/ew/.bashrc && cd /app/storage/app/data/hyp2000/$${v_dir}/input && cat italy2000.hyp | hyp2000 > ../output/output.log 2> ../output/output.err && cd ../output && cat hypo.arc | tr \"\\0\" \" \" | ew2openapi TYPE_HYP2000ARC - hypo.json || (echo \"Status:503\\n\\n$$(cat /app/storage/app/data/hyp2000/$${v_dir}/output/output.err)\")'"
     user: root
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     deploy:
       mode: replicated
       replicas: 2
@@ -39,17 +44,17 @@ services:
         parallelism: 2
         delay: 60s
         order: start-first
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
   pyml:
     image: ingv/pyml:${PYML_DOCKERIMAGE_TAG:-latest}
     volumes:
       - v-caravel-apollo-storage:/app/storage
     entrypoint: bash
     command: -c "curl https://dl.google.com/go/go1.20.1.linux-amd64.tar.gz --output /tmp/go.tar.gz && rm -rf /usr/local/go && tar -C /usr/local -xzf /tmp/go.tar.gz && rm /tmp/go.tar.gz && PATH=\"$PATH:/usr/local/go/bin\" && go install github.com/msoap/shell2http@latest && PATH=\"$PATH:$$(go env GOPATH)/bin\" && shell2http -port 8080 -form -include-stderr -cgi /get '/opt/entrypoint.sh --in_file_name /app/storage/app/data/pyml/$${v_dir}/input.json --in_file_format json --out_format json  > /app/storage/app/data/pyml/$${v_dir}/output.log 2>/app/storage/app/data/pyml/$${v_dir}/output.err || (echo \"Status:503\\n\\n$$(cat /app/storage/app/data/pyml/$${v_dir}/output/output.err)\")'"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     deploy:
       mode: replicated
       replicas: 2
@@ -59,11 +64,6 @@ services:
         parallelism: 2
         delay: 60s
         order: start-first
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
   #horizon:
   #  image: vlauciani/caravel-apollo-horizon:${APOLLO_VERSION:-latest}
   #  volumes:
@@ -97,27 +97,29 @@ services:
     volumes:
       - v-mysql-data:/var/lib/mysql
       #- './docker/mysql/extra/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}" ]
+      retries: 3
+      timeout: 5s
     deploy:
       mode: replicated
       replicas: 1
       restart_policy:
         condition: on-failure
-    healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}" ]
-      retries: 3
-      timeout: 5s
   redis:
     image: redis:7.0.7
     volumes:
       - v-redis:/data
     command: --requirepass r3d15
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      retries: 3
+      timeout: 5s
     deploy:
       mode: replicated
       replicas: 1
       restart_policy:
         condition: on-failure
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
 volumes:
   v-redis:
   v-mysql-data:
