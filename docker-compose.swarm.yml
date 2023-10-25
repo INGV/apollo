@@ -18,6 +18,11 @@ services:
         parallelism: 2
         delay: 10s
         order: start-first
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/" ]
+      interval: 30s
+      timeout: 15s
+      retries: 3
   hyp2000:
     image: ingv/hyp2000:${HYP2000_DOCKERIMAGE_TAG:-latest}
     volumes:

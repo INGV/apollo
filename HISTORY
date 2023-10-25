@@ -2,7 +2,8 @@
 Apollo Release History
 #########################
 
-* Release 2.30.0 (2023-10-24)
+* Release 2.30.0 (2023-10-25)
+  - Add 'healthcheck' on Apollo container
   - Update 'loc' validation rule
   - Add new host 'exist-dev.int.ingv.it:8081' into 'FindAndRetrieveStationXMLTrait' for RAN stations
 
