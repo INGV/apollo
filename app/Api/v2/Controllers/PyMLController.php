@@ -77,6 +77,7 @@ class PyMLController extends Controller
             //result array
             $result[] = $value;
         }
+
         // Return result
         return $result;
     }
