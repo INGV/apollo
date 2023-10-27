@@ -2,6 +2,9 @@
 Apollo Release History
 #########################
 
+* Release 2.31.0 (2023-10-27)
+  - Add 'hostname' field into PyML json output
+
 * Release 2.30.0 (2023-10-25)
   - Update 'healthcheck'
   - Add 'healthcheck' on Apollo container
