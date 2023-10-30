@@ -1,11 +1,8 @@
 #!/bin/bash
 BASENAME=$( basename $0 )
-DIRS_LIST="/app/storage/ /app/storage/data/ /app/storage/data/pyml/ /app/storage/data/hyp2000/"
+DIRS_LIST="/app/storage/ /app/storage/logs/ /app/storage/data/ /app/storage/data/pyml/ /app/storage/data/hyp2000/"
 
 echo "START - ${BASENAME} -> apollo01FixPermissions.sh"
-
-#echo " Running: chown -R application:application /app/storage/"
-#chown -R application:application /app/storage/
 
 echo " Running: chown -R application:application /app/bootstrap/cache/"
 chown -R application:application /app/bootstrap/cache/
@@ -18,6 +15,9 @@ for DIR in ${DIRS_LIST}; do
     echo " Running: chown application:application ${DIR}"
     chown application:application ${DIR}
 done
+
+echo " Running: chown -R application:application /app/storage/logs/*.log"
+chown -R application:application /app/storage/logs/*.log
 
 echo "END - ${BASENAME} -> apollo01FixPermissions.sh"
 echo ""
