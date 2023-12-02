@@ -1,4 +1,3 @@
-#image: docker:stable
 #image: docker:19.03.1
 image: docker:20.10.22
 
