@@ -1,6 +1,8 @@
-# apollo
+<p align="center"><a href="https://github.com/ingv/apollo" target="_blank"><img src="https://raw.githubusercontent.com/INGV/apollo/art/main/apollo.png" width="400" alt="Apollo Logo"></a></p>
 
-## Clone project
+## apollo
+
+### Clone project
 ```
 git clone --recursive https://gitlab.rm.ingv.it/caravel/apollo.git apollo
 ```
@@ -8,14 +10,14 @@ or using deploy token (*read-only*):
 ```
 git clone --recursive https://gitlab+deploy-token-71:TWxRfoetzHXxpsLbckbb@gitlab.rm.ingv.it/caravel/apollo.git apollo
 ```
-## Develop
+### Develop
 In *develop* mode, all files are "binded" into the container; it is useful to develop code.
-### Configure Laravel
+#### Configure Laravel
 Copy laravel environment file and set it:
 ```
 $ cp ./.env.example ./.env
 ```
-### Start containers
+#### Start containers
 
 First of all, check you `UID` and `GID` with command: `id -u` and `id -g`.
 If you have `UID=1000` and `UID=1000` run:
@@ -43,7 +45,7 @@ echo "----- 4 -----" && \
 docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=application apollo chown -R $(id -u):$(id -g) ./bootstrap/cache/ && \ 
 ```
 
-## Production
+### Production
 In *production* mode, all files are "copied" into the container (also `.env`) and you do not need "bind" files:
 ```
 cd apollo
@@ -55,7 +57,7 @@ you can decide to:
 
 In this case, update `docker-compose.prod.yml` file.
 
-## Contribute
+### Contribute
 Thanks to your contributions!
 
 Here is a list of users who already contributed to this repository: \
@@ -63,7 +65,7 @@ Here is a list of users who already contributed to this repository: \
   <img src="https://contrib.rocks/image?repo=ingv/apollo" />
 </a>
 
-## Author
+### Author
 (c) 2023 Valentino Lauciani valentino.lauciani[at]ingv.it 
 
 Istituto Nazionale di Geofisica e Vulcanologia, Italia
