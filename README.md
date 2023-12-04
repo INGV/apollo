@@ -58,7 +58,7 @@ In this case, update `docker-compose.prod.yml` file.
 ## Contribute
 Thanks to your contributions!
 
-Here is a list of users who already contributed to this repository:
+Here is a list of users who already contributed to this repository: \
 <a href="https://github.com/ingv/apollo/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=ingv/apollo" />
 </a>
