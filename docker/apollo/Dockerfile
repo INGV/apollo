@@ -49,6 +49,7 @@ COPY ./docker/apollo/extra/apollo02PhpArtisanMigrate.sh /opt/docker/provision/en
 
 # Set bashrc
 RUN echo "alias ll='ls -l'" >> ~/.bashrc
+RUN echo "alias ll='ls -l'" >> /home/application/.bashrc
 
 ##### Develop #####
 FROM base as apollo-dev
