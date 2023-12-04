@@ -1,7 +1,7 @@
 <p align="center"><a href="https://github.com/ingv/apollo" target="_blank"><img src="https://raw.githubusercontent.com/INGV/apollo/main/art/apollo.png" width="150" alt="Apollo Logo"></a></p>
 
 ## Apollo
-Apollo is a Web Service developed using Laravel, specifically designed to expose seismic localization software "*hyp2000*" and magnitude calculation software "*PyML*" through APIs. 
+Apollo is a Web Service developed using Laravel, specifically designed to expose seismic localization software "*hyp2000*" (https://github.com/INGV/hyp2000)   and magnitude calculation software "*PyML*" (https://github.com/INGV/pyml) through APIs. 
 
 This work highlights the key features of Apollo, including its OpenAPI-based development, JSON communication, containerization, and open- source nature.
 
