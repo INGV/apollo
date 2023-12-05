@@ -2,7 +2,7 @@
 # metadata file that makes public software easily discoverable.
 # More info at https://github.com/italia/publiccode.yml
 
-publiccodeYmlVersion: '0.2'
+publiccodeYmlVersion: '0.3'
 name: 'INGV - apollo' 
 releaseDate: 2023-10-27
 url: 'https://github.com/INGV/apollo'
