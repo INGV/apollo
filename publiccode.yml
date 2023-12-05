@@ -44,18 +44,18 @@ description:
   en:
     genericName: apollo
     shortDescription: >-
-      Web Service built on top of hypoinverse, a software used to Locate earthquakes.
+      Web Service specifically designed to expose seismic localization software "hyp2000" and magnitude calculation software "PyML" through APIs
     documentation: 'https://github.com/INGV/apollo/blob/main/README.md'
     longDescription: >
-      Hypoinverse is software used to Locate earthquakes and determine magnitudes in a local or regional seismic network.
-
-      More info aboute Hypoinverse, here: https://www.usgs.gov/software/hypoinverse-earthquake-location
-
-      At INGV we build stand-alone Docker to deploy "hyp2000" (https://github.com/ingv/hyp2000) and on top of that was buit a Web Service; It gets in input a JSON file with phases and amplitudes. 
-      For each station name, It searches the metadata (like Lat and Long) on the FDSN-StationXML Web Services around the world.
+      Apollo is a Web Service developed using Laravel, specifically designed to expose seismic localization software "hyp2000" and magnitude calculation software "PyML" through APIs. 
       
-      The output could be in a standard format like ARC and PRT or in JSON.
+      The key features of Apollo are its OpenAPI-based development, JSON communication, containerization, and open-source nature.
+
+      More info aboute "hyp2000", here: https://github.com/ingv/hyp2000
+
+      More info aboute "PyML", here: https://github.com/ingv/pyml
+
     localisedName: 'apollo'
     features:
-      - Web Service built on top of hypoinverse
+      - Web Service built on top of hyp2000 and pyml
       - Software used to locate earthquakes and determine magnitudes in a local or regional seismic network
