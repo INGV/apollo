@@ -23,20 +23,24 @@ tags:
   - name: location
     description: "location api"
 servers:
-- url: http://caravel.int.ingv.it:8780/api
+- url: http://localhost:8086/api
   description: production
   # 'x-sandbox' is needed to use 'http' instead of 'https'
   x-sandbox: true 
-- url: http://{hostname}/api
-  description: development
+- url: http://localhost:8586/api
+  description: develop
   # 'x-sandbox' is needed to use 'http' instead of 'https'
   x-sandbox: true 
-  variables:
-    hostname:
-      enum:
-        - 'localhost:8586'
-        - 'caravel.int.ingv.it:8780'
-      default: 'localhost:8586'
+#- url: http://{hostname}/api
+#  description: development
+#  # 'x-sandbox' is needed to use 'http' instead of 'https'
+#  x-sandbox: true 
+#  variables:
+#    hostname:
+#      enum:
+#        - 'localhost:8086'
+#        - 'server1.ingv.it:8586'
+#      default: 'localhost:8086'
       
 paths:
   /status:
