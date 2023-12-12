@@ -7,12 +7,9 @@ This work highlights the key features of Apollo, including its OpenAPI-based dev
 
 ### Clone project
 ```
-git clone --recursive https://gitlab.rm.ingv.it/caravel/apollo.git apollo
+git clone https://github.com/INGV/apollo.git
 ```
-or using deploy token (*read-only*):
-```
-git clone --recursive https://gitlab+deploy-token-71:TWxRfoetzHXxpsLbckbb@gitlab.rm.ingv.it/caravel/apollo.git apollo
-```
+
 ### Develop
 In *develop* mode, all files are "binded" into the container; it is useful to develop code.
 #### Configure Laravel
@@ -22,18 +19,27 @@ $ cp ./.env.example ./.env
 ```
 #### Start containers
 
-First of all, check you `UID` and `GID` with command: `id -u` and `id -g`.
-If you have `UID=1000` and `UID=1000` run:
+Build docker images:
 ```
 cd apollo
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up --remove-orphans -d
+docker compose \
+    -f docker-compose.yml \
+    -f docker-compose.dev.yml \
+    build \
+    --build-arg ENV_UID=$( id -u ) \
+    --build-arg ENV_GID=$( id -g ) \
+    --no-cache \
+    --pull
 ```
 
-otherwise, build locally docker images adn run:
+start Apollo's containers:
 ```
-cd apollo
-docker compose --progress=plain -f docker-compose.yml -f docker-compose.dev.yml build --build-arg ENV_UID=$( id -u ) --build-arg ENV_GID=$( id -g ) --no-cache --pull
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up --remove-orphans -d
+docker compose \
+    -f docker-compose.yml \
+    -f docker-compose.dev.yml \
+    up \
+    --remove-orphans \
+    -d
 ```
 
 install dependencies:
@@ -49,12 +55,30 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T --user=ap
 ```
 
 ### Production
-In *production* mode, all files are "copied" into the container (also `.env`) and you do not need "bind" files:
+In *production* mode, all files are "copied" into the container (also `.env`) and you do not need "bind" files. \
+Build docker images:
 ```
 cd apollo
-docker compose -f docker-compose.yml -f docker-compose.prod.yml build --build-arg ENV_UID=$( id -u ) --build-arg ENV_GID=$( id -g ) --no-cache --pull --progress=plain
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up --remove-orphans -d
+docker compose \
+    -f docker-compose.yml \
+    -f docker-compose.prod.yml \
+    build \
+    --build-arg ENV_UID=$( id -u ) \
+    --build-arg ENV_GID=$( id -g ) \
+    --no-cache \
+    --pull
 ```
+
+start Apollo's containers:
+```
+docker compose \
+    -f docker-compose.yml \
+    -f docker-compose.prod.yml \
+    up \
+    --remove-orphans \
+    -d
+```
+
 you can decide to:
 -  *bind*/*mount* the `.env` file and/or the `storage/` directory. 
 
